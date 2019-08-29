@@ -25,7 +25,7 @@ public:
 	FVector CenterChunkPosition;
 
 	UPROPERTY(EditAnywhere,Category = "Setup")
-	int ChunksLoadRadius;
+	int ChunksLoadRadius = 2;
 };
 
 

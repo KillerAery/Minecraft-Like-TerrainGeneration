@@ -22,4 +22,4 @@ void ATerrianGenerateDemoGameMode::BeginPlay()
 
 void ATerrianGenerateDemoGameMode::Tick(float DeltaSeconds)
 {
-}
+} 
