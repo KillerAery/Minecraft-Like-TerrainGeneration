@@ -21,19 +21,4 @@ public:
 	void BeginPlay()override;
 
 	void Tick(float DeltaSeconds)override;
-
-	UFUNCTION(BlueprintCallable)
-	UObject* SpawnObject(UClass* ObjClass);
-
-	UFUNCTION(BlueprintCallable)
-	UClass* GetBlockClass()const;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Watch")
-	FVector CenterChunkPosition;
-
-	UPROPERTY(EditAnywhere, Category = "Watch")
-	UClass* BlockClass;
-
-	UPROPERTY(EditAnywhere, Category = "Setup")
-	int ChunksLoadRadius = 2;
 };
