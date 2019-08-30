@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Block.h"
+#include "ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
 
 // Sets default values
@@ -9,6 +9,9 @@ ABlock::ABlock()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	meshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	SetRootComponent(meshComponent);
 
 }
 
@@ -22,12 +25,11 @@ void ABlock::BeginPlay()
 void ABlock::Initialize(int32 ID)
 {
 	BlockID = ID;
-
-	UStaticMeshComponent* meshComponent;
-	meshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	SetRootComponent(meshComponent);
-
-
+	FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d"), BlockID);
+	ConstructorHelpers::FObjectFinder<UStaticMesh> staticAsset(*NewString);
+	if (staticAsset.Succeeded()) {
+		meshComponent->SetStaticMesh(staticAsset.Object);
+	}
 }
 
 // Called every frame
