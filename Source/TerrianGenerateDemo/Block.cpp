@@ -11,8 +11,9 @@ ABlock::ABlock()
 	PrimaryActorTick.bCanEverTick = true;
 
 	meshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	SetRootComponent(meshComponent);
+	meshComponent->AttachTo(RootComponent);
 
+	Initialize(1);
 }
 
 // Called when the game starts or when spawned
@@ -25,7 +26,7 @@ void ABlock::BeginPlay()
 void ABlock::Initialize(int32 ID)
 {
 	BlockID = ID;
-	FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d"), BlockID);
+	static FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d"), BlockID);
 	ConstructorHelpers::FObjectFinder<UStaticMesh> staticAsset(*NewString);
 	if (staticAsset.Succeeded()) {
 		meshComponent->SetStaticMesh(staticAsset.Object);

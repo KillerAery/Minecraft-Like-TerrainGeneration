@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Block.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Chunk.generated.h"
@@ -15,8 +16,12 @@ public:
 	// Sets default values for this actor's properties
 	AChunk();
 
-	UPROPERTY(BlueprintReadOnly)
-	FVector position;
+	UPROPERTY(EditAnywhere)
+	FVector2D ChunkPosition = FVector2D(0,0);
+
+	ABlock* Blocks[16][16][256];
+
+	int32 BlocksHeight[16][16];
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
