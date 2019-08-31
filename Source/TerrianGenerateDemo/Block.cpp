@@ -4,6 +4,8 @@
 #include "ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
 
+int32 ABlock::tempID = 0;
+
 // Sets default values
 ABlock::ABlock()
 {
@@ -11,9 +13,15 @@ ABlock::ABlock()
 	PrimaryActorTick.bCanEverTick = true;
 
 	meshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	meshComponent->AttachTo(RootComponent);
+	SetRootComponent(meshComponent);
 
-	Initialize(1);
+	BlockID = tempID;
+	FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d"), BlockID);
+	ConstructorHelpers::FObjectFinder<UStaticMesh> staticAsset(*NewString);
+	if (staticAsset.Succeeded()) {
+		meshComponent->SetStaticMesh(staticAsset.Object);
+	}
+	//Initialize(1);
 }
 
 // Called when the game starts or when spawned
@@ -25,12 +33,7 @@ void ABlock::BeginPlay()
 
 void ABlock::Initialize(int32 ID)
 {
-	BlockID = ID;
-	static FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d"), BlockID);
-	ConstructorHelpers::FObjectFinder<UStaticMesh> staticAsset(*NewString);
-	if (staticAsset.Succeeded()) {
-		meshComponent->SetStaticMesh(staticAsset.Object);
-	}
+	tempID = ID;
 }
 
 // Called every frame

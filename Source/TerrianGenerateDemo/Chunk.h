@@ -4,6 +4,7 @@
 
 #include "Block.h"
 #include "CoreMinimal.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "Chunk.generated.h"
 

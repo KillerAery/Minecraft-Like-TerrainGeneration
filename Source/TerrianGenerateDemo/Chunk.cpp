@@ -15,13 +15,6 @@ AChunk::AChunk()
 			for (int k = 0; k < 256; ++k)
 				Blocks[i][j][k] = nullptr;
 
-	for (int i = 0; i < 16; ++i)
-		for (int j = 0; j < 16; ++j) {
-			BlocksHeight[i][j] = NoiseTool::perlinNoise(ChunkPosition + FVector2D(i*1.0f / 16.0f, j * 1.0f / 16.0f));
-			UE_LOG(LogTemp, Warning, TEXT("%d"), BlocksHeight[i][j]);
-		}
-	
-
 }
 
 // Called when the game starts or when spawned
@@ -29,25 +22,47 @@ void AChunk::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (int i = 0; i < 16; ++i)
+		for (int j = 0; j < 16; ++j) {
+			BlocksHeight[i][j] = NoiseTool::perlinNoise(ChunkPosition + FVector2D(i / 16.0f, j / 16.0f));
+			//UE_LOG(LogTemp, Warning, TEXT("%s"), *ChunkPosition.ToString());
+		}
+
 	int32 index = 0;
 	UWorld* World = GetWorld();
 	for (int i = 0; i < 16; ++i)
-		for (int j = 0; j < 16; ++j) 
-		for (int k = 0; k < BlocksHeight[i][j]; ++k)
-		{
-			if (World)
-			{
-				World->SpawnActor<ABlock>(FVector(i*100, j*100, k*100), FRotator::ZeroRotator);
-				//if (k == BlocksHeight[i][j] - 1) {
-				//	Blocks[i][j][k]->Initialize(1);
-				//}
-				//else {
-				//	Blocks[i][j][k]->Initialize(2);
-				//}
-			}
-			index++;
-		}
+		for (int j = 0; j < 16; ++j) {
 
+			for (int k = 0; k <= BlocksHeight[i][j]; ++k)
+			{
+
+				if (k == BlocksHeight[i][j] && (rand() % 255 < 240)) {
+					ABlock::Initialize(1);
+				}
+				else {
+					ABlock::Initialize(3);
+				}
+
+				World->SpawnActor<ABlock>(FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FRotator::ZeroRotator);
+
+					////产生acotor开始
+					//FTransform spawnTransform(FRotator::ZeroRotator, FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FVector(1.0f, 1.0f, 1.0f));
+					////产生acotor开始
+					//ABlock*landSample = Cast<ABlock>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ABlock::StaticClass(), spawnTransform));
+					////初始化传参
+					//if (k == BlocksHeight[i][j] - 1) {
+
+					//	ABlock::Initialize(1);
+					//}
+					//else {
+					//	ABlock::Initialize(3);
+					//}
+					////产生阶段结束
+					//UGameplayStatics::FinishSpawningActor(landSample, spawnTransform);
+				
+				index++;
+			}
+		}
 }
 
 // Called every frame

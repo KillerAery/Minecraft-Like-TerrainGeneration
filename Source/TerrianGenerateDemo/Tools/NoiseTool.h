@@ -18,6 +18,7 @@ public:
 
 	static float grad(FVector2D vertex,FVector2D position2D);
 	static float perlinNoise(FVector2D position2D);
+	static float valueNoise(FVector2D position2D);
 private:
 	NoiseTool() = delete;
 	~NoiseTool() = delete;
