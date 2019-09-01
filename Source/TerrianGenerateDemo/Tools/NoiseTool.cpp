@@ -19,12 +19,12 @@ uint32_t NoiseTool::hash11(int position)
 
 FVector2D NoiseTool::hash22(FVector2D position2D)
 {
-	return FVector2D((float)(hash11(position2D.X)%32), (float)(hash11(0x251ab517 * position2D.Y) % 32));
+	return FVector2D((hash11(position2D.X)%64), (hash11(0x251ab517 * position2D.Y)%64));
 }
 
 uint32_t NoiseTool::hash21(FVector2D position2D)
 {
-	return hash11((int)position2D.X * 0x651A6BE6 + (int)position2D.Y);
+	return hash11((int)position2D.X * 0x651A6BE1 + (int)position2D.Y);
 }
 
 FVector NoiseTool::hash33(FVector position3D)
@@ -47,7 +47,7 @@ float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 float NoiseTool::perlinNoise(FVector2D position2D)
 {	
 	//向量两个纬度值向下取整
-	FVector2D pi =FVector2D(int(position2D.X),int(position2D.Y));
+	FVector2D pi =FVector2D(floor(position2D.X),floor(position2D.Y));
 
 	//计算缓和曲线
 	FVector2D pf = position2D - pi;
@@ -63,13 +63,13 @@ float NoiseTool::perlinNoise(FVector2D position2D)
 		FMath::Lerp(grad(vertex[2], pf - FVector2D(0.0f, 1.0f)), 
 			grad(vertex[3], pf - FVector2D(1.0f, 1.0f)),
 			w.X),
-		w.Y)+24,0,128);
+		w.Y)+24,0,100);
 }
 
 float NoiseTool::valueNoise(FVector2D position2D)
 {
 	//向量两个纬度值向下取整
-	FVector2D pi = FVector2D((int32)position2D.X, (int32)position2D.Y);
+	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
 
 	//计算缓和曲线
 	FVector2D pf = position2D - pi;

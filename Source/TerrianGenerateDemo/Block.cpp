@@ -4,7 +4,7 @@
 #include "ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
 
-int32 ABlock::tempID = 0;
+int32 ABlock::tempID = 1;
 
 // Sets default values
 ABlock::ABlock()
