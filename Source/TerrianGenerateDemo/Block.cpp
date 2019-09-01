@@ -21,6 +21,7 @@ ABlock::ABlock()
 	if (staticAsset.Succeeded()) {
 		meshComponent->SetStaticMesh(staticAsset.Object);
 	}
+
 	//Initialize(1);
 }
 

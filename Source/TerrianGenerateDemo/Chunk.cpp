@@ -32,7 +32,6 @@ void AChunk::BeginPlay()
 	UWorld* World = GetWorld();
 	for (int i = 0; i < 16; ++i)
 		for (int j = 0; j < 16; ++j) {
-
 			for (int k = 0; k <= BlocksHeight[i][j]; ++k)
 			{
 
@@ -43,8 +42,19 @@ void AChunk::BeginPlay()
 					ABlock::Initialize(3);
 				}
 
-				World->SpawnActor<ABlock>(FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FRotator::ZeroRotator);
+				Blocks[i][j][k] = World->SpawnActor<ABlock>(FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FRotator::ZeroRotator);
+				//隐藏内部block
+				if (i > 0 && i < 15 && j>0 && j < 15) {
+					if (k < BlocksHeight[i][j] && 
+						k < BlocksHeight[i-1][j] && 
+						k < BlocksHeight[i][j-1] && 
+						k < BlocksHeight[i+1][j] && 
+						k < BlocksHeight[i][j+1]) {
+						Blocks[i][j][k]->SetActorHiddenInGame(true);
 
+					}
+				}
+				
 					////产生acotor开始
 					//FTransform spawnTransform(FRotator::ZeroRotator, FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FVector(1.0f, 1.0f, 1.0f));
 					////产生acotor开始
@@ -63,6 +73,7 @@ void AChunk::BeginPlay()
 				index++;
 			}
 		}
+	
 }
 
 // Called every frame
