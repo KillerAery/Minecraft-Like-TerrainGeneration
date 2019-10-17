@@ -1,0 +1,128 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "TerrianGenerateDemo (Debug)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemo Win64 Debug Build",
+			"program": "D:\\Project\\TerrianGenerate\\Binaries\\Win64\\TerrianGenerateDemo-Win64-Debug.exe",
+			"args": [
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "TerrianGenerateDemo (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemo Win64 DebugGame Build",
+			"program": "D:\\Project\\TerrianGenerate\\Binaries\\Win64\\TerrianGenerateDemo-Win64-DebugGame.exe",
+			"args": [
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "TerrianGenerateDemo (Development)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemo Win64 Development Build",
+			"program": "D:\\Project\\TerrianGenerate\\Binaries\\Win64\\TerrianGenerateDemo.exe",
+			"args": [
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "TerrianGenerateDemo (Shipping)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemo Win64 Shipping Build",
+			"program": "D:\\Project\\TerrianGenerate\\Binaries\\Win64\\TerrianGenerateDemo-Win64-Shipping.exe",
+			"args": [
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "TerrianGenerateDemo (Test)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemo Win64 Test Build",
+			"program": "D:\\Project\\TerrianGenerate\\Binaries\\Win64\\TerrianGenerateDemo-Win64-Test.exe",
+			"args": [
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "TerrianGenerateDemoEditor (Debug)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemoEditor Win64 Debug Build",
+			"program": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Binaries\\Win64\\UE4Editor-Win64-Debug.exe",
+			"args": [
+				"D:\\Project\\TerrianGenerate\\TerrianGenerateDemo.uproject"
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "TerrianGenerateDemoEditor (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemoEditor Win64 DebugGame Build",
+			"program": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Binaries\\Win64\\UE4Editor.exe",
+			"args": [
+				"D:\\Project\\TerrianGenerate\\TerrianGenerateDemo.uproject"
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "TerrianGenerateDemoEditor (Development)",
+			"request": "launch",
+			"preLaunchTask": "TerrianGenerateDemoEditor Win64 Development Build",
+			"program": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Binaries\\Win64\\UE4Editor.exe",
+			"args": [
+				"D:\\Project\\TerrianGenerate\\TerrianGenerateDemo.uproject"
+			],
+			"cwd": "D:\\UnrealEngine4\\UE_4.22",
+			"stopAtEntry": false,
+			"externalConsole": true,
+			"type": "cppvsdbg",
+			"visualizerFile": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Extras\\VisualStudioDebugging\\UE4.natvis"
+		},
+		{
+			"name": "Generate Project Files",
+			"type": "clr",
+			"request": "launch",
+			"program": "D:\\UnrealEngine4\\UE_4.22\\Engine\\Binaries\\DotNET\\UnrealBuildTool.exe",
+			"console": "externalTerminal",
+			"args": [
+				"-projectfiles",
+				"-vscode",
+				"-project=\"D:\\Project\\TerrianGenerate\\TerrianGenerateDemo.uproject\"",
+				"-game",
+				"-engine"
+			],
+			"internalConsoleOptions": "openOnSessionStart",
+			"cwd": "D:\\UnrealEngine4\\UE_4.22"
+		}
+	]
+}
