@@ -37,23 +37,20 @@ uint32_t NoiseTool::hash31(FVector position3D)
 	return hash11(position3D.X * 0x651A6BE6 - position3D.Y * 0xCB251062 + position3D.Z);
 }
 
-//求梯度值（本质是求顶点代表的梯度向量与距离向量的点积）
+
 float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 {
 	return FVector2D::DotProduct(hash22(vertex), position2D);
 }
 
-//二维柏林噪声
 float NoiseTool::perlinNoise(FVector2D position2D)
 {	
-	//向量两个纬度值向下取整
+
 	FVector2D pi =FVector2D(floor(position2D.X),floor(position2D.Y));
 
-	//计算缓和曲线
 	FVector2D pf = position2D - pi;
 	FVector2D w = pf * pf * (FVector2D(3.0f,3.0f) - 2.0f * pf);
 
-	//二维晶体格四个顶点
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1.0f,pi.Y},{pi.X,pi.Y + 1.0f},{pi.X + 1.0f,pi.Y + 1.0f} };
 
 	return FMath::Clamp<float>(FMath::Lerp(
@@ -68,14 +65,11 @@ float NoiseTool::perlinNoise(FVector2D position2D)
 
 float NoiseTool::valueNoise(FVector2D position2D)
 {
-	//向量两个纬度值向下取整
 	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
 
-	//计算缓和曲线
 	FVector2D pf = position2D - pi;
 	FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
-	//二维晶体格四个顶点
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
 
 	return FMath::Clamp<float>(FMath::Lerp(

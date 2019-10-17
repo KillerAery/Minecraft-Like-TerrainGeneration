@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 /**
- * 噪声工具（特制版）：提供噪声函数 范围[0~255)
+ * 
  */
 class TERRIANGENERATEDEMO_API NoiseTool
 {

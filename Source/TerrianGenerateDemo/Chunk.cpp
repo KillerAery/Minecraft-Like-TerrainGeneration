@@ -43,7 +43,7 @@ void AChunk::BeginPlay()
 				}
 
 				Blocks[i][j][k] = World->SpawnActor<ABlock>(FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FRotator::ZeroRotator);
-				//隐藏内部block
+
 				if (i > 0 && i < 15 && j>0 && j < 15) {
 					if (k < BlocksHeight[i][j] && 
 						k < BlocksHeight[i-1][j] && 
@@ -54,21 +54,6 @@ void AChunk::BeginPlay()
 
 					}
 				}
-				
-					////产生acotor开始
-					//FTransform spawnTransform(FRotator::ZeroRotator, FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FVector(1.0f, 1.0f, 1.0f));
-					////产生acotor开始
-					//ABlock*landSample = Cast<ABlock>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ABlock::StaticClass(), spawnTransform));
-					////初始化传参
-					//if (k == BlocksHeight[i][j] - 1) {
-
-					//	ABlock::Initialize(1);
-					//}
-					//else {
-					//	ABlock::Initialize(3);
-					//}
-					////产生阶段结束
-					//UGameplayStatics::FinishSpawningActor(landSample, spawnTransform);
 				
 				index++;
 			}
