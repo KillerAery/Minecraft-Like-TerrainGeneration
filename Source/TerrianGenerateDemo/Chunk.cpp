@@ -42,18 +42,17 @@ void AChunk::BeginPlay()
 					ABlock::Initialize(3);
 				}
 
-				Blocks[i][j][k] = World->SpawnActor<ABlock>(FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FRotator::ZeroRotator);
-
-				if (i > 0 && i < 15 && j>0 && j < 15) {
 					if (k < BlocksHeight[i][j] && 
-						k < BlocksHeight[i-1][j] && 
-						k < BlocksHeight[i][j-1] && 
-						k < BlocksHeight[i+1][j] && 
-						k < BlocksHeight[i][j+1]) {
-						Blocks[i][j][k]->SetActorHiddenInGame(true);
+						(i<=0||k < BlocksHeight[i-1][j]) && 
+						(j<=0||k < BlocksHeight[i][j-1])&& 
+						(i>=15||k < BlocksHeight[i+1][j]) && 
+						(j>=15||k < BlocksHeight[i][j+1])) {
+						Blocks[i][j][k] = World->SpawnActor<ABlock>(FVector(i * 100 + ChunkPosition.X * 1600, j * 100 + ChunkPosition.Y * 1600, k * 100), FRotator::ZeroRotator);
+					}
+					else {
 
 					}
-				}
+				
 				
 				index++;
 			}

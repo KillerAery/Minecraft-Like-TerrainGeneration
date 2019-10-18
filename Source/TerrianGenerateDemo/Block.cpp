@@ -2,7 +2,6 @@
 
 #include "Block.h"
 #include "ConstructorHelpers.h"
-#include "Components/StaticMeshComponent.h"
 
 int32 ABlock::tempID = 1;
 
@@ -14,6 +13,7 @@ ABlock::ABlock()
 
 	meshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(meshComponent);
+
 
 	BlockID = tempID;
 	FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d"), BlockID);
@@ -43,4 +43,3 @@ void ABlock::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
-

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Components/StaticMeshComponent.h"
 #include "Block.generated.h"
 
 UCLASS()
@@ -18,6 +19,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	int32 BlockID = 0;
 
+	static int32 tempID;
+
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UStaticMeshComponent* meshComponent = nullptr;
 protected:
@@ -26,8 +29,6 @@ protected:
 
 public:	
 	static void Initialize(int32 ID);
-
-	static int32 tempID;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
