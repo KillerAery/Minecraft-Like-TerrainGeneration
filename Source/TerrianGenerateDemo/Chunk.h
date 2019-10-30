@@ -9,6 +9,10 @@
 #include "Components/InstancedStaticMeshComponent.h"
 #include "Chunk.generated.h"
 
+const size_t BlockWidth = 64;
+const size_t MaxBlocksWidth = 16;
+const size_t MaxBlocksHeigth = 256;
+
 UCLASS()
 class TERRIANGENERATEDEMO_API AChunk : public AActor
 {
@@ -21,12 +25,16 @@ public:
 	UPROPERTY(EditAnywhere)
 	FVector2D ChunkPosition = FVector2D(0,0);
 
-	ABlock* Blocks[16][16][256];
+	ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
 
-	int32 BlocksHeight[16][16];
+	int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth];
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	void GeneratePerlinNoise();
+	void GenerateBlocks();
+private:
 
 public:	
 	// Called every frame
