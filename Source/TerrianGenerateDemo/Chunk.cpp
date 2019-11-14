@@ -39,30 +39,43 @@ void AChunk::BeginPlay()
 
 void AChunk::GeneratePerlinNoise()
 {
-	FVector2D position2D = ChunkPosition / (MaxBlocksWidth * BlockWidth);
-	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
+	FVector2D pi = FVector2D(floor(ChunkPosition.X), floor(ChunkPosition.Y));
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1.0f,pi.Y},{pi.X,pi.Y + 1.0f},{pi.X + 1.0f,pi.Y + 1.0f} };
 
-
 	FVector2D pf,w;
-
+	//todo
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 		for (int j = 0; j < MaxBlocksWidth; ++j) {
 			
 			pf = FVector2D(i/float(MaxBlocksWidth),j/float(MaxBlocksWidth));
 			w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
-
-			BlocksHeight[i][j] = FMath::Clamp<float>(FMath::Lerp(
-				FMath::Lerp(NoiseTool::grad(vertex[0], pf),
-					NoiseTool::grad(vertex[1], pf - FVector2D(1.0f, 0.0f)),
+			BlocksHeight[i][j] += 0.33f * FMath::Clamp<float>(FMath::Lerp(
+				FMath::Lerp((int32)(NoiseTool::hash21(vertex[0]) % 57),
+				(int32)(NoiseTool::hash21(vertex[1]) % 57),
 					w.X),
-				FMath::Lerp(NoiseTool::grad(vertex[2], pf - FVector2D(0.0f, 1.0f)),
-					NoiseTool::grad(vertex[3], pf - FVector2D(1.0f, 1.0f)),
+				FMath::Lerp((int32)(NoiseTool::hash21(vertex[2]) % 57),
+				(int32)(NoiseTool::hash21(vertex[3]) % 57),
 					w.X),
-				w.Y) + 24, 0, 100);
-
+				w.Y), 0, 57);
 		}
+
+	for (int i = 0; i < MaxBlocksWidth; ++i)
+		for (int j = 0; j < MaxBlocksWidth; ++j) {
+
+			pf = FVector2D(i / float(MaxBlocksWidth), j / float(MaxBlocksWidth));
+			w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
+
+			BlocksHeight[i][j] += FMath::Clamp<float>(FMath::Lerp(
+				FMath::Lerp((int32)(NoiseTool::hash21(vertex[0]/2) % 20),
+				(int32)(NoiseTool::hash21(vertex[1]/2) % 20),
+					w.X),
+				FMath::Lerp((int32)(NoiseTool::hash21(vertex[2]/2) % 20),
+				(int32)(NoiseTool::hash21(vertex[3]/2) % 20),
+					w.X),
+				w.Y), 0, 20);
+		}
+
 
 }
 
