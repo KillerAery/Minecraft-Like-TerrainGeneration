@@ -24,13 +24,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "MyFunc")
 	void SetPlayerLoactionEveryTick(FVector location);
-
-
+	
+	UPROPERTY(VisibleAnywhere)
+	FVector2D ChunksCenterPosition;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-	FVector position3D;
 
 	AChunk* Chunks[2][ChunkSize][ChunkSize];
 

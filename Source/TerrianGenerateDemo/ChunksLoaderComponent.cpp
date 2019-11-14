@@ -20,14 +20,14 @@ UChunksLoaderComponent::UChunksLoaderComponent()
 
 void UChunksLoaderComponent::SetPlayerLoactionEveryTick(FVector location)
 {
-	position3D = location;
+	ChunksCenterPosition = FVector2D((int32)(location.X / 1600), (int32)(location.Y / 1600));
 }
 
 // Called when the game starts
 void UChunksLoaderComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetPlayerLoactionEveryTick(FVector::ZeroVector);
 }
 
 
@@ -41,9 +41,6 @@ void UChunksLoaderComponent::UpdateChunks()
 			Chunks[nextChunksIndex][i][j] = nullptr;
 		}
 
-	FVector2D pos2D = FVector2D(position3D.X, position3D.Z);
-	pos2D /= 1600;
-
 	//对旧chunks进行载入检查
 	for (int i = 0; i < ChunkSize; ++i)
 		for (int j = 0; j < ChunkSize; ++j) {
@@ -54,7 +51,7 @@ void UChunksLoaderComponent::UpdateChunks()
 			FVector2D chunkPosition = Chunks[ChunksIndex][i][j]->ChunkPosition;
 
 			if (NeedChunk(chunkPosition)) {
-				FVector2D d = chunkPosition - pos2D;
+				FVector2D d = chunkPosition - ChunksCenterPosition;
 				Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] = Chunks[ChunksIndex][i][j];
 			}
 			else {
@@ -63,21 +60,19 @@ void UChunksLoaderComponent::UpdateChunks()
 			}
 		}
 
-	int dt = 1;
-
 	UWorld* World = GetWorld();
 	//生成新Chunk
 	for (int i = 0; i < ChunkSize; ++i)
 		for (int j = 0; j < ChunkSize; ++j) {
 			if (!Chunks[nextChunksIndex][i][j]) {
-				AChunk::Initialize(FVector2D(pos2D.X + (i - Center) * dt,
-					pos2D.Y + (j - Center) * dt));
+				AChunk::Initialize(FVector2D(ChunksCenterPosition.X + (i - Center),
+					ChunksCenterPosition.Y + (j - Center)));
 
 				Chunks[nextChunksIndex][i][j] =
 					World->SpawnActor<AChunk>
-					(FVector((pos2D.X + (i - Center) * dt) * 1600,
+					(FVector((ChunksCenterPosition.X + i - Center) * 1600,
 						0,
-						(pos2D.Y + (i - Center) * dt) * 1600),
+						(ChunksCenterPosition.Y + i - Center) * 1600),
 						FRotator::ZeroRotator);
 			}
 		}
@@ -89,9 +84,8 @@ void UChunksLoaderComponent::UpdateChunks()
 
 bool UChunksLoaderComponent::NeedChunk(FVector2D chunkPosition)
 {
-	FVector2D pos2D = FVector2D(position3D.X, position3D.Z);
-	FVector2D d = chunkPosition - pos2D;
-	return (int32)fabs(d.X) < LoadRadius && (int32)fabs(d.Y) < LoadRadius;
+	FVector2D d = chunkPosition - ChunksCenterPosition;
+	return abs((int32)(d.X)) < LoadRadius && abs((int32)fabs(d.Y)) < LoadRadius;
 }
 
 // Called every frame
