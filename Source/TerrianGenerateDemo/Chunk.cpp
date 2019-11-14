@@ -4,17 +4,27 @@
 #include "Chunk.h"
 #include "Tools/NoiseTool.h"
 
+FVector2D AChunk::InitialChunkPosition = FVector2D();
+
 // Sets default values
 AChunk::AChunk()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	ChunkPosition = InitialChunkPosition;
+
 	for (int i = 0; i < 16; ++i)
 		for (int j = 0; j < 16; ++j)
 			for (int k = 0; k < 256; ++k)
 				Blocks[i][j][k] = nullptr;
 
+}
+
+
+void AChunk::Initialize(FVector2D chunkPosition)
+{
+	InitialChunkPosition = chunkPosition;
 }
 
 // Called when the game starts or when spawned
@@ -29,7 +39,7 @@ void AChunk::BeginPlay()
 
 void AChunk::GeneratePerlinNoise()
 {
-	FVector2D position2D = ChunkPosition / BlockWidth;
+	FVector2D position2D = ChunkPosition / (MaxBlocksWidth * BlockWidth);
 	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1.0f,pi.Y},{pi.X,pi.Y + 1.0f},{pi.X + 1.0f,pi.Y + 1.0f} };
 
@@ -39,7 +49,7 @@ void AChunk::GeneratePerlinNoise()
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 		for (int j = 0; j < MaxBlocksWidth; ++j) {
 			
-			pf = FVector2D(i/MaxBlocksWidth,j/MaxBlocksWidth);
+			pf = FVector2D(i/float(MaxBlocksWidth),j/float(MaxBlocksWidth));
 			w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
 
@@ -51,6 +61,7 @@ void AChunk::GeneratePerlinNoise()
 					NoiseTool::grad(vertex[3], pf - FVector2D(1.0f, 1.0f)),
 					w.X),
 				w.Y) + 24, 0, 100);
+
 		}
 
 }
@@ -76,14 +87,14 @@ void AChunk::GenerateBlocks()
 					(j <= 0 || k < BlocksHeight[i][j - 1]) &&
 					(i >= 15 || k < BlocksHeight[i + 1][j]) &&
 					(j >= 15 || k < BlocksHeight[i][j + 1])) {
+
+				}
+				else {
 					Blocks[i][j][k] = World->SpawnActor<ABlock>(
 						FVector(i * 100 + ChunkPosition.X * 1600,
 							j * 100 + ChunkPosition.Y * 1600,
 							k * 100),
 						FRotator::ZeroRotator);
-				}
-				else {
-
 				}
 
 

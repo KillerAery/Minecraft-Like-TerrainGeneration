@@ -19,14 +19,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	int32 BlockID = 0;
 
-	static int32 tempID;
-
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UStaticMeshComponent* meshComponent = nullptr;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	static int32 InitialID;//TODO
 public:	
 	static void Initialize(int32 ID);
 

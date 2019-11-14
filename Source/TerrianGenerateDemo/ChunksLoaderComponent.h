@@ -7,11 +7,11 @@
 #include "Components/ActorComponent.h"
 #include "ChunksLoaderComponent.generated.h"
 
-const size_t LoadRadius = 3;
+const int32 LoadRadius = 2;
 
-const size_t ChunkSize = LoadRadius * 2 - 1;
+const int32 ChunkSize = LoadRadius * 2 - 1;
 
-const size_t Center = LoadRadius - 1;
+const int32 Center = LoadRadius - 1;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class TERRIANGENERATEDEMO_API UChunksLoaderComponent : public UActorComponent
@@ -38,7 +38,7 @@ protected:
 
 	void UpdateChunks();
 
-	bool NeedToLoadChunk(FVector2D position, FVector2D chunkPosition);
+	bool NeedChunk(FVector2D chunkPosition);
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

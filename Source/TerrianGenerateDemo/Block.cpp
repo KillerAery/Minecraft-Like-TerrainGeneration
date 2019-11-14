@@ -3,7 +3,7 @@
 #include "Block.h"
 #include "ConstructorHelpers.h"
 
-int32 ABlock::tempID = 1;
+int32 ABlock::InitialID = 1;
 
 // Sets default values
 ABlock::ABlock()
@@ -15,7 +15,7 @@ ABlock::ABlock()
 	SetRootComponent(meshComponent);
 
 
-	BlockID = tempID;
+	BlockID = InitialID;
 	FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d"), BlockID);
 	ConstructorHelpers::FObjectFinder<UStaticMesh> staticAsset(*NewString);
 	if (staticAsset.Succeeded()) {
@@ -34,7 +34,7 @@ void ABlock::BeginPlay()
 
 void ABlock::Initialize(int32 ID)
 {
-	tempID = ID;
+	InitialID = ID;
 }
 
 // Called every frame

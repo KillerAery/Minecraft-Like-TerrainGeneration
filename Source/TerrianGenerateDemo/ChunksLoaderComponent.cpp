@@ -28,7 +28,6 @@ void UChunksLoaderComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UpdateChunks();
 }
 
 
@@ -37,16 +36,13 @@ void UChunksLoaderComponent::UpdateChunks()
 	//清理
 	size_t nextChunksIndex = !ChunksIndex;
 
-	for (int x = 0; x < ChunkSize; ++x)
-		for (int y = 0; y < ChunkSize; ++y) {
-			Chunks[nextChunksIndex][x][y] = nullptr;
+	for (int i = 0; i < ChunkSize; ++i)
+		for (int j = 0; j < ChunkSize; ++j) {
+			Chunks[nextChunksIndex][i][j] = nullptr;
 		}
 
-	FVector2D position2D;
-	position2D.X = position3D.X / 1600;
-	position2D.Y = position3D.Z / 1600;
-
-	UWorld* World = GetWorld();
+	FVector2D pos2D = FVector2D(position3D.X, position3D.Z);
+	pos2D /= 1600;
 
 	//对旧chunks进行载入检查
 	for (int i = 0; i < ChunkSize; ++i)
@@ -55,32 +51,34 @@ void UChunksLoaderComponent::UpdateChunks()
 				continue;
 			}
 
-			FVector2D chunkPosition2D = Chunks[ChunksIndex][i][j]->ChunkPosition;
-			chunkPosition2D /= 1600;
+			FVector2D chunkPosition = Chunks[ChunksIndex][i][j]->ChunkPosition;
 
-			if (!NeedToLoadChunk(position2D, chunkPosition2D)) {
+			if (NeedChunk(chunkPosition)) {
+				FVector2D d = chunkPosition - pos2D;
+				Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] = Chunks[ChunksIndex][i][j];
+			}
+			else {
 				Chunks[ChunksIndex][i][j]->Destroy();	//卸载chunk
 				Chunks[ChunksIndex][i][j] = nullptr;
 			}
-			else {
-				FVector2D d = chunkPosition2D - position2D;
-				Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] = Chunks[ChunksIndex][i][j];
-			}
-
 		}
 
+	int dt = 1;
+
+	UWorld* World = GetWorld();
 	//生成新Chunk
 	for (int i = 0; i < ChunkSize; ++i)
 		for (int j = 0; j < ChunkSize; ++j) {
 			if (!Chunks[nextChunksIndex][i][j]) {
+				AChunk::Initialize(FVector2D(pos2D.X + (i - Center) * dt,
+					pos2D.Y + (j - Center) * dt));
+
 				Chunks[nextChunksIndex][i][j] =
 					World->SpawnActor<AChunk>
-					(FVector(position3D.X + i * 1600,
-						position3D.Z + j * 1600,
-						0),
+					(FVector((pos2D.X + (i - Center) * dt) * 1600,
+						0,
+						(pos2D.Y + (i - Center) * dt) * 1600),
 						FRotator::ZeroRotator);
-
-				continue;
 			}
 		}
 
@@ -89,17 +87,19 @@ void UChunksLoaderComponent::UpdateChunks()
 	ChunksIndex = nextChunksIndex;
 }
 
-bool UChunksLoaderComponent::NeedToLoadChunk(FVector2D position, FVector2D chunkPosition)
+bool UChunksLoaderComponent::NeedChunk(FVector2D chunkPosition)
 {
-	FVector2D d = position - chunkPosition;
-	return (int32)fabs(d.X)<=1 && (int32)fabs(d.Y) <= 1;
+	FVector2D pos2D = FVector2D(position3D.X, position3D.Z);
+	FVector2D d = chunkPosition - pos2D;
+	return (int32)fabs(d.X) < LoadRadius && (int32)fabs(d.Y) < LoadRadius;
 }
 
 // Called every frame
 void UChunksLoaderComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	
+	UpdateChunks();
 	// ...
 }
 
