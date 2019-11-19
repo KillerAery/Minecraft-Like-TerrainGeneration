@@ -20,7 +20,7 @@ UChunksLoaderComponent::UChunksLoaderComponent()
 
 void UChunksLoaderComponent::SetPlayerLoactionEveryTick(FVector location)
 {
-	ChunksCenterPosition = FVector2D((int32)(location.X / 1600), (int32)(location.Y / 1600));
+	ChunksCenterPosition = FVector2D((int32)(location.X / 1600 - 0.5), (int32)(location.Y / 1600 - 0.5));
 }
 
 // Called when the game starts

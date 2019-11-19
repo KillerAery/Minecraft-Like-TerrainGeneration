@@ -19,12 +19,14 @@ uint32 NoiseTool::hash11(int32 position)
 
 FVector2D NoiseTool::hash22(FVector2D position2D)
 {
-	return FVector2D(hash11(0x1b2a3522 * position2D.X)%53, hash11(position2D.Y)%53);
+	FVector2D v(hash11(0x651A6BE3 * (int32)position2D.X)%1024-512, hash11((int32)position2D.Y)%1024-512);
+	v/= (int32)v.Size();
+	return v;
 }
 
 uint32 NoiseTool::hash21(FVector2D position2D)
 {
-	return hash11((int32)position2D.X * 0x651A6BE1 + (int32)position2D.Y);
+	return hash11(0x651A6BE1 * (int32)position2D.X + (int32)position2D.Y);
 }
 
 FVector NoiseTool::hash33(FVector position3D)

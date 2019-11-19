@@ -7,7 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "ChunksLoaderComponent.generated.h"
 
-const int32 LoadRadius = 2;
+const int32 LoadRadius = 3;
 
 const int32 ChunkSize = LoadRadius * 2 - 1;
 
