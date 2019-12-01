@@ -24,10 +24,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	static int32 InitialID;//TODO
 public:	
-	static void Initialize(int32 ID);
+	void Initialize(int32 InitialID);
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

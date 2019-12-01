@@ -31,13 +31,15 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	AChunk* Chunks[2][ChunkSize][ChunkSize];
+	Chunk* Chunks[2][ChunkSize][ChunkSize];
 
 	size_t ChunksIndex = 0;
 
 	void UpdateChunks();
 
 	bool NeedChunk(FVector2D chunkPosition);
+
+	Chunk* GenerateChunk(FVector2D chunkPosition);
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

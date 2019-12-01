@@ -2,48 +2,25 @@
 
 
 #include "Chunk.h"
-#include "Tools/NoiseTool.h"
+#include "NoiseTool.h"
 
-FVector2D AChunk::InitialChunkPosition = FVector2D();
 
-// Sets default values
-AChunk::AChunk()
+Chunk::Chunk(FVector2D chunkPosition)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-	ChunkPosition = InitialChunkPosition;
-
+	ChunkPosition = chunkPosition;
 	for (int i = 0; i < 16; ++i)
-		for (int j = 0; j < 16; ++j)
-			for (int k = 0; k < 256; ++k)
-				Blocks[i][j][k] = nullptr;
-
+	for (int j = 0; j < 16; ++j)
+	for (int k = 0; k < 256; ++k)
+		Blocks[i][j][k] = nullptr;
 }
 
-
-void AChunk::Initialize(FVector2D chunkPosition)
-{
-	InitialChunkPosition = chunkPosition;
-}
-
-// Called when the game starts or when spawned
-void AChunk::BeginPlay()
-{
-	Super::BeginPlay();
-
-	GeneratePerlinNoise();
-	GenerateBlocks();
-
-}
-
-void AChunk::GeneratePerlinNoise()
+void Chunk::GeneratePerlinNoise()
 {
 	FVector2D pi = FVector2D(floor(ChunkPosition.X), floor(ChunkPosition.Y));
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1.0f,pi.Y},{pi.X,pi.Y + 1.0f},{pi.X + 1.0f,pi.Y + 1.0f} };
 
 	FVector2D pf,w;
-	//todo
+	//TODO
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 		for (int j = 0; j < MaxBlocksWidth; ++j) {
 			
@@ -69,48 +46,3 @@ void AChunk::GeneratePerlinNoise()
 				w.Y), -1.0f, 1.0f) * 5 + 20);
 		}
 }
-
-void AChunk::GenerateBlocks()
-{
-	int32 index = 0;
-	UWorld* World = GetWorld();
-	for (int i = 0; i < 16; ++i)
-		for (int j = 0; j < 16; ++j) {
-			for (int k = 0; k <= BlocksHeight[i][j]; ++k)
-			{
-
-				if (k == BlocksHeight[i][j] && (rand() % 255 < 240)) {
-					ABlock::Initialize(1);
-				}
-				else {
-					ABlock::Initialize(3);
-				}
-
-				if (k < BlocksHeight[i][j] &&
-					(i <= 0 || k < BlocksHeight[i - 1][j]) &&
-					(j <= 0 || k < BlocksHeight[i][j - 1]) &&
-					(i >= 15 || k < BlocksHeight[i + 1][j]) &&
-					(j >= 15 || k < BlocksHeight[i][j + 1])) {
-
-				}
-				else {
-					Blocks[i][j][k] = World->SpawnActor<ABlock>(
-						FVector(i * 100 + ChunkPosition.X * 1600,
-							j * 100 + ChunkPosition.Y * 1600,
-							k * 100),
-						FRotator::ZeroRotator);
-				}
-
-
-				index++;
-			}
-		}
-}
-
-// Called every frame
-void AChunk::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

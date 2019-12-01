@@ -9,12 +9,6 @@ UChunksLoaderComponent::UChunksLoaderComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	for (int index = 0; index < 2; ++index)
-		for (int x = 0; x < ChunkSize; ++x)
-			for (int y = 0; y < ChunkSize; ++y) {
-				Chunks[index][x][y] = nullptr;
-			}
 }
 
 
@@ -27,7 +21,6 @@ void UChunksLoaderComponent::SetPlayerLoactionEveryTick(FVector location)
 void UChunksLoaderComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SetPlayerLoactionEveryTick(FVector::ZeroVector);
 }
 
 
@@ -35,7 +28,6 @@ void UChunksLoaderComponent::UpdateChunks()
 {
 	//清理
 	size_t nextChunksIndex = !ChunksIndex;
-
 	for (int i = 0; i < ChunkSize; ++i)
 		for (int j = 0; j < ChunkSize; ++j) {
 			Chunks[nextChunksIndex][i][j] = nullptr;
@@ -52,32 +44,25 @@ void UChunksLoaderComponent::UpdateChunks()
 
 			if (NeedChunk(chunkPosition)) {
 				FVector2D d = chunkPosition - ChunksCenterPosition;
-				Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] = Chunks[ChunksIndex][i][j];
+				Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] =
+					Chunks[ChunksIndex][i][j];
 			}
 			else {
-				Chunks[ChunksIndex][i][j]->Destroy();	//卸载chunk
+				delete Chunks[ChunksIndex][i][j];	//卸载chunk
 				Chunks[ChunksIndex][i][j] = nullptr;
 			}
 		}
 
-	UWorld* World = GetWorld();
 	//生成新Chunk
 	for (int i = 0; i < ChunkSize; ++i)
 		for (int j = 0; j < ChunkSize; ++j) {
 			if (!Chunks[nextChunksIndex][i][j]) {
-				AChunk::Initialize(FVector2D(ChunksCenterPosition.X + (i - Center),
-					ChunksCenterPosition.Y + (j - Center)));
-
-				Chunks[nextChunksIndex][i][j] =
-					World->SpawnActor<AChunk>
-					(FVector((ChunksCenterPosition.X + i - Center) * 1600,
-						0,
-						(ChunksCenterPosition.Y + i - Center) * 1600),
-						FRotator::ZeroRotator);
+				Chunks[nextChunksIndex][i][j] =	GenerateChunk(FVector2D(
+					ChunksCenterPosition.X + (i - Center),
+					ChunksCenterPosition.Y + (j - Center))
+				);
 			}
 		}
-
-
 	//切换
 	ChunksIndex = nextChunksIndex;
 }
@@ -93,7 +78,47 @@ void UChunksLoaderComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
-	UpdateChunks();
+	//UpdateChunks();
 	// ...
 }
 
+
+Chunk* UChunksLoaderComponent::GenerateChunk(FVector2D chunkPosition)
+{
+	Chunk* chunk = new Chunk(chunkPosition);
+	UWorld* World = GetWorld();
+
+	FVector2D chunkWorldPosition = FVector2D(chunkPosition.X * 1600,chunkPosition.Y * 1600);
+
+	int32 index = 0;
+	for (int i = 0; i < 16; ++i)
+		for (int j = 0; j < 16; ++j) {
+			for (int k = 0; k <= chunk->BlocksHeight[i][j]; ++k)
+			{
+				if (k < chunk->BlocksHeight[i][j] &&
+					(i <= 0 || k < chunk->BlocksHeight[i - 1][j]) &&
+					(j <= 0 || k < chunk->BlocksHeight[i][j - 1]) &&
+					(i >= 15 || k < chunk->BlocksHeight[i + 1][j]) &&
+					(j >= 15 || k < chunk->BlocksHeight[i][j + 1])) {
+				}
+				else {
+					chunk->Blocks[i][j][k] = World->SpawnActor<ABlock>(
+						FVector(chunkWorldPosition.X + i * 100,
+							chunkWorldPosition.Y + j * 100,
+							k * 100),
+						FRotator::ZeroRotator);
+
+					chunk->Blocks[i][j][k]->SetFolderPath("/Blocks");
+
+					//if (k == BlocksHeight[i][j] && (rand() % 255 < 240)) {
+					//	Blocks[i][j][k] = 1;
+					//}
+					//else {
+					//	Blocks[i][j][k] = 3;
+					//}
+				}
+				index++;
+			}
+		}
+	return chunk;
+}
