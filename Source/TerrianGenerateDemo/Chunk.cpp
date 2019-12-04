@@ -7,11 +7,13 @@
 
 Chunk::Chunk(FVector2D chunkPosition)
 {
+	for (int i = 0; i < MaxBlocksWidth; ++i)
+		for (int j = 0; j < MaxBlocksWidth; ++j)
+			for (int k = 0; k < MaxBlocksHeigth; ++k)
+				Blocks[i][j][k] = nullptr;
+
 	ChunkPosition = chunkPosition;
-	for (int i = 0; i < 16; ++i)
-	for (int j = 0; j < 16; ++j)
-	for (int k = 0; k < 256; ++k)
-		Blocks[i][j][k] = nullptr;
+	GeneratePerlinNoise();
 }
 
 void Chunk::GeneratePerlinNoise()

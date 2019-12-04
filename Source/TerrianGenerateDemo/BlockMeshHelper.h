@@ -19,6 +19,6 @@ private:
 	TSparseArray<UStaticMesh*> meshMap;
 
 	static BlockMeshHelper sBlockMeshHelper;
-
+	
 	UStaticMesh* LoadStaticMeshFromPath(const FString& Path);
 };

@@ -20,9 +20,9 @@ UStaticMesh* BlockMeshHelper::GetBlockMesh(int32 id)
 BlockMeshHelper::BlockMeshHelper()
 {
 	for (int i = 0; i <= BlockCount; ++i) {
-		//FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d.uasset"), i); 
-		//meshMap.Add(LoadStaticMeshFromPath(NewString));
-		meshMap.Add(nullptr);
+		FString NewString = FString::Printf(TEXT("/Game/Meshes/Block%d.uasset"), i); 
+		meshMap.Add(LoadStaticMeshFromPath(*NewString));
+		//meshMap.Add(nullptr);
 	}
 }
 
@@ -30,6 +30,5 @@ UStaticMesh* BlockMeshHelper::LoadStaticMeshFromPath(const FString& Path)
 {
 
 	if (Path.IsEmpty()) return nullptr;
-
 	return LoadObject<UStaticMesh>(nullptr, *(Path));
 }

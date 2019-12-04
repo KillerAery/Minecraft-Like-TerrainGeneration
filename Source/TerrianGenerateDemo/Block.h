@@ -18,15 +18,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	int32 BlockID = 0;
-
-	UPROPERTY(EditAnywhere, Category = "Components")
-	UStaticMeshComponent* meshComponent = nullptr;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 public:	
-	void Initialize(int32 InitialID);
-
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 };

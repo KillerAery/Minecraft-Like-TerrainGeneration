@@ -17,15 +17,6 @@ void ABlock::BeginPlay()
 	
 }
 
-void ABlock::Initialize(int32 InitialID)
-{
-	BlockID = InitialID;
-	meshComponent = NewObject<UStaticMeshComponent>(this, TEXT("Mesh"));
-	meshComponent->RegisterComponent();
-	meshComponent->AttachTo(RootComponent);
-	meshComponent->SetStaticMesh(BlockMeshHelper::GetBlockMesh(InitialID));
-}
-
 // Called every frame
 void ABlock::Tick(float DeltaTime)
 {
