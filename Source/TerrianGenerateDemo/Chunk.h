@@ -4,7 +4,6 @@
 
 #include "Block.h"
 
-const size_t BlockWidth = 100;
 const size_t MaxBlocksWidth = 16;
 const size_t MaxBlocksHeigth = 256;
 

@@ -11,7 +11,6 @@
 const int32 LoadRadius = 3;
 const int32 ChunkSize = LoadRadius * 2 - 1;
 const int32 Center = LoadRadius - 1;
-const int32 MAX_BLOCKS_NUM = 9;
 /**
  * 
  */
@@ -42,8 +41,6 @@ protected:
 	Chunk* Chunks[2][ChunkSize][ChunkSize];
 	//当前缓冲区索引（使用双重缓冲）
 	size_t ChunksIndex = 0;
-	//所有Block种类
-	UBlueprint* BlocksTemplate[MAX_BLOCKS_NUM];
 	bool NeedChunk(FVector2D chunkPosition);
 	Chunk* GenerateChunk(FVector2D chunkPosition);
 	ABlock* CreateBlock(int32 id, FVector location);

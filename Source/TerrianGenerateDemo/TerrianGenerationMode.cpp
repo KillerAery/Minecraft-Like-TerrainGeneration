@@ -4,7 +4,6 @@
 #include "TerrianGenerationMode.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
-#include "UObject/ConstructorHelpers.h"
 
 ATerrianGenerationMode::ATerrianGenerationMode()
 	: Super()
@@ -23,12 +22,6 @@ ATerrianGenerationMode::ATerrianGenerationMode()
 	for (int j = 0; j < ChunkSize; ++j) {
 		Chunks[index][i][j] = nullptr;
 	}
-	//加载所有BLock种类
-	for (int i = 0; i < MAX_BLOCKS_NUM; ++i) {
-		FStringAssetReference asset = ("Blueprint'/Game/Blueprints/Blocks/BP_Block"+FString::FromInt(i+1)+".BP_Block"+ FString::FromInt(i+1) +"'");
-		UObject* itemObj = asset.ResolveObject();
-		BlocksTemplate[i] = Cast<UBlueprint>(itemObj);
-	}
 }
 
 void ATerrianGenerationMode::BeginPlay()
@@ -43,49 +36,46 @@ void ATerrianGenerationMode::Tick(float DeltaSeconds)
 
 void ATerrianGenerationMode::SetCameraLoaction(FVector location)
 {
-	ChunksCenterPosition = FVector2D((int32)(location.X / 1600 - 0.5), (int32)(location.Y / 1600 - 0.5));
+	ChunksCenterPosition = FVector2D(
+		(int32)(location.X / (MaxBlocksWidth * 100) - 0.5f),
+		(int32)(location.Y / (MaxBlocksWidth * 100) - 0.5f));
 }
 
 void ATerrianGenerationMode::UpdateChunks()
 {
-	UE_LOG(LogTemp, Warning, TEXT("CCCC"));
-	//清理
 	size_t nextChunksIndex = !ChunksIndex;
-	for (int i = 0; i < ChunkSize; ++i)
-		for (int j = 0; j < ChunkSize; ++j) {
-			Chunks[nextChunksIndex][i][j] = nullptr;
-		}
-
 	//对旧chunks进行载入检查
 	for (int i = 0; i < ChunkSize; ++i)
-		for (int j = 0; j < ChunkSize; ++j) {
-			if (!Chunks[ChunksIndex][i][j]) {
-				continue;
-			}
-
-			FVector2D chunkPosition = Chunks[ChunksIndex][i][j]->ChunkPosition;
-
-			if (NeedChunk(chunkPosition)) {
-				FVector2D d = chunkPosition - ChunksCenterPosition;
-				Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] =
-					Chunks[ChunksIndex][i][j];
-			}
-			else {
-				delete Chunks[ChunksIndex][i][j];	//卸载chunk
-				Chunks[ChunksIndex][i][j] = nullptr;
-			}
+	for (int j = 0; j < ChunkSize; ++j) 
+	{
+		if (!Chunks[ChunksIndex][i][j]) {
+			continue;
 		}
+
+		FVector2D chunkPosition = Chunks[ChunksIndex][i][j]->ChunkPosition;
+
+		if (NeedChunk(chunkPosition)) {
+			FVector2D d = chunkPosition - ChunksCenterPosition;
+			Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] = Chunks[ChunksIndex][i][j];
+			Chunks[ChunksIndex][i][j] = nullptr;
+		}
+		else {
+			delete Chunks[ChunksIndex][i][j];	//卸载chunk
+			Chunks[ChunksIndex][i][j] = nullptr;
+		}
+	}
 
 	//生成新Chunk
 	for (int i = 0; i < ChunkSize; ++i)
-		for (int j = 0; j < ChunkSize; ++j) {
-			if (!Chunks[nextChunksIndex][i][j]) {
-				Chunks[nextChunksIndex][i][j] = GenerateChunk(FVector2D(
-					ChunksCenterPosition.X + (i - Center),
-					ChunksCenterPosition.Y + (j - Center))
-				);
-			}
+	for (int j = 0; j < ChunkSize; ++j) 
+	{
+		if (!Chunks[nextChunksIndex][i][j]) {
+			Chunks[nextChunksIndex][i][j] = GenerateChunk(FVector2D(
+				ChunksCenterPosition.X + (i - Center),
+				ChunksCenterPosition.Y + (j - Center))
+			);
 		}
+	}
 	//切换
 	ChunksIndex = nextChunksIndex;
 }
@@ -100,21 +90,19 @@ Chunk* ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 {
 	Chunk* chunk = new Chunk(chunkPosition);
 
-	UWorld* World = GetWorld();
-	FVector2D chunkWorldPosition = FVector2D(chunkPosition.X * 1600, chunkPosition.Y * 1600);
+	FVector2D chunkWorldPosition = FVector2D(chunkPosition.X * MaxBlocksWidth * 100, chunkPosition.Y * MaxBlocksWidth * 100);
 
-	int32 index = 0;
-	for (int i = 0; i < MaxBlocksWidth; ++i)
-		for (int j = 0; j < MaxBlocksWidth; ++j) {
-			for (int k = 0; k <= chunk->BlocksHeight[i][j]; ++k)
+	for (int i = 0; i < 16; ++i)
+		for (int j = 0; j < 16; ++j) {
+			for (int k = chunk->BlocksHeight[i][j]; k >= 0; --k)
 			{
-				if (k < chunk->BlocksHeight[i][j] &&
-					(i <= 0 || k < chunk->BlocksHeight[i - 1][j]) &&
-					(j <= 0 || k < chunk->BlocksHeight[i][j - 1]) &&
-					(i >= 15 || k < chunk->BlocksHeight[i + 1][j]) &&
-					(j >= 15 || k < chunk->BlocksHeight[i][j + 1])) {
-				}
-				else {
+				if (
+					(i == 0 || k >= chunk->BlocksHeight[i - 1][j]) ||
+					(j == 0 || k >= chunk->BlocksHeight[i][j - 1]) ||
+					(i == 15 || k >= chunk->BlocksHeight[i + 1][j]) ||
+					(j == 15 || k >= chunk->BlocksHeight[i][j + 1])
+					)
+				{
 					if (k == chunk->BlocksHeight[i][j] && (rand() % 255 < 240)) {
 						chunk->Blocks[i][j][k] = CreateBlock(1,
 							FVector(chunkWorldPosition.X + i * 100,
@@ -130,18 +118,23 @@ Chunk* ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 						);
 					}
 				}
-				index++;
+				else {
+					break;
+				}
 			}
 		}
+
 	return chunk;
 }
 
 ABlock* ATerrianGenerationMode::CreateBlock(int32 id, FVector location)
 {
-	if (id <= 0 || id > MAX_BLOCKS_NUM || !BlocksTemplate[id - 1]) {
+	if (id <= 0 || id > MAX_BLOCKS_NUM) {
 		return nullptr;
 	}
-	return GetWorld()->SpawnActor<ABlock>(BlocksTemplate[id-1]->GeneratedClass,location,FRotator::ZeroRotator);
+	ABlock* block = GetWorld()->SpawnActor<ABlock>(location, FRotator::ZeroRotator);
+	block->InitByBlockID(id);
+	return block;
 }
 
 

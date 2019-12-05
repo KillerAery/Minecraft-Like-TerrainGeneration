@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
+#include "UObject/ConstructorHelpers.h"
 #include "Block.generated.h"
+
+const int32 MAX_BLOCKS_NUM = 9;
 
 UCLASS()
 class TERRIANGENERATEDEMO_API ABlock : public AActor
@@ -18,10 +21,15 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	int32 BlockID = 0;
-protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void InitByBlockID(int32 id);
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	UStaticMeshComponent* mMeshComponent;
+protected:
+	static UStaticMesh* BlockStaticMeshs[MAX_BLOCKS_NUM];
 };
