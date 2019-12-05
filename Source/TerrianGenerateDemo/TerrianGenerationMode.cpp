@@ -97,12 +97,16 @@ Chunk* ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 			for (int k = chunk->BlocksHeight[i][j]; k >= 0; --k)
 			{
 				if (
-					(i == 0 || k >= chunk->BlocksHeight[i - 1][j]) ||
-					(j == 0 || k >= chunk->BlocksHeight[i][j - 1]) ||
-					(i == 15 || k >= chunk->BlocksHeight[i + 1][j]) ||
-					(j == 15 || k >= chunk->BlocksHeight[i][j + 1])
-					)
+					(i == 0 || k <= chunk->BlocksHeight[i - 1][j]) &&
+					(j == 0 || k <= chunk->BlocksHeight[i][j - 1]) &&
+					(i == 15 || k <= chunk->BlocksHeight[i + 1][j]) &&
+					(j == 15 || k <= chunk->BlocksHeight[i][j + 1]) &&
+					k < chunk->BlocksHeight[i][j]
+				)
 				{
+					break;
+				}
+				else {
 					if (k == chunk->BlocksHeight[i][j] && (rand() % 255 < 240)) {
 						chunk->Blocks[i][j][k] = CreateBlock(1,
 							FVector(chunkWorldPosition.X + i * 100,
@@ -117,9 +121,6 @@ Chunk* ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 								k * 100)
 						);
 					}
-				}
-				else {
-					break;
 				}
 			}
 		}
