@@ -1,4 +1,4 @@
-// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
+﻿// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
 #include "TerrianGenerateDemoProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"

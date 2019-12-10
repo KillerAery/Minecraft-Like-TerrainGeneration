@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -25,21 +25,21 @@ public:
 
 	void Tick(float DeltaSeconds)override;
 
-	//ÉèÖÃÉãÏñ»ú£¨Íæ¼Ò£©ÖĞĞÄÎ»ÖÃ
+	//è®¾ç½®æ‘„åƒæœºï¼ˆç©å®¶ï¼‰ä¸­å¿ƒä½ç½®
 	UFUNCTION(BlueprintCallable, Category = "Func")
 	void SetCameraLoaction(FVector location);
 
-	//¸üĞÂÖÜÎ§Chunk
+	//æ›´æ–°å‘¨å›´Chunk
 	UFUNCTION(BlueprintCallable, Category = "Func")
 	void UpdateChunks();
 
-	//ÖĞĞÄÎ»ÖÃ
+	//ä¸­å¿ƒä½ç½®
 	UPROPERTY(VisibleAnywhere)
 	FVector2D ChunksCenterPosition;
 protected:
-	//È«²¿Chunk
+	//å…¨éƒ¨Chunk
 	Chunk* Chunks[2][ChunkSize][ChunkSize];
-	//µ±Ç°»º³åÇøË÷Òı£¨Ê¹ÓÃË«ÖØ»º³å£©
+	//å½“å‰ç¼“å†²åŒºç´¢å¼•ï¼ˆä½¿ç”¨åŒé‡ç¼“å†²ï¼‰
 	size_t ChunksIndex = 0;
 	bool NeedChunk(FVector2D chunkPosition);
 	Chunk* GenerateChunk(FVector2D chunkPosition);

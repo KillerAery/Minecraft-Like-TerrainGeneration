@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "TerrianGenerationMode.h"
@@ -16,7 +16,7 @@ ATerrianGenerationMode::ATerrianGenerationMode()
 
 	// use our custom HUD class
 	HUDClass = ATerrianGenerateDemoHUD::StaticClass();
-	//³õÊ¼»¯¿Õ»º³åÇø
+	//åˆå§‹åŒ–ç©ºç¼“å†²åŒº
 	for (int index = 0; index < 2; ++index)
 	for (int i = 0; i < ChunkSize; ++i)
 	for (int j = 0; j < ChunkSize; ++j) {
@@ -44,7 +44,7 @@ void ATerrianGenerationMode::SetCameraLoaction(FVector location)
 void ATerrianGenerationMode::UpdateChunks()
 {
 	size_t nextChunksIndex = !ChunksIndex;
-	//¶Ô¾Échunks½øĞĞÔØÈë¼ì²é
+	//å¯¹æ—§chunksè¿›è¡Œè½½å…¥æ£€æŸ¥
 	for (int i = 0; i < ChunkSize; ++i)
 	for (int j = 0; j < ChunkSize; ++j) 
 	{
@@ -60,12 +60,12 @@ void ATerrianGenerationMode::UpdateChunks()
 			Chunks[ChunksIndex][i][j] = nullptr;
 		}
 		else {
-			delete Chunks[ChunksIndex][i][j];	//Ğ¶ÔØchunk
+			delete Chunks[ChunksIndex][i][j];	//å¸è½½chunk
 			Chunks[ChunksIndex][i][j] = nullptr;
 		}
 	}
 
-	//Éú³ÉĞÂChunk
+	//ç”Ÿæˆæ–°Chunk
 	for (int i = 0; i < ChunkSize; ++i)
 	for (int j = 0; j < ChunkSize; ++j) 
 	{
@@ -76,7 +76,7 @@ void ATerrianGenerationMode::UpdateChunks()
 			);
 		}
 	}
-	//ÇĞ»»
+	//åˆ‡æ¢
 	ChunksIndex = nextChunksIndex;
 }
 

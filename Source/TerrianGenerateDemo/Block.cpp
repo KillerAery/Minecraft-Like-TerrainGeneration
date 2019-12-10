@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Block.h"
 
@@ -7,10 +7,10 @@ UStaticMesh* ABlock::BlockStaticMeshs[MAX_BLOCKS_NUM]{ nullptr };
 // Sets default values
 ABlock::ABlock()
 {
-	//½ûÖ¹
+	//ç¦æ­¢
 	PrimaryActorTick.bCanEverTick = false;
 
-	//´øÒ»¸östaticmesh×é¼ş
+	//å¸¦ä¸€ä¸ªstaticmeshç»„ä»¶
 	mMeshComponent = NewObject<UStaticMeshComponent>(this, TEXT("Block"));
 	mMeshComponent->RegisterComponent();
 	RootComponent = mMeshComponent;
@@ -33,13 +33,13 @@ void ABlock::InitByBlockID(int32 id)
 {	
 	if (!mMeshComponent)return;
 
-	//Èç¹ûÃ»ÓĞ¼ÓÔØÏàÓ¦µÄstaticmesh£¬Ôò¼ÓÔØÖ®
+	//å¦‚æœæ²¡æœ‰åŠ è½½ç›¸åº”çš„staticmeshï¼Œåˆ™åŠ è½½ä¹‹
 	if (!BlockStaticMeshs[id - 1]) {
 		BlockStaticMeshs[id - 1] = LoadObject<UStaticMesh>(this,
 			*("StaticMesh'/Game/Meshes/Block" +
 				FString::FromInt(id) + ".Block" +
 				FString::FromInt(id) + "'"));
 	}
-	//ÉèÖÃstaticmesh
+	//è®¾ç½®staticmesh
 	mMeshComponent->SetStaticMesh(BlockStaticMeshs[id - 1]);
 }
