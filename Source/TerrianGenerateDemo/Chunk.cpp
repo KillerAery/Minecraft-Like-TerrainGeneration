@@ -2,7 +2,6 @@
 
 
 #include "Chunk.h"
-#include "TerrianGenerator.h"
 
 Chunk::Chunk(FVector2D chunkPosition)
 {
