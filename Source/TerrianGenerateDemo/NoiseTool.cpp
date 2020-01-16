@@ -19,7 +19,7 @@ uint32 NoiseTool::hash11(int32 position)
 
 FVector2D NoiseTool::hash22(FVector2D position2D)
 {
-	FVector2D v(hash11(0x651A6BE3 * (int32)position2D.X)%1024-512, hash11((int32)position2D.Y)%1024-512);
+	FVector2D v(hash11(0x651A6BE3 * (int32)position2D.X)%1023-511, hash11((int32)position2D.Y)%1023-511);
 	v/= (int32)v.Size();
 	return v;
 }
@@ -41,7 +41,7 @@ uint32 NoiseTool::hash31(FVector position3D)
 
 float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 {
-	return FVector2D::DotProduct(hash22(vertex), position2D);
+	return FVector2D::DotProduct(vertex, position2D);
 }
 
 float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
@@ -55,11 +55,11 @@ float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1.0f,pi.Y},{pi.X,pi.Y + 1.0f},{pi.X + 1.0f,pi.Y + 1.0f} };
 
 	return FMath::Lerp(
-		FMath::Lerp(grad(vertex[0], pf),
-			grad(vertex[1], pf - FVector2D(1.0f, 0.0f)),
+		FMath::Lerp(grad(hash22(vertex[0]), pf),
+			grad(hash22(vertex[1]), pf - FVector2D(1.0f, 0.0f)),
 			w.X),
-		FMath::Lerp(grad(vertex[2], pf - FVector2D(0.0f, 1.0f)),
-			grad(vertex[3], pf - FVector2D(1.0f, 1.0f)),
+		FMath::Lerp(grad(hash22(vertex[2]), pf - FVector2D(0.0f, 1.0f)),
+			grad(hash22(vertex[3]), pf - FVector2D(1.0f, 1.0f)),
 			w.X),
 		w.Y);
 }

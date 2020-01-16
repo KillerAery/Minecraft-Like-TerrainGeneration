@@ -4,6 +4,7 @@
 #include "TerrianGenerationMode.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
+#include "TerrianGenerator.h"
 
 ATerrianGenerationMode::ATerrianGenerationMode()
 	: Super()
