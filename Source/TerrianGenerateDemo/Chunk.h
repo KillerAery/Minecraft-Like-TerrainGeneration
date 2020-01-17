@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Block.h"
-#include "TerrianGenerator.h"
+#include "TerrianGenerateSetting.h"
 
 class TERRIANGENERATEDEMO_API Chunk
 {
@@ -11,6 +11,7 @@ public:
 	Chunk(FVector2D chunkPosition);
 	FVector2D ChunkPosition;
 	int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth];
+	BiomeType BlocksBiome[MaxBlocksWidth][MaxBlocksWidth];
 
 	ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
 };

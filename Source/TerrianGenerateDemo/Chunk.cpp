@@ -2,6 +2,8 @@
 
 
 #include "Chunk.h"
+#include "TerrianGenerator.h"
+#include "BiomeGenerator.h"
 
 Chunk::Chunk(FVector2D chunkPosition)
 {
@@ -13,4 +15,6 @@ Chunk::Chunk(FVector2D chunkPosition)
 		Blocks[i][j][k] = nullptr;
 
 	TerrianGenerator::GenerateHeight(ChunkPosition, BlocksHeight);
+	BiomeGenerator::GenerateBiome(ChunkPosition, BlocksBiome);
+
 }

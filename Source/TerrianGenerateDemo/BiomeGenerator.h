@@ -3,13 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TerrianGenerateSetting.h"
 
-enum class BiomeType
-{
-	hot,
-	normal,
-	cold
-};
 
 /**
  * 
@@ -20,4 +15,7 @@ public:
 	BiomeGenerator();
 	~BiomeGenerator();
 	static BiomeType GetBiomeType(FVector2D BlockPosition);
+
+	static void GenerateBiome(FVector2D ChunkPosition, BiomeType  BlocksBiome[MaxBlocksWidth][MaxBlocksWidth]);
 };
+  

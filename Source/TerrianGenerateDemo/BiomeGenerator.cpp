@@ -15,3 +15,8 @@ BiomeType BiomeGenerator::GetBiomeType(FVector2D BlockPosition)
 {
 	return BiomeType::normal;
 }
+
+void BiomeGenerator::GenerateBiome(FVector2D ChunkPosition, BiomeType BlocksBiome[MaxBlocksWidth][MaxBlocksWidth])
+{
+
+}

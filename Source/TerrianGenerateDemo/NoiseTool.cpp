@@ -19,8 +19,8 @@ uint32 NoiseTool::hash11(int32 position)
 
 FVector2D NoiseTool::hash22(FVector2D position2D)
 {
-	FVector2D v(hash11(0x651A6BE3 * (int32)position2D.X)%1023-511, hash11((int32)position2D.Y)%1023-511);
-	v/= (int32)v.Size();
+	FVector2D v(-1*hash11(0x651A6BE3 * (int32)position2D.X * (int32)position2D.Y)%128, -1 * hash11((int32)position2D.X *(int32)position2D.Y)%128);
+	v /= 32;
 	return v;
 }
 
@@ -52,7 +52,7 @@ float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
 	FVector2D pf = position2D - pi;
 	FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
-	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1.0f,pi.Y},{pi.X,pi.Y + 1.0f},{pi.X + 1.0f,pi.Y + 1.0f} };
+	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
 
 	return FMath::Lerp(
 		FMath::Lerp(grad(hash22(vertex[0]), pf),
