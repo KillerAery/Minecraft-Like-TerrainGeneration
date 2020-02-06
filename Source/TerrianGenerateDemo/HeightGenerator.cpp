@@ -1,23 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TerrianGenerator.h"
+#include "HeightGenerator.h"
 #include "NoiseTool.h"
 
-TerrianGenerator::TerrianGenerator()
+HeightGenerator::HeightGenerator()
 {
 }
 
-TerrianGenerator::~TerrianGenerator()
+HeightGenerator::~HeightGenerator()
 {
 }
 
-float TerrianGenerator::GetHeight(FVector2D BlockPosition)
+float HeightGenerator::GetHeight(FVector2D BlockPosition)
 {
 	return 0.0f;
 }
 
-void TerrianGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth])
+void HeightGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth])
 {
 	int32 m = 1;
 	for (int d = 0; d < 1; ++d, m *= 2) {

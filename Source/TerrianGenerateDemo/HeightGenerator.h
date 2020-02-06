@@ -8,11 +8,11 @@
 /**
  * 
  */
-class TERRIANGENERATEDEMO_API TerrianGenerator
+class TERRIANGENERATEDEMO_API HeightGenerator
 {
 public:
-	TerrianGenerator();
-	~TerrianGenerator();
+	HeightGenerator();
+	~HeightGenerator();
 	
 	static float GetHeight(FVector2D blockPosition);
 

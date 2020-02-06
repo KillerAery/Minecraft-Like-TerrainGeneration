@@ -2,7 +2,7 @@
 
 
 #include "Chunk.h"
-#include "TerrianGenerator.h"
+#include "HeightGenerator.h"
 #include "BiomeGenerator.h"
 
 Chunk::Chunk(FVector2D chunkPosition)
@@ -14,7 +14,7 @@ Chunk::Chunk(FVector2D chunkPosition)
 	for (int k = 0; k < MaxBlocksHeigth; ++k)
 		Blocks[i][j][k] = nullptr;
 
-	TerrianGenerator::GenerateHeight(ChunkPosition, BlocksHeight);
+	HeightGenerator::GenerateHeight(ChunkPosition, BlocksHeight);
 	BiomeGenerator::GenerateBiome(ChunkPosition, BlocksBiome);
 
 }
