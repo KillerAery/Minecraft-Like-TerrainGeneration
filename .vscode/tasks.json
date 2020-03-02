@@ -1,0 +1,977 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "TerrianGenerateDemo Win32 Debug Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Debug Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win32 Debug Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Debug Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 DebugGame Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 DebugGame Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win32 DebugGame Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 DebugGame Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Development Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Development Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win32 Development Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Development Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Shipping Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Shipping Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win32 Shipping Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Shipping Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Test Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Test Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win32 Test Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win32 Test Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win32",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Debug Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Debug Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win64 Debug Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Debug Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 DebugGame Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 DebugGame Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win64 DebugGame Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 DebugGame Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Development Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Development Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win64 Development Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Development Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Shipping Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Shipping Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win64 Shipping Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Shipping Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Test Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Test Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo Win64 Test Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo Win64 Test Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"Win64",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Debug Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Debug Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo HTML5 Debug Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Debug Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 DebugGame Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 DebugGame Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo HTML5 DebugGame Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 DebugGame Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Development Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Development Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo HTML5 Development Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Development Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Shipping Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Shipping Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo HTML5 Shipping Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Shipping Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Shipping",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Test Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Test Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemo HTML5 Test Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemo HTML5 Test Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemo",
+				"HTML5",
+				"Test",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 Debug Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 Debug Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemoEditor Win64 Debug Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 Debug Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"Debug",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 DebugGame Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 DebugGame Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemoEditor Win64 DebugGame Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 DebugGame Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"DebugGame",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 Development Build",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 Development Rebuild",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Build.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"dependsOn": [
+				"TerrianGenerateDemoEditor Win64 Development Clean"
+			],
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		},
+		{
+			"label": "TerrianGenerateDemoEditor Win64 Development Clean",
+			"group": "build",
+			"command": "Engine\\Build\\BatchFiles\\Clean.bat",
+			"args": [
+				"TerrianGenerateDemoEditor",
+				"Win64",
+				"Development",
+				"C:\\Project\\TerrianGenerateDemo\\TerrianGenerateDemo.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "C:\\Program Files\\Epic Games\\UE_4.22"
+			}
+		}
+	]
+}

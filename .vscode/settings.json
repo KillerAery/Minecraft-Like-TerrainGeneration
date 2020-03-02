@@ -1,0 +1,10 @@
+{
+	"files.exclude": {
+		"C:/Project/TerrianGenerateDemo/.git": true,
+		"C:/Project/TerrianGenerateDemo/.vs": true,
+		"C:/Project/TerrianGenerateDemo/.vscode": true,
+		"C:/Project/TerrianGenerateDemo/Content": true,
+		"C:/Project/TerrianGenerateDemo/Intermediate": true,
+		"C:/Project/TerrianGenerateDemo/Saved": true
+	}
+}
