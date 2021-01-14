@@ -19,7 +19,7 @@ uint32 NoiseTool::hash11(int32 position)
 
 FVector2D NoiseTool::hash22(FVector2D position2D)
 {
-	FVector2D v(-1*hash11(0x651A6BE3 * (int32)position2D.X * (int32)position2D.Y)%128, -1 * hash11((int32)position2D.X *(int32)position2D.Y)%128);
+	FVector2D v(hash11(0x651A6BE3 * (int32)position2D.X * (int32)position2D.Y)%64-32,hash11((int32)position2D.X ^ (int32)position2D.Y)%64-32);
 	v /= 32;
 	return v;
 }
@@ -39,6 +39,17 @@ uint32 NoiseTool::hash31(FVector position3D)
 	return hash11(position3D.X * 0x651A6BE6 - position3D.Y * 0xCB251062 + position3D.Z);
 }
 
+float NoiseTool::grad_f(FVector2D vertex, FVector2D p){
+	switch((0x651A6BE1 * (int32)vertex.X + (int32)vertex.Y) % 4)
+    {
+      case 1: return  p.X + p.Y;  //代表梯度向量(1,1)
+      case 2: return -p.X + p.Y;  //代表梯度向量(-1,1)
+      case 3: return  p.X - p.Y;  //代表梯度向量(1,-1)
+      case 4: return -p.X - p.Y;  //代表梯度向量(-1,-1)
+      default: return 0; // never happens
+    }
+}
+
 float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 {
 	return FVector2D::DotProduct(vertex, position2D);
@@ -55,11 +66,11 @@ float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
 
 	return FMath::Lerp(
-		FMath::Lerp(grad(hash22(vertex[0]), pf),
-			grad(hash22(vertex[1]), pf - FVector2D(1.0f, 0.0f)),
+		FMath::Lerp(grad_f(vertex[0],pf),
+			grad_f(vertex[1], pf - FVector2D(1.0f, 0.0f)),
 			w.X),
-		FMath::Lerp(grad(hash22(vertex[2]), pf - FVector2D(0.0f, 1.0f)),
-			grad(hash22(vertex[3]), pf - FVector2D(1.0f, 1.0f)),
+		FMath::Lerp(grad_f(vertex[2], pf - FVector2D(0.0f, 1.0f)),
+			grad_f(vertex[3], pf - FVector2D(1.0f, 1.0f)),
 			w.X),
 		w.Y);
 }

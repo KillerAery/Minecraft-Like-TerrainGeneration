@@ -16,6 +16,8 @@ public:
 	static FVector hash33(FVector position3D);
 	static uint32 hash31(FVector position3D);
 	
+	static float grad_f(FVector2D vertex, FVector2D position2D);
+
 	//求梯度值
 	static float grad(FVector2D vertex, FVector2D position2D);
 	

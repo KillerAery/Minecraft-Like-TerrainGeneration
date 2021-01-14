@@ -32,7 +32,7 @@ void HeightGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight
 			for (int j = 0; j < MaxBlocksWidth; ++j)
 			{
 
-				pf = FVector2D(i / float(MaxBlocksWidth)/m, j / float(MaxBlocksWidth)/m);
+				pf = FVector2D(float(i) / MaxBlocksWidth / m, float(j) / MaxBlocksWidth/m);
 				w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
 				BlocksHeight[i][j] +=
@@ -47,13 +47,13 @@ void HeightGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight
 					//+
 					(FMath::Clamp<float>(FMath::Lerp(
 						FMath::Lerp(NoiseTool::grad(vertexAfterHash22[0], pf),
-							NoiseTool::grad(vertexAfterHash22[1], pf - FVector2D(1, 0)),
+							NoiseTool::grad(vertexAfterHash22[1], pf - FVector2D(1.0f, 0.0f)),
 							w.X),
-						FMath::Lerp(NoiseTool::grad(vertexAfterHash22[2], pf - FVector2D(0, 1)),
-							NoiseTool::grad(vertexAfterHash22[3], pf - FVector2D(1, 1)),
+						FMath::Lerp(NoiseTool::grad(vertexAfterHash22[2], pf - FVector2D(0.0f, 1.0f)),
+							NoiseTool::grad(vertexAfterHash22[3], pf - FVector2D(1.0f, 1.0f)),
 							w.X),
 						w.Y), -3.0f, 3.0f) * 0.5f * m);
-				BlocksHeight[i][j] = FMath::Clamp(BlocksHeight[i][j], 0, 255);
+				BlocksHeight[i][j] = FMath::Clamp(BlocksHeight[i][j], 0, 124);
 			}
 	}
 }
