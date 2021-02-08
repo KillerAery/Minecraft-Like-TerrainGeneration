@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Block.h"
+#include "Model/Block.h"
 
 UStaticMesh* ABlock::BlockStaticMeshs[MAX_BLOCKS_NUM]{ nullptr };
 

@@ -1,9 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Chunk.h"
-#include "HeightGenerator.h"
-#include "BiomeGenerator.h"
+#include "Model/Chunk.h"
+#include "Core/HeightGenerator.h"
+#include "Core/BiomeGenerator.h"
 
 Chunk::Chunk(FVector2D chunkPosition)
 {

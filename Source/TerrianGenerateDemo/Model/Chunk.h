@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Block.h"
-#include "TerrianGenerateSetting.h"
+#include "Core/TerrianGenerateSetting.h"
 
 class TERRIANGENERATEDEMO_API Chunk
 {

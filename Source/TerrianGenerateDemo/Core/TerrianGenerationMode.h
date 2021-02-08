@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Chunk.h"
+#include "Model/Chunk.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/GameModeBase.h"
