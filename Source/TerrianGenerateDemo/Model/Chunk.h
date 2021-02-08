@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Block.h"
+#include "Model/Block.h"
 #include "Core/TerrianGenerateSetting.h"
 
 class TERRIANGENERATEDEMO_API Chunk

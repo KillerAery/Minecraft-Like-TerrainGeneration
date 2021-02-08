@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "BiomeGenerator.h"
-#include "NoiseTool.h"
+#include "Core/BiomeGenerator.h"
+#include "Core/NoiseTool.h"
 
 BiomeGenerator::BiomeGenerator()
 {

@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-
 const size_t MaxBlocksWidth = 16;
 const size_t MaxBlocksHeigth = 256;
 

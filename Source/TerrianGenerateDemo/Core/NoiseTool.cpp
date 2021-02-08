@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "NoiseTool.h"
+#include "Core/NoiseTool.h"
 
 uint32 NoiseTool::hash11(int32 position)
 {
