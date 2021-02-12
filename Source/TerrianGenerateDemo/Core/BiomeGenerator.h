@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/TerrianGenerateSetting.h"
+#include "Core/GenerationSettings.h"
 
 
 /**
