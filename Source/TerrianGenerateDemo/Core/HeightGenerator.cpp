@@ -34,13 +34,11 @@ void HeightGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight
 				pf = FVector2D((float)i / (float)MaxBlocksWidth / m, float(j) / (float)MaxBlocksWidth / m);
 				//w.X = pf.X * pf.X * (3.0f - 2.0f * pf.X);
 				//w.Y = pf.Y * pf.Y * (3.0f - 2.0f * pf.Y);
-				w.X = pf.X;
-				w.Y = pf.Y;
 				//w.X = pf.X*(2.0f-pf.X);
 				//w.Y = pf.Y*(2.0f-pf.Y);
-				if(w.X<0.0f||w.X>1.0f){
-					UE_LOG(LogTemp, Warning, TEXT("Your messsadasfasasasdfdsftgfsdgfdsgdfsge"));
-				}
+				w.X = pf.X;
+				w.Y = pf.Y;
+
 				BlocksHeight[i][j] =
 				/*
 					1.0f * FMath::Clamp<float>(FMath::Lerp(
