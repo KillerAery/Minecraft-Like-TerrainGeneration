@@ -25,6 +25,8 @@ public:
 	static float perlinNoise(FVector2D position2D, int32 crystalSize);
 
 	//static float valueNoise(FVector2D position2D);
+
+	static float simplexNoise(FVector2D position2D);
 private:
 	NoiseTool() = delete;
 	~NoiseTool() = delete;

@@ -55,7 +55,7 @@ float NoiseTool::grad_f(FVector2D vertex, FVector2D p){
 
 float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 {
-	return FVector2D::DotProduct(vertex, position2D);
+	return FVector2D::gradProduct(vertex, position2D);
 }
 
 float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
@@ -96,3 +96,34 @@ float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
 //			w.X),
 //		w.Y), 0, 255);
 //}
+
+float NoiseTool::simplexNoise(FVector2D p)
+{
+  const float K1 = 0.366025404; // (sqrt(3)-1)/2;
+  const float K2 = -0.211324865; // (sqrt(3)-3)/6;
+  
+  //坐标偏斜
+  FVector2D p2 = p + (p.X + p.Y) * K1;
+  
+  //向下取整
+  FVector2D p2i = FVector2D((int)p2.X,(int)p2.Y);
+  
+  FVector2D p2f = p2 - p2i;
+  FVector2D vertex2Offset = (p2f.X < p2f.Y) ? FVector2D(0, 1) : FVector2D(1, 0);
+  
+  //顶点变换回单行网格空间
+  FVector2D a = p - (p2i + (p2i.X + p2i.Y) * K2 * FVector2D(1,1));
+  //FVector2D b = p - (p2i + vertex2Offset + (p2i.X + p2i.Y + 1) * K2 * Vector2(1,1));
+  FVector2D b = a - vertex2Offset - K2 * FVector2D(1,1);
+  //FVector2D c = p - (p2i + Vecotr2(1,1) + (p2i.X+1 + p2i.Y+1) * K2 * Vector2(1,1));
+  FVector2D c = a - FVector2D(1,1) - 2 * K2 * FVector2D(1,1);
+            
+  //顶点变换回单行网格空间
+  FVector2D a = p - (p2i - (p2i.X + p2i.Y) * K2 * FVector2D(1,1));
+
+  //计算贡献度取和
+  FVector h = FVector(0.5f - grad(a, a), 0.5f - grad(b, b), 0.5f - grad(c, c));
+  FVector n = h * h * h * h * FVector(grad(a, hash22(p2i)), grad(b, hash22(p2i + vertex2Offset)), grad(c, hash22(p2i + FVector2D(1,1))));
+
+  return n.X + n.Y + n.Z;
+}
