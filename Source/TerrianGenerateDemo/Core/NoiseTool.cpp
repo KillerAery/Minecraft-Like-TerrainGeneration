@@ -58,27 +58,28 @@ float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 	return FVector2D::DotProduct(vertex, position2D);
 }
 
-float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
+//TODO frequence
+float NoiseTool::perlinNoise(FVector2D pf,int32 crystalSize,int32 frequence)
 {
-	position2D /= crystalSize;
-	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
-
-	FVector2D pf = position2D - pi;
-	FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
-
-	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
+	//position2D /= crystalSize;
+	
+	//FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
+	FVector2D w = pf;
 
 	return FMath::Lerp(
-		FMath::Lerp(grad_f(vertex[0],pf),
-			grad_f(vertex[1], pf - FVector2D(1.0f, 0.0f)),
+		FMath::Lerp(
+			grad(GlobalVertex[0],pf),
+			grad(GlobalVertex[1], pf - FVector2D(1.0f, 0.0f)),
 			w.X),
-		FMath::Lerp(grad_f(vertex[2], pf - FVector2D(0.0f, 1.0f)),
-			grad_f(vertex[3], pf - FVector2D(1.0f, 1.0f)),
+		FMath::Lerp(
+			grad(GlobalVertex[2], pf - FVector2D(0.0f, 1.0f)),
+			grad(GlobalVertex[3], pf - FVector2D(1.0f, 1.0f)),
 			w.X),
 		w.Y);
 }
 
-float NoiseTool::valueNoise(FVector2D position2D,int32 crystalSize)
+//TODO
+float NoiseTool::valueNoise(FVector2D position2D,int32 crystalSize,int32 frequence)
 {
 	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
 
@@ -97,7 +98,8 @@ float NoiseTool::valueNoise(FVector2D position2D,int32 crystalSize)
 		w.Y), 0, 255);
 }
 
-float NoiseTool::simplexNoise(FVector2D p,int32 crystalSize)
+//TODO
+float NoiseTool::simplexNoise(FVector2D p,int32 crystalSize,int32 frequence)
 {
   const float K1 = 0.366025404; // (sqrt(3)-1)/2;
   const float K2 = -0.211324865; // (sqrt(3)-3)/6;
@@ -128,3 +130,12 @@ float NoiseTool::simplexNoise(FVector2D p,int32 crystalSize)
   FVector n = FVector(hx*grad(a, hash22(p2i)), hy*grad(b, hash22(p2i + vertex2Offset)), hz*grad(c, hash22(p2i + FVector2D(1,1))));
   return n.X + n.Y + n.Z;
 }
+
+
+void NoiseTool::setGlobalVertex(FVector2D vertexs[]){
+	for(int32 i = 0;i<4;++i)
+	GlobalVertex[i]=vertexs[i];
+}
+
+//初始化全局顶点
+FVector2D NoiseTool::GlobalVertex[4] = {};

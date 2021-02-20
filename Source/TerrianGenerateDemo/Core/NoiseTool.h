@@ -20,10 +20,17 @@ public:
 	static float grad_f(FVector2D vertex, FVector2D position2D);
 	static float grad(FVector2D vertex, FVector2D position2D);
 	
-	//输入2D坐标，晶格大小，输出噪声值
-	static float perlinNoise(FVector2D position2D, int32 crystalSize);
-	static float valueNoise(FVector2D position2D, int32 crystalSize);
-	static float simplexNoise(FVector2D position2D, int32 crystalSize);
+	//输入2D坐标，晶格大小，频率，输出噪声值
+	static float perlinNoise(FVector2D position2D, int32 crystalSize,int32 frequence);
+	static float valueNoise(FVector2D position2D, int32 crystalSize,int32 frequence);
+	static float simplexNoise(FVector2D position2D, int32 crystalSize,int32 frequence);
+
+	//预先设置顶点坐标
+	//---优化
+	static void setGlobalVertex(FVector2D vertexs[]);
+private:
+	static FVector2D GlobalVertex[4];
+
 private:
 	NoiseTool() = delete;
 	~NoiseTool() = delete;
