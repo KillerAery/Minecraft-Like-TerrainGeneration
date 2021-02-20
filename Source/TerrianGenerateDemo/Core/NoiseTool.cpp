@@ -62,18 +62,18 @@ float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 float NoiseTool::perlinNoise(FVector2D pf,int32 crystalSize,int32 frequence)
 {
 	//position2D /= crystalSize;
-	
+
 	//FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 	FVector2D w = pf;
 
 	return FMath::Lerp(
 		FMath::Lerp(
 			grad(GlobalVertex[0],pf),
-			grad(GlobalVertex[1], pf - FVector2D(1.0f, 0.0f)),
+			grad(GlobalVertex[1],pf - FVector2D(1.0f, 0.0f)),
 			w.X),
 		FMath::Lerp(
-			grad(GlobalVertex[2], pf - FVector2D(0.0f, 1.0f)),
-			grad(GlobalVertex[3], pf - FVector2D(1.0f, 1.0f)),
+			grad(GlobalVertex[2],pf - FVector2D(0.0f, 1.0f)),
+			grad(GlobalVertex[3],pf - FVector2D(1.0f, 1.0f)),
 			w.X),
 		w.Y);
 }
