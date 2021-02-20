@@ -16,17 +16,14 @@ public:
 	static FVector hash33(FVector position3D);
 	static uint32 hash31(FVector position3D);
 	
+	//求梯度值	
 	static float grad_f(FVector2D vertex, FVector2D position2D);
-
-	//求梯度值
 	static float grad(FVector2D vertex, FVector2D position2D);
 	
 	//输入2D坐标，晶格大小，输出噪声值
 	static float perlinNoise(FVector2D position2D, int32 crystalSize);
-
-	//static float valueNoise(FVector2D position2D);
-
-	static float simplexNoise(FVector2D position2D);
+	static float valueNoise(FVector2D position2D, int32 crystalSize);
+	static float simplexNoise(FVector2D position2D, int32 crystalSize);
 private:
 	NoiseTool() = delete;
 	~NoiseTool() = delete;

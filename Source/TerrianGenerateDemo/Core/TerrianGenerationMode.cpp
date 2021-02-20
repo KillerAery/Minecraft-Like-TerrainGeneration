@@ -5,6 +5,7 @@
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
 
+
 ATerrianGenerationMode::ATerrianGenerationMode()
 	: Super()
 {
@@ -16,12 +17,6 @@ ATerrianGenerationMode::ATerrianGenerationMode()
 
 	// use our custom HUD class
 	HUDClass = ATerrianGenerateDemoHUD::StaticClass();
-	//初始化空缓冲区
-	for (int index = 0; index < 2; ++index)
-	for (int i = 0; i < ChunkSize; ++i)
-	for (int j = 0; j < ChunkSize; ++j) {
-		Chunks[index][i][j] = nullptr;
-	}
 }
 
 void ATerrianGenerationMode::BeginPlay()
@@ -43,89 +38,82 @@ void ATerrianGenerationMode::SetCameraLoaction(FVector location)
 
 void ATerrianGenerationMode::UpdateChunks()
 {
-	size_t nextChunksIndex = !ChunksIndex;
-	//对旧chunks进行载入检查
-	for (int i = 0; i < ChunkSize; ++i)
-	for (int j = 0; j < ChunkSize; ++j) 
-	{
-		if (!Chunks[ChunksIndex][i][j]) {
-			continue;
-		}
-
-		FVector2D chunkPosition = Chunks[ChunksIndex][i][j]->ChunkPosition;
-
-		if (NeedChunk(chunkPosition)) {
-			FVector2D d = chunkPosition - ChunksCenterPosition;
-			Chunks[nextChunksIndex][(int32)d.X + Center][(int32)d.Y + Center] = Chunks[ChunksIndex][i][j];
-			Chunks[ChunksIndex][i][j] = nullptr;
-		}
-		else {
-			delete Chunks[ChunksIndex][i][j];	//卸载chunk
-			Chunks[ChunksIndex][i][j] = nullptr;
-		}
-	}
-
 	//生成新Chunk
 	for (int i = 0; i < ChunkSize; ++i)
 	for (int j = 0; j < ChunkSize; ++j) 
 	{
-		if (!Chunks[nextChunksIndex][i][j]) {
-			Chunks[nextChunksIndex][i][j] = GenerateChunk(FVector2D(
-				ChunksCenterPosition.X + (i - Center),
-				ChunksCenterPosition.Y + (j - Center))
-			);
+		FVector2D f = FVector2D(ChunksCenterPosition.X + (i - Center),
+								ChunksCenterPosition.Y + (j - Center)
+								);
+
+		if (NeedChunk(f)) {
+			GenerateChunk(f);
 		}
 	}
-	//切换
-	ChunksIndex = nextChunksIndex;
 }
 
 bool ATerrianGenerationMode::NeedChunk(FVector2D chunkPosition)
 {
+	//是否已存在Chunks列表内
+	if(Chunks.FindByPredicate(
+		[chunkPosition](Chunk& chunk){
+			return FVector2D::DistSquared(chunkPosition,chunk.ChunkPosition)<0.001f;
+		}))
+	{
+		return false;
+	}
+
+	//不存在Chunk列表，则判断是否在加载范围
 	FVector2D d = chunkPosition - ChunksCenterPosition;
 	return abs((int32)(d.X)) < LoadRadius && abs((int32)fabs(d.Y)) < LoadRadius;
 }
 
-Chunk* ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
+void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 {
-	Chunk* chunk = new Chunk(chunkPosition);
+	int32 index = Chunks.Add(Chunk(chunkPosition));
+	Chunk& chunk = Chunks[index];
 
 	FVector2D chunkWorldPosition = FVector2D(chunkPosition.X * MaxBlocksWidth * 100, chunkPosition.Y * MaxBlocksWidth * 100);
 
-	for (int i = 0; i < 16; ++i)
-		for (int j = 0; j < 16; ++j) {
-			for (int k = chunk->BlocksHeight[i][j]; k >= 0; --k)
-			{
-				if (
-					(i == 0 || k <= chunk->BlocksHeight[i - 1][j]) &&
-					(j == 0 || k <= chunk->BlocksHeight[i][j - 1]) &&
-					(i == 15 || k <= chunk->BlocksHeight[i + 1][j]) &&
-					(j == 15 || k <= chunk->BlocksHeight[i][j + 1]) &&
-					k < chunk->BlocksHeight[i][j]
-				)
-				{
-					break;
-				}
-				else {
-					if (k == chunk->BlocksHeight[i][j] && (rand() % 255 < 240)) {
-						chunk->Blocks[i][j][k] = CreateBlock(1,
-							FVector(chunkWorldPosition.X + i * 100,
-								chunkWorldPosition.Y + j * 100,
-								k * 100)
-						);
-					}
-					else {
-						chunk->Blocks[i][j][k] = CreateBlock(3,
-							FVector(chunkWorldPosition.X + i * 100,
-								chunkWorldPosition.Y + j * 100,
-								k * 100)
-						);
-					}
-				}
-			}
-		}
+	const int32 TRICK_EDGE_HEIGH = 5;
 
-	return chunk;
+	for (int i = 0; i < 16; ++i)
+	for (int j = 0; j < 16; ++j) 
+	{
+		for (int k = chunk.BlocksHeight[i][j],count = TRICK_EDGE_HEIGH; k >= 0; --k)
+		{
+			if(i == 0 || j == 0 || i == 15 || j == 15){
+				if(count==0)continue;
+				count--;
+			}
+			else if (k <= chunk.BlocksHeight[i - 1][j] &&
+				k <= chunk.BlocksHeight[i][j - 1] &&
+				k <= chunk.BlocksHeight[i + 1][j] &&
+				k <= chunk.BlocksHeight[i][j + 1] &&
+				k < chunk.BlocksHeight[i][j])
+			{
+					break;
+			}
+
+			FVector BlockPosition = FVector(
+				chunkWorldPosition.X + i * 100,
+				chunkWorldPosition.Y + j * 100,
+				k * 100);
+			
+			if (k == chunk.BlocksHeight[i][j] && (rand() % 255 < 240)) {
+				chunk.Blocks[i][j][k] = CreateBlock(1,BlockPosition);
+			}
+			else{
+				chunk.Blocks[i][j][k] = CreateBlock(3,BlockPosition);
+			}
+				
+		}
+	}
+}
+
+
+int32 ATerrianGenerationMode::GetHeight(FVector2D position){
+	return 0;
 }
 
 ABlock* ATerrianGenerationMode::CreateBlock(int32 id, FVector location)

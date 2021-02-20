@@ -55,7 +55,7 @@ float NoiseTool::grad_f(FVector2D vertex, FVector2D p){
 
 float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 {
-	return FVector2D::gradProduct(vertex, position2D);
+	return FVector2D::DotProduct(vertex, position2D);
 }
 
 float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
@@ -78,26 +78,26 @@ float NoiseTool::perlinNoise(FVector2D position2D,int32 crystalSize)
 		w.Y);
 }
 
-//float NoiseTool::valueNoise(FVector2D position2D)
-//{
-//	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
-//
-//	FVector2D pf = position2D - pi;
-//	FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
-//
-//	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
-//
-//	return FMath::Clamp<float>(FMath::Lerp(
-//		FMath::Lerp(hash21(vertex[0]) % 17,
-//			hash21(vertex[1]) % 17,
-//			w.X),
-//		FMath::Lerp(hash21(vertex[2]) % 17,
-//			hash21(vertex[3]) % 17,
-//			w.X),
-//		w.Y), 0, 255);
-//}
+float NoiseTool::valueNoise(FVector2D position2D,int32 crystalSize)
+{
+	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
 
-float NoiseTool::simplexNoise(FVector2D p)
+	FVector2D pf = position2D - pi;
+	FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
+
+	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
+
+	return FMath::Clamp<float>(FMath::Lerp(
+		FMath::Lerp(hash21(vertex[0]) % 17,
+			hash21(vertex[1]) % 17,
+			w.X),
+		FMath::Lerp(hash21(vertex[2]) % 17,
+			hash21(vertex[3]) % 17,
+			w.X),
+		w.Y), 0, 255);
+}
+
+float NoiseTool::simplexNoise(FVector2D p,int32 crystalSize)
 {
   const float K1 = 0.366025404; // (sqrt(3)-1)/2;
   const float K2 = -0.211324865; // (sqrt(3)-3)/6;
@@ -117,13 +117,14 @@ float NoiseTool::simplexNoise(FVector2D p)
   FVector2D b = a - vertex2Offset - K2 * FVector2D(1,1);
   //FVector2D c = p - (p2i + Vecotr2(1,1) + (p2i.X+1 + p2i.Y+1) * K2 * Vector2(1,1));
   FVector2D c = a - FVector2D(1,1) - 2 * K2 * FVector2D(1,1);
-            
-  //顶点变换回单行网格空间
-  FVector2D a = p - (p2i - (p2i.X + p2i.Y) * K2 * FVector2D(1,1));
 
   //计算贡献度取和
-  FVector h = FVector(0.5f - grad(a, a), 0.5f - grad(b, b), 0.5f - grad(c, c));
-  FVector n = h * h * h * h * FVector(grad(a, hash22(p2i)), grad(b, hash22(p2i + vertex2Offset)), grad(c, hash22(p2i + FVector2D(1,1))));
-
+  float hx = 0.5f - grad(a, a);
+  float hy = 0.5f - grad(b, b);
+  float hz = 0.5f - grad(c, c);
+  hx=hx*hx*hx*hx;
+  hy=hy*hy*hy*hy;
+  hz=hz*hz*hz*hz;
+  FVector n = FVector(hx*grad(a, hash22(p2i)), hy*grad(b, hash22(p2i + vertex2Offset)), hz*grad(c, hash22(p2i + FVector2D(1,1))));
   return n.X + n.Y + n.Z;
 }

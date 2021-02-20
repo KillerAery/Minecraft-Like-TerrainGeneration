@@ -36,12 +36,17 @@ public:
 	//中心位置
 	UPROPERTY(VisibleAnywhere)
 	FVector2D ChunksCenterPosition;
+	
 protected:
 	//全部Chunk
-	Chunk* Chunks[2][ChunkSize][ChunkSize];
-	//当前缓冲区索引（使用双重缓冲）
-	size_t ChunksIndex = 0;
+	TArray<Chunk> Chunks;
+	
 	bool NeedChunk(FVector2D chunkPosition);
-	Chunk* GenerateChunk(FVector2D chunkPosition);
+
+	//
+	void GenerateChunk(FVector2D chunkPosition);
+
+	int32 GetHeight(FVector2D position);
+
 	ABlock* CreateBlock(int32 id, FVector location);
 };
