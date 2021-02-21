@@ -59,21 +59,21 @@ float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 }
 
 
-float NoiseTool::perlinNoise(FVector2D pf)
+float NoiseTool::perlinNoise(FVector2D p)
 {
-	pf = GlobalOffset + pf;
-	
-	FVector2D w = pf;
-	//FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
+	p = GlobalOffset + p;
+
+	FVector2D w = p;
+	//FVector2D w = p * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
 	return FMath::Lerp(
 		FMath::Lerp(
-			grad(GlobalVertex[0],pf),
-			grad(GlobalVertex[1],pf - FVector2D(1.0f, 0.0f)),
+			grad(GlobalVertex[0],p),
+			grad(GlobalVertex[1],p - FVector2D(1.0f, 0.0f)),
 			w.X),
 		FMath::Lerp(
-			grad(GlobalVertex[2],pf - FVector2D(0.0f, 1.0f)),
-			grad(GlobalVertex[3],pf - FVector2D(1.0f, 1.0f)),
+			grad(GlobalVertex[2],p - FVector2D(0.0f, 1.0f)),
+			grad(GlobalVertex[3],p - FVector2D(1.0f, 1.0f)),
 			w.X),
 		w.Y);
 }
@@ -98,37 +98,37 @@ float NoiseTool::valueNoise(FVector2D position2D)
 		w.Y), 0, 255);
 }
 
-//TODO
+
 float NoiseTool::simplexNoise(FVector2D p)
 {
+  p = p + GlobalOffset;
+
   const float K1 = 0.366025404; // (sqrt(3)-1)/2;
-  const float K2 = -0.211324865; // (sqrt(3)-3)/6;
-  
+  const float K2 = 0.211324865; // (3-sqrt(3))/6;
   //坐标偏斜
-  FVector2D p2 = p + (p.X + p.Y) * K1;
-  
-  //向下取整
-  FVector2D p2i = FVector2D((int)p2.X,(int)p2.Y);
-  
-  FVector2D p2f = p2 - p2i;
-  FVector2D vertex2Offset = (p2f.X < p2f.Y) ? FVector2D(0, 1) : FVector2D(1, 0);
+  float s = (p.X + p.Y) * K1;
+  FVector2D pi = FVector2D(floor(p.X+s),floor(p.Y+s));
+  float t = (pi.X + pi.Y) *K2;
+  FVector2D pf = p-pi+t*FVector2D::UnitVector;
+  FVector2D vertex2Offset = (pf.X < pf.Y) ? FVector2D(0, 1) : FVector2D(1, 0);
   
   //顶点变换回单行网格空间
-  FVector2D a = p - (p2i + (p2i.X + p2i.Y) * K2 * FVector2D(1,1));
-  //FVector2D b = p - (p2i + vertex2Offset + (p2i.X + p2i.Y + 1) * K2 * Vector2(1,1));
-  FVector2D b = a - vertex2Offset - K2 * FVector2D(1,1);
-  //FVector2D c = p - (p2i + Vecotr2(1,1) + (p2i.X+1 + p2i.Y+1) * K2 * Vector2(1,1));
-  FVector2D c = a - FVector2D(1,1) - 2 * K2 * FVector2D(1,1);
+  FVector2D dist1 = pf;
+  FVector2D dist2 = pf - vertex2Offset + K2 * FVector2D::UnitVector;
+  FVector2D dist3 = pf - FVector2D(1,1) + 2 * K2 * FVector2D::UnitVector;
 
   //计算贡献度取和
-  float hx = 0.5f - grad(a, a);
-  float hy = 0.5f - grad(b, b);
-  float hz = 0.5f - grad(c, c);
+  float hx = 0.5f - FVector2D::DotProduct(dist1, dist1);
+  float hy = 0.5f - FVector2D::DotProduct(dist2, dist2);
+  float hz = 0.5f - FVector2D::DotProduct(dist3, dist3);
   hx=hx*hx*hx*hx;
   hy=hy*hy*hy*hy;
   hz=hz*hz*hz*hz;
-  FVector n = FVector(hx*grad(a, hash22(p2i)), hy*grad(b, hash22(p2i + vertex2Offset)), hz*grad(c, hash22(p2i + FVector2D(1,1))));
-  return n.X + n.Y + n.Z;
+  return 0.3f*70*(
+  		hx*FVector2D::DotProduct(dist1, hash22(pi)) 
+	  	+hy*FVector2D::DotProduct(dist2, hash22(pi + vertex2Offset))
+	  	+hz*FVector2D::DotProduct(dist3, hash22(pi + FVector2D(1,1)))
+  		);
 }
 
 void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
@@ -146,7 +146,8 @@ void NoiseTool::prehandleValueNoise(FVector2D position2D, int32 crystalSize,int3
 }
 
 void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
-
+	FVector2D pi = FVector2D(floor(position2D.X / crystalSize), floor(position2D.Y / crystalSize));
+	GlobalOffset = position2D / crystalSize;
 }
 
 

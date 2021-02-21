@@ -23,8 +23,9 @@ void HeightGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight
 	int32 m = 1;
 	int32 maxHeigh = 64.0f;
 
-	for (int d = 0; d < 5; ++d,m*=2) {
-		NoiseTool::prehandlePerlinNoise(ChunkPosition,m,1);
+	for (int d = 0; d < 8; ++d,m*=2) {
+		NoiseTool::prehandleSimplexNoise(ChunkPosition,m,1);
+		//NoiseTool::prehandlePerlinNoise(ChunkPosition,m,1);
 
 		for (int i = 0; i < MaxBlocksWidth; ++i)
 		for (int j = 0; j < MaxBlocksWidth; ++j)
@@ -33,7 +34,8 @@ void HeightGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight
 			BlocksHeight[i][j] += 
 			(	
 				FMath::Clamp<float>(
-				NoiseTool::perlinNoise(pf)
+				NoiseTool::simplexNoise(pf)
+				//NoiseTool::perlinNoise(pf)
 				,-1.0f,1.0f)*maxHeigh + maxHeigh
 
 			)*0.5f/m;
