@@ -58,13 +58,13 @@ float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
 	return FVector2D::DotProduct(vertex, position2D);
 }
 
-//TODO frequence
-float NoiseTool::perlinNoise(FVector2D pf,int32 crystalSize,int32 frequence)
-{
-	//position2D /= crystalSize;
 
-	//FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
+float NoiseTool::perlinNoise(FVector2D pf)
+{
+	pf = GlobalOffset + pf;
+	
 	FVector2D w = pf;
+	//FVector2D w = pf * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
 	return FMath::Lerp(
 		FMath::Lerp(
@@ -79,7 +79,7 @@ float NoiseTool::perlinNoise(FVector2D pf,int32 crystalSize,int32 frequence)
 }
 
 //TODO
-float NoiseTool::valueNoise(FVector2D position2D,int32 crystalSize,int32 frequence)
+float NoiseTool::valueNoise(FVector2D position2D)
 {
 	FVector2D pi = FVector2D(floor(position2D.X), floor(position2D.Y));
 
@@ -99,7 +99,7 @@ float NoiseTool::valueNoise(FVector2D position2D,int32 crystalSize,int32 frequen
 }
 
 //TODO
-float NoiseTool::simplexNoise(FVector2D p,int32 crystalSize,int32 frequence)
+float NoiseTool::simplexNoise(FVector2D p)
 {
   const float K1 = 0.366025404; // (sqrt(3)-1)/2;
   const float K2 = -0.211324865; // (sqrt(3)-3)/6;
@@ -131,11 +131,25 @@ float NoiseTool::simplexNoise(FVector2D p,int32 crystalSize,int32 frequence)
   return n.X + n.Y + n.Z;
 }
 
+void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
+	FVector2D pi = FVector2D(floor(position2D.X / crystalSize), floor(position2D.Y / crystalSize));
+	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
 
-void NoiseTool::setGlobalVertex(FVector2D vertexs[]){
 	for(int32 i = 0;i<4;++i)
-	GlobalVertex[i]=vertexs[i];
+	GlobalVertex[i]=NoiseTool::hash22(vertex[i]);
+	
+	GlobalOffset = (position2D-pi*crystalSize)/crystalSize;
 }
+
+void NoiseTool::prehandleValueNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
+
+}
+
+void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
+
+}
+
 
 //初始化全局顶点
 FVector2D NoiseTool::GlobalVertex[4] = {};
+FVector2D NoiseTool::GlobalOffset = FVector2D::ZeroVector;
