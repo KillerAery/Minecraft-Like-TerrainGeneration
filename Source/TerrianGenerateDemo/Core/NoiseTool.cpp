@@ -124,7 +124,7 @@ float NoiseTool::simplexNoise(FVector2D p)
   hx=hx*hx*hx*hx;
   hy=hy*hy*hy*hy;
   hz=hz*hz*hz*hz;
-  return 0.3f*70*(
+  return 70*(
   		hx*FVector2D::DotProduct(dist1, hash22(pi)) 
 	  	+hy*FVector2D::DotProduct(dist2, hash22(pi + vertex2Offset))
 	  	+hz*FVector2D::DotProduct(dist3, hash22(pi + FVector2D(1,1)))
