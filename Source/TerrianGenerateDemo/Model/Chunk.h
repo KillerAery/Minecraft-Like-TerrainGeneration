@@ -3,7 +3,9 @@
 #pragma once
 
 #include "Model/Block.h"
-#include "Core/GenerationSettings.h"
+
+const size_t MaxBlocksWidth = 16;
+const size_t MaxBlocksHeigth = 256;
 
 class TERRIANGENERATEDEMO_API Chunk
 {
@@ -11,7 +13,7 @@ public:
 	Chunk(FVector2D chunkPosition);
 	FVector2D ChunkPosition;
 	int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth];
-	BiomeType BlocksBiome[MaxBlocksWidth][MaxBlocksWidth];
+	float BlocksTemperature[MaxBlocksWidth][MaxBlocksWidth];
 
 	ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
 };

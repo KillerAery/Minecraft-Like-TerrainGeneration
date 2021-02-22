@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/GenerationSettings.h"
+#include "Model/Chunk.h"
 
 
 /**
@@ -12,10 +12,9 @@
 class TERRIANGENERATEDEMO_API BiomeGenerator
 {
 public:
-	BiomeGenerator();
-	~BiomeGenerator();
-	static BiomeType GetBiomeType(FVector2D BlockPosition);
-
-	static void GenerateBiome(FVector2D ChunkPosition, BiomeType  BlocksBiome[MaxBlocksWidth][MaxBlocksWidth]);
+	static void GenerateBiome(Chunk& chunk);
+private:
+	BiomeGenerator() = delete;
+	~BiomeGenerator() = delete;
 };
   

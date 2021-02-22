@@ -2,6 +2,8 @@
 
 
 #include "Core/TerrianGenerationMode.h"
+#include "Core/HeightGenerator.h"
+#include "Core/BiomeGenerator.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
 
@@ -72,6 +74,11 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 {
 	int32 index = Chunks.Add(Chunk(chunkPosition));
 	Chunk& chunk = Chunks[index];
+	//生成高度
+	HeightGenerator::GenerateHeight(chunk);
+	//生成生物群落
+	BiomeGenerator::GenerateBiome(chunk);
+
 
 	FVector2D chunkWorldPosition = FVector2D(chunkPosition.X * MaxBlocksWidth * 100, chunkPosition.Y * MaxBlocksWidth * 100);
 
@@ -99,9 +106,21 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 				chunkWorldPosition.X + i * 100,
 				chunkWorldPosition.Y + j * 100,
 				k * 100);
+
+			int targetBlockID = 1;
 			
+			if(chunk.BlocksTemperature[i][j]>0.3f){
+				targetBlockID = 4;
+			}
+			else if(chunk.BlocksTemperature[i][j]>-0.3f){
+				targetBlockID = 1;
+			}
+			else{
+				targetBlockID = 10;
+			}
+
 			if (k == chunk.BlocksHeight[i][j] && (rand() % 255 < 240)) {
-				chunk.Blocks[i][j][k] = CreateBlock(1,BlockPosition);
+				chunk.Blocks[i][j][k] = CreateBlock(targetBlockID,BlockPosition);
 			}
 			else{
 				chunk.Blocks[i][j][k] = CreateBlock(3,BlockPosition);
