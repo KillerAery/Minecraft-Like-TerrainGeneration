@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/GenerationSettings.h"
+#include "Model/Chunk.h"
 
 /**
  * 
@@ -11,12 +11,9 @@
 class TERRIANGENERATEDEMO_API HeightGenerator
 {
 public:
-	HeightGenerator();
-	~HeightGenerator();
-	
 	static float GetHeight(FVector2D blockPosition);
-
-	static void GenerateHeight(FVector2D ChunkPosition,int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth]);
-
-
+	static void GenerateHeight(Chunk& chunk);
+private:
+	HeightGenerator() = delete;
+	~HeightGenerator() = delete;
 };

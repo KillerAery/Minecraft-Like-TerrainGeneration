@@ -18,27 +18,26 @@ float HeightGenerator::GetHeight(FVector2D BlockPosition)
 }
 
 // #BUG1:仍存在边缘问题（0,0）
-void HeightGenerator::GenerateHeight(FVector2D ChunkPosition, int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth])
+void HeightGenerator::GenerateHeight(Chunk& chunk)
 {
-	int32 m = 1;
-	int32 maxHeigh = 64.0f;
+	int32 m = 3;
+	int32 maxHeigh = 100.0f;
 
-	for (int d = 0; d < 8; ++d,m*=2) {
-		NoiseTool::prehandleSimplexNoise(ChunkPosition,m,1);
+	for (int d = 0; d < 2; ++d,m*=2) {
+		NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,m,1);
 		//NoiseTool::prehandlePerlinNoise(ChunkPosition,m,1);
 
 		for (int i = 0; i < MaxBlocksWidth; ++i)
 		for (int j = 0; j < MaxBlocksWidth; ++j)
 		{
 			FVector2D pf = FVector2D((float)i / MaxBlocksWidth / m, float(j) / MaxBlocksWidth / m);
-			BlocksHeight[i][j] += 
+			chunk.BlocksHeight[i][j] += 
 			(	
 				FMath::Clamp<float>(
 				NoiseTool::simplexNoise(pf)
 				//NoiseTool::perlinNoise(pf)
 				,-1.0f,1.0f)*maxHeigh + maxHeigh
-
-			)*0.5f/m;
+			)/2/3;
 		}
 
 	}
