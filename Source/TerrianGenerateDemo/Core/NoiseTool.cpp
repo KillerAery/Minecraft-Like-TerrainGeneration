@@ -29,7 +29,7 @@ FVector2D NoiseTool::hash22(FVector2D position2D)
 
 uint32 NoiseTool::hash21(FVector2D position2D)
 {
-	return hash11(0x651A6BE1 * (int32)position2D.X + (int32)position2D.Y);
+	return hash11(0x651A6BE1 * (int32)position2D.X + (int32)position2D.Y)%1024;
 }
 
 FVector NoiseTool::hash33(FVector position3D)

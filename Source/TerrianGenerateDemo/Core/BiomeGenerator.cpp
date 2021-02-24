@@ -3,15 +3,6 @@
 #include "Core/BiomeGenerator.h"
 #include "Core/NoiseTool.h"
 
-BiomeGenerator::BiomeGenerator()
-{
-}
-
-BiomeGenerator::~BiomeGenerator()
-{
-}
-
-
 void BiomeGenerator::GenerateBiome(Chunk& chunk)
 {
 	int32 cystalSize = 64;
@@ -23,7 +14,7 @@ void BiomeGenerator::GenerateBiome(Chunk& chunk)
 		FVector2D pf = FVector2D((float)i / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
 		float biomeValue = FMath::Clamp<float>(
 				NoiseTool::simplexNoise(pf)
-				,-1.0f,1.0f) + FMath::RandRange(-0.1f,0.1f);
+				,-1.0f,1.0f) + ((NoiseTool::hash21(chunk.ChunkPosition*16 + pf*1024))-512.0f)/512.0f*0.05f;
 		chunk.BlocksTemperature[i][j] = biomeValue;
 	}
 }

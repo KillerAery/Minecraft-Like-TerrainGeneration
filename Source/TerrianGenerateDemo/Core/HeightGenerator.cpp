@@ -4,14 +4,6 @@
 #include "Core/HeightGenerator.h"
 #include "Core/NoiseTool.h"
 
-HeightGenerator::HeightGenerator()
-{
-}
-
-HeightGenerator::~HeightGenerator()
-{
-}
-
 float HeightGenerator::GetHeight(FVector2D BlockPosition)
 {
 	return 0.0f;
@@ -23,7 +15,7 @@ void HeightGenerator::GenerateHeight(Chunk& chunk)
 	int32 m = 3;
 	int32 maxHeigh = 100.0f;
 
-	for (int d = 0; d < 2; ++d,m*=2) {
+	for (int d = 0; d < 3; ++d,m*=2) {
 		NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,m,1);
 		//NoiseTool::prehandlePerlinNoise(ChunkPosition,m,1);
 
@@ -37,7 +29,7 @@ void HeightGenerator::GenerateHeight(Chunk& chunk)
 				NoiseTool::simplexNoise(pf)
 				//NoiseTool::perlinNoise(pf)
 				,-1.0f,1.0f)*maxHeigh + maxHeigh
-			)/2/3;
+			)/3/3;
 		}
 
 	}
