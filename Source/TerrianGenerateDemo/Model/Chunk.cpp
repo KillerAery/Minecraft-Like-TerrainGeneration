@@ -3,15 +3,8 @@
 
 #include "Model/Chunk.h"
 
-Chunk::Chunk(FVector2D chunkPosition)
+Chunk::Chunk(FVector2D chunkPosition):
+	BlocksHeight{0},BlocksTemperature{0},Blocks{nullptr}
 {
 	ChunkPosition = chunkPosition;
-	for (int i = 0; i < MaxBlocksWidth; ++i)
-	for (int j = 0; j < MaxBlocksWidth; ++j)
-	{
-		BlocksHeight[i][j] = 0;
-
-	for (int k = 0; k < MaxBlocksHeigth; ++k)
-		Blocks[i][j][k] = nullptr;
-	}
 }

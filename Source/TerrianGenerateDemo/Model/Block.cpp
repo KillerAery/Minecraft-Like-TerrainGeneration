@@ -17,17 +17,21 @@ ABlock::ABlock()
 }
 
 // Called when the game starts or when spawned
+/*
 void ABlock::BeginPlay()
 {
 	Super::BeginPlay();
 }
+*/
 
 // Called every frame
+/*
 void ABlock::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
+*/
 
 void ABlock::InitByBlockID(int32 id)
 {	

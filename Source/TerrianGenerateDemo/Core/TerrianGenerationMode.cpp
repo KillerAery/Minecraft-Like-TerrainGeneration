@@ -4,6 +4,7 @@
 #include "Core/TerrianGenerationMode.h"
 #include "Core/HeightGenerator.h"
 #include "Core/BiomeGenerator.h"
+#include "Core/TreeGenerator.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
 
@@ -78,11 +79,14 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	HeightGenerator::GenerateHeight(chunk);
 	//生成生物群落
 	BiomeGenerator::GenerateBiome(chunk);
-
+	//生成植被
+	TreeGenerator::GenerateTree(chunk);
 
 	FVector2D chunkWorldPosition = FVector2D(chunkPosition.X * MaxBlocksWidth * 100, chunkPosition.Y * MaxBlocksWidth * 100);
 
 	const int32 TRICK_EDGE_HEIGH = 5;
+
+	FVector BlockPosition;
 
 	for (int i = 0; i < 16; ++i)
 	for (int j = 0; j < 16; ++j) 
@@ -102,17 +106,17 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 					break;
 			}
 
-			FVector BlockPosition = FVector(
+			BlockPosition = FVector(
 				chunkWorldPosition.X + i * 100,
 				chunkWorldPosition.Y + j * 100,
 				k * 100);
 
 			int targetBlockID = 1;
 			
-			if(chunk.BlocksTemperature[i][j]>0.3f){
+			if(chunk.BlocksTemperature[i][j]>0.25f){
 				targetBlockID = 4;
 			}
-			else if(chunk.BlocksTemperature[i][j]>-0.3f){
+			else if(chunk.BlocksTemperature[i][j]>-0.25f){
 				targetBlockID = 1;
 			}
 			else{
@@ -127,6 +131,20 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 			}
 				
 		}
+	}
+
+
+	for(auto& t:chunk.BlocksID){
+		int x = t.Get<0>().Get<0>();
+		int y = t.Get<0>().Get<1>();
+		int z = t.Get<0>().Get<2>();
+		int32 blockID = t.Get<1>();
+		
+		BlockPosition = FVector(
+			chunkWorldPosition.X + x * 100,
+			chunkWorldPosition.Y + y * 100,
+			z * 100);
+		chunk.Blocks[x][y][z] = CreateBlock(blockID,BlockPosition);
 	}
 }
 

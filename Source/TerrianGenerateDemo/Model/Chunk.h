@@ -15,5 +15,6 @@ public:
 	int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth];
 	float BlocksTemperature[MaxBlocksWidth][MaxBlocksWidth];
 
+	TArray<TPair<TTuple<int32,int32,int32>,int32>> BlocksID;
 	ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
 };
