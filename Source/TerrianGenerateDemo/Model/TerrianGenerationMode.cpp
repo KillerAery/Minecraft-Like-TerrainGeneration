@@ -1,9 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Core/TerrianGenerationMode.h"
+#include "Model/TerrianGenerationMode.h"
 #include "Core/HeightGenerator.h"
-#include "Core/BiomeGenerator.h"
+#include "Core/TemperatureGenerator.h"
 #include "Core/TreeGenerator.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
@@ -78,7 +78,7 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	//生成高度
 	HeightGenerator::GenerateHeight(chunk);
 	//生成生物群落
-	BiomeGenerator::GenerateBiome(chunk);
+	TemperatureGenerator::GenerateTemperature(chunk);
 	//生成植被
 	TreeGenerator::GenerateTree(chunk);
 

@@ -2,7 +2,7 @@
 
 
 #include "Core/HeightGenerator.h"
-#include "Core/NoiseTool.h"
+#include "Tool/NoiseTool.h"
 
 float HeightGenerator::GetHeight(FVector2D BlockPosition)
 {

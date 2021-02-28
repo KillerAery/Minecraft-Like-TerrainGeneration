@@ -9,12 +9,12 @@
 /**
  * 
  */
-class TERRIANGENERATEDEMO_API BiomeGenerator
+class TERRIANGENERATEDEMO_API TemperatureGenerator
 {
 public:
-	static void GenerateBiome(Chunk& chunk);
+	static void GenerateTemperature(Chunk& chunk);
 private:
-	BiomeGenerator() = delete;
-	~BiomeGenerator() = delete;
+	TemperatureGenerator() = delete;
+	~TemperatureGenerator() = delete;
 };
   

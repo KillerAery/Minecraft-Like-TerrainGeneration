@@ -2,7 +2,7 @@
 
 
 #include "TreeGenerator.h"
-#include "Core/NoiseTool.h"
+#include "Tool/NoiseTool.h"
 
 void TreeGenerator::GenerateTree(Chunk& chunk){
     int32 cystalSize = 16;
