@@ -18,7 +18,7 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
         float valueTemperature = chunk.BlocksTemperature[i][j];
 		float possible = 
         (NoiseTool::rand(chunk.ChunkPosition*11 + pf*1011))
-            - FMath::Abs(valueTemperature+0.1f)*0.25f;
+            - FMath::Abs(valueTemperature+0.1f)*0.22f;
         
         //若满足概率
         if(possible > 0.9f){
