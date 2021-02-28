@@ -2,19 +2,19 @@
 
 #include "Core/NoiseTool.h"
 
-uint32 NoiseTool::hash11(int32 position)
+int32 NoiseTool::hash11(int32 position)
 {
-	const unsigned int BIT_NOISE1 = 0x85297A4D;
-	const unsigned int BIT_NOISE2 = 0x68E31DA4;
-	const unsigned int BIT_NOISE3 = 0x1B56C4E9;
-	unsigned int mangled = position;
+	const uint32 BIT_NOISE1 = 0x85297A4D;
+	const uint32 BIT_NOISE2 = 0x68E31DA4;
+	const uint32 BIT_NOISE3 = 0x1B56C4E9;
+	uint32 mangled = position;
 	mangled *= BIT_NOISE1;
 	mangled ^= (mangled >> 8);
 	mangled += BIT_NOISE2;
 	mangled ^= (mangled << 8);
 	mangled *= BIT_NOISE3;
 	mangled ^= (mangled >> 8);
-	return mangled;
+	return mangled%1024;
 }
 
 FVector2D NoiseTool::hash22(FVector2D position2D)
@@ -27,7 +27,7 @@ FVector2D NoiseTool::hash22(FVector2D position2D)
 	return v;
 }
 
-uint32 NoiseTool::hash21(FVector2D position2D)
+int32 NoiseTool::hash21(FVector2D position2D)
 {
 	return hash11(0x651A6BE1 * (int32)position2D.X + (int32)position2D.Y)%1024;
 }
@@ -37,9 +37,22 @@ FVector NoiseTool::hash33(FVector position3D)
 	return FVector(hash11(position3D.X), hash11(position3D.Y),hash11(position3D.Z));
 }
 
-uint32 NoiseTool::hash31(FVector position3D)
+int32 NoiseTool::hash31(FVector position3D)
 {
 	return hash11(position3D.X * 0x651A6BE6 - position3D.Y * 0xCB251062 + position3D.Z);
+}
+
+int32 NoiseTool::randInt(FVector2D position){
+	return hash21(position*1024);
+}
+	
+float NoiseTool::rand(FVector2D position){
+	return hash21(position*1024)/1024.0f;
+}
+
+float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
+{
+	return FVector2D::DotProduct(vertex, position2D);
 }
 
 float NoiseTool::grad_f(FVector2D vertex, FVector2D p){
@@ -51,11 +64,6 @@ float NoiseTool::grad_f(FVector2D vertex, FVector2D p){
       case 4: return -p.X - p.Y;  //代表梯度向量(-1,-1)
       default: return 0; // never happens
     }
-}
-
-float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
-{
-	return FVector2D::DotProduct(vertex, position2D);
 }
 
 
@@ -131,6 +139,7 @@ float NoiseTool::simplexNoise(FVector2D p)
   		);
 }
 
+
 void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
 	FVector2D pi = FVector2D(floor(position2D.X / crystalSize), floor(position2D.Y / crystalSize));
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
@@ -141,6 +150,7 @@ void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize,int
 	GlobalOffset = (position2D-pi*crystalSize)/crystalSize;
 }
 
+//TODO
 void NoiseTool::prehandleValueNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
 
 }
