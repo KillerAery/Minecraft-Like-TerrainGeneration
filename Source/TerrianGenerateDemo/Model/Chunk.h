@@ -11,10 +11,23 @@ class TERRIANGENERATEDEMO_API Chunk
 {
 public:	
 	Chunk(FVector2D chunkPosition);
-	FVector2D ChunkPosition;
-	int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth];
-	float BlocksTemperature[MaxBlocksWidth][MaxBlocksWidth];
 
+public:
+	//chunk中心位置
+	FVector2D ChunkPosition;
+	
+	//chunk地形高度[0~256]
+	int32 BlocksHeight[MaxBlocksWidth][MaxBlocksWidth];
+	
+	//chunk地形温度[-1.0f,1.0f]
+	float BlocksTemperature[MaxBlocksWidth][MaxBlocksWidth];
+	
+	//chunk地形湿度[0.0f,1.0f]
+	float BlocksHumidity[MaxBlocksWidth][MaxBlocksWidth];
+
+	//chunk特殊方块列表
 	TArray<TPair<TTuple<int32,int32,int32>,int32>> BlocksID;
+
+	//chunk所有显示用ABlock
 	ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
 };

@@ -2,12 +2,35 @@
 
 #include "Tool/NoiseTool.h"
 
+//初始化全局顶点
+FVector2D NoiseTool::GlobalVertex[4] = {};
+
+//初始化全局偏移
+FVector2D NoiseTool::GlobalOffset = FVector2D::ZeroVector;
+
+//初始化全局种子
+int32 NoiseTool::GlobalSeed = 107;
+
 int32 NoiseTool::hash11(int32 position)
 {
 	const uint32 BIT_NOISE1 = 0x85297A4D;
 	const uint32 BIT_NOISE2 = 0x68E31DA4;
 	const uint32 BIT_NOISE3 = 0x1B56C4E9;
 	uint32 mangled = position;
+	mangled *= BIT_NOISE1;
+	mangled ^= (mangled >> 8);
+	mangled += BIT_NOISE2;
+	mangled ^= (mangled << 8);
+	mangled *= BIT_NOISE3;
+	mangled ^= (mangled >> 8);
+	return mangled%1024;
+}
+
+int32 NoiseTool::hash11WithGlobalSeed(int32 position){
+	const uint32 BIT_NOISE1 = 0x85297A4D;
+	const uint32 BIT_NOISE2 = 0x68E31DA4;
+	const uint32 BIT_NOISE3 = 0x1B56C4E9;
+	uint32 mangled = position ^ GlobalSeed;
 	mangled *= BIT_NOISE1;
 	mangled ^= (mangled >> 8);
 	mangled += BIT_NOISE2;
@@ -42,12 +65,18 @@ int32 NoiseTool::hash31(FVector position3D)
 	return hash11(position3D.X * 0x651A6BE6 - position3D.Y * 0xCB251062 + position3D.Z);
 }
 
+void NoiseTool::setSeed(int32 seed){
+	GlobalSeed = seed;
+}
+
 int32 NoiseTool::randInt(FVector2D position){
-	return hash21(position*1024);
+	position = position*1024;
+	return hash11WithGlobalSeed(0x651A6BE1 * (int32)position.X + (int32)position.Y)%1024;
 }
 	
 float NoiseTool::rand(FVector2D position){
-	return hash21(position*1024)/1024.0f;
+	position = position*1024;
+	return hash11WithGlobalSeed(0x651A6BE1 * (int32)position.X + (int32)position.Y)%1024/1024.0f;
 }
 
 float NoiseTool::grad(FVector2D vertex, FVector2D position2D)
@@ -74,7 +103,9 @@ float NoiseTool::perlinNoise(FVector2D p)
 	FVector2D w = p;
 	//FVector2D w = p * pf * (FVector2D(3.0f, 3.0f) - 2.0f * pf);
 
-	return FMath::Lerp(
+	return 
+	FMath::Clamp<float>(
+		FMath::Lerp(
 		FMath::Lerp(
 			grad(GlobalVertex[0],p),
 			grad(GlobalVertex[1],p - FVector2D(1.0f, 0.0f)),
@@ -83,7 +114,9 @@ float NoiseTool::perlinNoise(FVector2D p)
 			grad(GlobalVertex[2],p - FVector2D(0.0f, 1.0f)),
 			grad(GlobalVertex[3],p - FVector2D(1.0f, 1.0f)),
 			w.X),
-		w.Y);
+		w.Y)
+	,-1,1)
+	;
 }
 
 //TODO
@@ -96,7 +129,8 @@ float NoiseTool::valueNoise(FVector2D position2D)
 
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
 
-	return FMath::Clamp<float>(FMath::Lerp(
+	return FMath::Clamp<float>(
+		FMath::Lerp(
 		FMath::Lerp(hash21(vertex[0]) % 17,
 			hash21(vertex[1]) % 17,
 			w.X),
@@ -129,14 +163,17 @@ float NoiseTool::simplexNoise(FVector2D p)
   float hx = 0.5f - FVector2D::DotProduct(dist1, dist1);
   float hy = 0.5f - FVector2D::DotProduct(dist2, dist2);
   float hz = 0.5f - FVector2D::DotProduct(dist3, dist3);
-  hx=hx*hx*hx*hx;
-  hy=hy*hy*hy*hy;
-  hz=hz*hz*hz*hz;
-  return 70*(
-  		hx*FVector2D::DotProduct(dist1, hash22(pi)) 
-	  	+hy*FVector2D::DotProduct(dist2, hash22(pi + vertex2Offset))
-	  	+hz*FVector2D::DotProduct(dist3, hash22(pi + FVector2D(1,1)))
-  		);
+
+  hx*=hx;
+  hy*=hy;
+  hz*=hz;
+
+  return FMath::Clamp<float>(
+		70*(hx*hx*FVector2D::DotProduct(dist1, hash22(pi)) 
+	  	+hy*hy*FVector2D::DotProduct(dist2, hash22(pi + vertex2Offset))
+	  	+hz*hz*FVector2D::DotProduct(dist3, hash22(pi + FVector2D(1,1)))
+  		)
+		,-1,1);
 }
 
 
@@ -161,6 +198,3 @@ void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,in
 }
 
 
-//初始化全局顶点
-FVector2D NoiseTool::GlobalVertex[4] = {};
-FVector2D NoiseTool::GlobalOffset = FVector2D::ZeroVector;

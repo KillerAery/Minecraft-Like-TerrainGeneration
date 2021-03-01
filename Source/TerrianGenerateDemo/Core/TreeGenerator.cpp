@@ -5,8 +5,10 @@
 #include "Tool/NoiseTool.h"
 
 void TreeGenerator::GenerateTree(Chunk& chunk){
-    int32 cystalSize = 16;
+    const int32 cystalSize = 16;
+
 	NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize,1);
+    NoiseTool::setSeed(117+NoiseTool::hash21(chunk.ChunkPosition));
 
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 	for (int j = 0; j < MaxBlocksWidth; ++j)
@@ -15,18 +17,15 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
 
         //-----------
         //--生成草
-        
         int32 height = chunk.BlocksHeight[i][j];
         if(height <=79) continue;
 
         float valueTemperature = chunk.BlocksTemperature[i][j];
-		float possible = 
-        (NoiseTool::rand(chunk.ChunkPosition*11 + pf*1011))
-            - FMath::Abs(valueTemperature+0.1f)*0.22f;
+		float possible = NoiseTool::rand(pf) - FMath::Abs(valueTemperature+0.1f)*0.22f;
         
         //若满足概率
         if(possible > 0.9f){
-            valueTemperature += (NoiseTool::rand(chunk.ChunkPosition*17 + pf*10207)-0.5f)*0.2f;
+            valueTemperature += (NoiseTool::rand(FVector2D::UnitVector+pf)-0.5f)*0.2f;
             //方块ID 11为绿草,ID 12为黄草，ID 13为白草
             if(valueTemperature>0.3f){
                 chunk.BlocksID.Emplace(TTuple<int32,int32,int32>(i,j,chunk.BlocksHeight[i][j]+1),12);

@@ -18,7 +18,7 @@ void HeightGenerator::GenerateHeight(Chunk& chunk)
 	float f[3] = {0.12f,0.2f,0.68f};
 	//波幅
 	float maxHeigh[3] = {100.0f,100.0f,100.0f};
-
+	
 	for (int d = 0; d < 3; ++d) {
 		NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,m[d],1);
 		//NoiseTool::prehandlePerlinNoise(ChunkPosition,m,1);
@@ -28,11 +28,9 @@ void HeightGenerator::GenerateHeight(Chunk& chunk)
 		{
 			FVector2D pf = FVector2D((float)i / MaxBlocksWidth / m[d], float(j) / MaxBlocksWidth / m[d]);
 			chunk.BlocksHeight[i][j] += 
-			(	
-				FMath::Clamp<float>(
-				NoiseTool::simplexNoise(pf)
-				//NoiseTool::perlinNoise(pf)
-				,-1.0f,1.0f)*maxHeigh[d] + maxHeigh[d]
+			(NoiseTool::simplexNoise(pf)
+			//NoiseTool::perlinNoise(pf)
+			*maxHeigh[d] + maxHeigh[d]
 			)*f[d];
 		}
 
