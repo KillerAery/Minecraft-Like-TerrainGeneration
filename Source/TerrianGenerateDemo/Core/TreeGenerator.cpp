@@ -15,6 +15,10 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
 
         //-----------
         //--生成草
+        
+        int32 height = chunk.BlocksHeight[i][j];
+        if(height <=79) continue;
+
         float valueTemperature = chunk.BlocksTemperature[i][j];
 		float possible = 
         (NoiseTool::rand(chunk.ChunkPosition*11 + pf*1011))

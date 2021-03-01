@@ -2,6 +2,7 @@
 
 
 #include "RainGenerator.h"
+#include "Tool/NoiseTool.h"
 
 
 void RainGenerator::GenerateRain(Chunk& chunk){
