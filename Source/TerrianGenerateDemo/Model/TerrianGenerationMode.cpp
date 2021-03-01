@@ -123,7 +123,7 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 				targetBlockID = 10;
 			}
 
-			if (k == chunk.BlocksHeight[i][j] && (rand() % 255 < 240)) {
+			if (k == chunk.BlocksHeight[i][j] && (rand() % 255 < 250)) {
 				chunk.Blocks[i][j][k] = CreateBlock(targetBlockID,BlockPosition);
 			}
 			else{

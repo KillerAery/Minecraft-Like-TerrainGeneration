@@ -8,7 +8,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "TerrianGenerationMode.generated.h"
 
-const int32 LoadRadius = 2;
+const int32 LoadRadius = 3;
 const int32 ChunkSize = LoadRadius * 2 - 1;
 const int32 Center = LoadRadius - 1;
 /**
