@@ -42,7 +42,7 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
 
             float valueTemperature = chunk.BlocksTemperature[i][j];
             float valueHumidity = chunk.BlocksHumidity[i][j];
-		    float possible = ((NoiseTool::simplexNoise(pf)+1.0f)/2.0f)*0.15f - FMath::Abs(valueTemperature+0.1f)*0.05f + valueHumidity*0.1f + NoiseTool::rand(pf)*0.9f;
+		    float possible = ((NoiseTool::simplexNoise(pf)+1.0f)/2.0f)*0.15f - FMath::Abs(valueTemperature+0.1f)*0.10f + valueHumidity*0.15f + NoiseTool::rand(pf)*0.9f;
             
             //若满足概率
             if(possible > 0.985f){

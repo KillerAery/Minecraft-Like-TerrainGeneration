@@ -109,11 +109,16 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 					break;
 			}
 
-			int targetBlockID;
+			int32 targetBlockID;
+			float temperature = chunk.BlocksTemperature[i][j];
+			float humidity = chunk.BlocksHumidity[i][j];
 
-			//温度选择 沙地、草地、雪地
-			if(chunk.BlocksTemperature[i][j]>0.25f){targetBlockID = 4;}
-			else if(chunk.BlocksTemperature[i][j]>-0.25f){targetBlockID = 1;}
+			//温度选择 沙地、泥地、草地、雪地
+			if(temperature > 0.20f && humidity < 0.3f){targetBlockID = 4;}
+			else if(temperature > 0.20f){targetBlockID = 3;}
+			else if(temperature > -0.2f && humidity < 0.05f){targetBlockID = 2;}
+			else if(temperature > -0.2f && humidity < 0.1f){targetBlockID = 3;}
+			else if(temperature > -0.2f){targetBlockID = 1;}
 			else{targetBlockID = 10;}
 
 			//随机泥土
