@@ -4,9 +4,11 @@
 
 //初始化全局顶点
 FVector2D NoiseTool::GlobalVertex[4] = {};
+FVector NoiseTool::GlobalVertex3D[3] = {};
 
 //初始化全局偏移
 FVector2D NoiseTool::GlobalOffset = FVector2D::ZeroVector;
+FVector NoiseTool::GlobalOffset3D = FVector::ZeroVector;
 
 //初始化全局种子
 int32 NoiseTool::GlobalSeed = 107;
@@ -55,9 +57,15 @@ int32 NoiseTool::hash21(FVector2D position2D)
 	return hash11(0x651A6BE1 * (int32)position2D.X + (int32)position2D.Y)%1024;
 }
 
-FVector NoiseTool::hash33(FVector position3D)
+FVector NoiseTool::hash33(FVector position)
 {
-	return FVector(hash11(position3D.X), hash11(position3D.Y),hash11(position3D.Z));
+	FVector v(
+		hash11((int32)position.X^0x651A6BE3+(int32)position.Y^0x218A6147-(int32)position.Z^0x118A5191)%1024,
+		hash11((int32)position.X^0x118A5191-(int32)position.Y^0x218AE247+(int32)position.Z^0x2B8AE147)%1024,
+		hash11((int32)position.X^0x21613122-(int32)position.Y^0x118A5191-(int32)position.Z^0x218AE247)%1024
+		);
+	v/=1024.0f;
+	return v;
 }
 
 int32 NoiseTool::hash31(FVector position3D)
@@ -176,6 +184,95 @@ float NoiseTool::simplexNoise(FVector2D p)
 		,-1,1);
 }
 
+//TODO
+float NoiseTool::simplexNoise(FVector p){
+ 	p = p + GlobalOffset3D;
+
+	// Skew the input space to determine which simplex cell we're in
+ 	const float F3 = 1.0/3.0;
+
+ 	float s = (p.X+p.Y+p.Z)*F3; // Very nice and simple skew factor for 3D
+	FVector pi = FVector(floor(p.X+s),floor(p.Y+s),floor(p.Z+s));
+
+ 	const float G3 = 1.0/6.0; // Very nice and simple unskew factor, too
+ 	float t = (pi.X+pi.Y+pi.Z)*G3;
+	 
+	// Unskew the cell origin back to (x,y,z) space
+	FVector p0 = FVector(p.X-pi.X+t,p.Y-pi.Y+t,p.Z-pi.Z+t);// The x,y,z distances from the cell origin
+
+ 	// For the 3D case, the simplex shape is a slightly irregular tetrahedron.
+ 	// Determine which simplex we are in.
+	FVector pi1;
+	FVector pi2;
+ 	// Offsets for second corner of simplex in (i,j,k) coords
+ 	if(p0.X>=p0.Y) {
+ 		if(p0.Y>=p0.Z){ 
+			pi1 = FVector(1,0,0);
+			pi2 = FVector(1,1,0);
+		} // X Y Z order
+ 		else if(p0.X>=p0.Z) {
+			pi1 = FVector(1,0,0);
+			pi2 = FVector(1,0,1);
+		} // X Z Y order
+ 		else {
+			pi1 = FVector(0,0,1);
+			pi2 = FVector(1,0,1);
+		} // Z X Y order
+ 	}
+ 	else { // p0.X<p0.Y
+ 		if(p0.Y<p0.Z) {			 
+			pi1 = FVector(0,0,1);
+			pi2 = FVector(0,1,1); 
+		} // Z Y X order
+ 		else if(p0.X<p0.Z) {
+			pi1 = FVector(0,1,0);
+			pi2 = FVector(0,1,1); 
+		} // Y Z X order
+ 		else {
+			pi1 = FVector(0,1,0);
+			pi2 = FVector(1,1,0); 
+		} // Y X Z order
+ 	}
+
+ 	// A step of (1,0,0) in (i,j,k) means a step of (1-c,-c,-c) in (x,y,z),
+ 	// a step of (0,1,0) in (i,j,k) means a step of (-c,1-c,-c) in (x,y,z), and
+ 	// a step of (0,0,1) in (i,j,k) means a step of (-c,-c,1-c) in (x,y,z), where
+ 	// c = 1/6.
+	FVector p1 = p0 - pi1 + FVector::OneVector*(G3);// Offsets for second corner in (x,y,z) coords
+	FVector p2 = p0 - pi2 + FVector::OneVector*(2.0f*G3);// Offsets for third corner in (x,y,z) coords
+	FVector p3 = p0 - FVector::OneVector*(-1.0f+3.0f*G3);// Offsets for last corner in (x,y,z) coords
+
+ 	// Calculate the contribution from the four corners
+ 	float t0 = 0.6 - p0.X*p0.X - p0.Y*p0.Y - p0.Z*p0.Z;
+	float n0, n1, n2, n3; // Noise contributions from the four corners
+ 	if(t0<0) n0 = 0.0;
+ 	else {
+ 		t0 *= t0;
+ 		n0 = t0 * t0 * FVector::DotProduct(pi,hash33(p0));
+ 	}
+ 	float t1 = 0.6 - FVector::DotProduct(p1,p1);
+ 	if(t1<0) n1 = 0.0;
+ 	else {
+ 		t1 *= t1;
+ 		n1 = t1 * t1 * FVector::DotProduct(pi,hash33(p1));
+ 	}
+ 	float t2 = 0.6 - FVector::DotProduct(p2,p2);
+ 	if(t2<0) n2 = 0.0;
+ 	else {
+ 		t2 *= t2;
+ 		n2 = t2 * t2 * FVector::DotProduct(pi,hash33(p2));
+ 	}
+ 	float t3 = 0.6 - FVector::DotProduct(p3,p3);
+ 	if(t3<0) n3 = 0.0;
+ 	else {
+ 		t3 *= t3;
+ 		n3 = t3 * t3 * FVector::DotProduct(pi,hash33(p3));
+ 	}
+ 	// Add contributions from each corner to get the final noise value.
+ 	// The result is scaled to stay just inside [-1,1]
+ 	return 32.0f*(n0 + n1 + n2 + n3);
+}
+
 
 void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
 	FVector2D pi = FVector2D(floor(position2D.X / crystalSize), floor(position2D.Y / crystalSize));
@@ -197,6 +294,10 @@ void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,in
 	GlobalOffset = position2D / crystalSize;
 }
 
+void NoiseTool::prehandleSimplexNoise(FVector position,int32 crystalSize,int32 frequence){
+	FVector pi = FVector(floor(position.X / crystalSize), floor(position.Y / crystalSize), floor(position.Z / crystalSize));
+	GlobalOffset3D = position / crystalSize;
+}
 
 //二阶bezier曲线 t应[0.0f~1.0f]
 FVector2D NoiseTool::bezier(FVector2D p0,FVector2D p1,FVector2D p2,float t){
