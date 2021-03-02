@@ -106,30 +106,29 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 					break;
 			}
 
+			int targetBlockID;
+
+			//温度选择 沙地、草地、雪地
+			if(chunk.BlocksTemperature[i][j]>0.25f){targetBlockID = 4;}
+			else if(chunk.BlocksTemperature[i][j]>-0.25f){targetBlockID = 1;}
+			else{targetBlockID = 10;}
+
+			//随机泥土
+			if (k < chunk.BlocksHeight[i][j] || (rand() % 255 >= 250)){
+				targetBlockID = 3;
+			}
+
+			//边缘高度选择 地表、地下
+			if(chunk.BlocksHeight[i][j]-k>=2){
+				targetBlockID = 2;
+			}
+
 			BlockPosition = FVector(
 				chunkWorldPosition.X + i * 100,
 				chunkWorldPosition.Y + j * 100,
 				k * 100);
-
-			int targetBlockID = 1;
-			
-			if(chunk.BlocksTemperature[i][j]>0.25f){
-				targetBlockID = 4;
-			}
-			else if(chunk.BlocksTemperature[i][j]>-0.25f){
-				targetBlockID = 1;
-			}
-			else{
-				targetBlockID = 10;
-			}
-
-			if (k == chunk.BlocksHeight[i][j] && (rand() % 255 < 250)) {
-				chunk.Blocks[i][j][k] = CreateBlock(targetBlockID,BlockPosition);
-			}
-			else{
-				chunk.Blocks[i][j][k] = CreateBlock(3,BlockPosition);
-			}
 				
+			chunk.Blocks[i][j][k] = CreateBlock(targetBlockID,BlockPosition);
 		}
 	}
 
