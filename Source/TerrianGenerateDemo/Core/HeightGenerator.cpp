@@ -15,7 +15,7 @@ void HeightGenerator::GenerateHeight(Chunk& chunk)
 	//晶格大小
 	int32 m[3] = {4,16,64};
 	//权重
-	float f[3] = {0.12f,0.2f,0.68f};
+	float f[3] = {0.12f,0.22f,0.66f};
 	//波幅
 	float maxHeigh[3] = {100.0f,100.0f,100.0f};
 	

@@ -26,7 +26,7 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
         //若满足概率
         if(possible > 0.9f){
             valueTemperature += (NoiseTool::rand(FVector2D::UnitVector+pf)-0.5f)*0.2f;
-            //方块ID 11为绿草,ID 12为黄草，ID 13为白草
+            //方块ID 11为绿草,ID 12为黄草，ID13为白草
             if(valueTemperature>0.3f){
                 chunk.BlocksID.Emplace(TTuple<int32,int32,int32>(i,j,chunk.BlocksHeight[i][j]+1),12);
             }
