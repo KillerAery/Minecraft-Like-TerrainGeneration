@@ -54,6 +54,12 @@ public:
 
 	//预处理噪声（预先设置全局顶点）：初始2D坐标，晶格大小，频率
 	static void prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,int32 frequence);
+
+	//二阶bezier曲线 t应[0.0f~1.0f]
+	static FVector2D bezier(FVector2D p0,FVector2D p1,FVector2D p2,float t);
+
+	//三阶bezier曲线 t应[0.0f~1.0f]
+	static FVector2D bezier(FVector2D p0,FVector2D p1,FVector2D p2,FVector2D p3,float t);
 private:
 	static FVector2D GlobalVertex[4];
 	static FVector2D GlobalOffset;

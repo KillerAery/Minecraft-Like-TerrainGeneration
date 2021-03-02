@@ -198,3 +198,12 @@ void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,in
 }
 
 
+//二阶bezier曲线 t应[0.0f~1.0f]
+FVector2D NoiseTool::bezier(FVector2D p0,FVector2D p1,FVector2D p2,float t){
+	return ((1-t)*(1-t)*p0+t*(1-t)*p1+t*t*p2);
+}
+
+//三阶bezier曲线 t应[0.0f~1.0f]
+FVector2D NoiseTool::bezier(FVector2D p0,FVector2D p1,FVector2D p2,FVector2D p3,float t){
+	return bezier(p0,p1,p2,t)*(1-t)+bezier(p1,p2,p3,t)*t;
+}

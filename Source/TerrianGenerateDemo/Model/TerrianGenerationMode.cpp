@@ -4,6 +4,7 @@
 #include "Model/TerrianGenerationMode.h"
 #include "Core/HeightGenerator.h"
 #include "Core/TemperatureGenerator.h"
+#include "Core/HumidityGenerator.h"
 #include "Core/TreeGenerator.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
@@ -77,8 +78,10 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	Chunk& chunk = Chunks[index];
 	//生成高度
 	HeightGenerator::GenerateHeight(chunk);
-	//生成生物群落
+	//生成温度
 	TemperatureGenerator::GenerateTemperature(chunk);
+	//生成湿度
+	HumidityGenerator::GenerateHumidity(chunk);
 	//生成植被
 	TreeGenerator::GenerateTree(chunk);
 
