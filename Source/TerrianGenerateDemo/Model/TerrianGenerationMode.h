@@ -40,7 +40,7 @@ public:
 protected:
 	//全部Chunk
 	TArray<Chunk> Chunks;
-	
+
 	bool NeedChunk(FVector2D chunkPosition);
 
 	//

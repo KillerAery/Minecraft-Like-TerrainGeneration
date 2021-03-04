@@ -32,5 +32,5 @@ public:
 	TArray<TPair<TTuple<int32,int32,int32>,int32>> BlocksID;
 
 	//chunk所有显示用ABlock
-	ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
+	//ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
 };

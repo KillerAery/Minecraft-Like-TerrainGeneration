@@ -8,7 +8,7 @@
 #include "CoreMinimal.h"
 #include "Block.generated.h"
 
-const int32 MAX_BLOCKS_NUM = 23;
+const int32 MAX_BLOCKS_NUM = 24;
 
 UCLASS()
 class TERRIANGENERATEDEMO_API ABlock : public AActor
@@ -26,6 +26,7 @@ public:
 
 	void InitByBlockID(int32 id);
 
+	int32 GetBlockID();
 protected:
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	int32 BlockID = 0;

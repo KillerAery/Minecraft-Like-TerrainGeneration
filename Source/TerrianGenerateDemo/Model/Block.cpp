@@ -16,6 +16,10 @@ ABlock::ABlock()
 	RootComponent = mMeshComponent;
 }
 
+
+int32 ABlock::GetBlockID(){
+	return BlockID;
+}
 // Called when the game starts or when spawned
 /*
 void ABlock::BeginPlay()

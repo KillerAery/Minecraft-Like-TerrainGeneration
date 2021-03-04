@@ -93,10 +93,10 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	const int32 TRICK_EDGE_HEIGH = 5;
 
 	FVector BlockPosition;
-
+	
 	for (int i = 0; i < 16; ++i)
 	for (int j = 0; j < 16; ++j) 
-	{
+	{	
 		for (int k = chunk.BlocksHeight[i][j],count = TRICK_EDGE_HEIGH; k >= 0; --k)
 		{
 			if(i == 0 || j == 0 || i == 15 || j == 15){
@@ -157,22 +157,28 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 				chunkWorldPosition.Y + j * 100,
 				k * 100);
 				
-			chunk.Blocks[i][j][k] = CreateBlock(targetBlockID,BlockPosition);
+			ABlock* block = CreateBlock(targetBlockID,BlockPosition);
 		}
 	}
 
-
+	int32 chunkX = chunk.ChunkPosition.X/1600;
+	int32 chunkY = chunk.ChunkPosition.Y/1600;
+	//生成特殊方块
 	for(auto& t:chunk.BlocksID){
 		int x = t.Get<0>().Get<0>();
 		int y = t.Get<0>().Get<1>();
-		int z = t.Get<0>().Get<2>();
+		float z = t.Get<0>().Get<2>();
 		int32 blockID = t.Get<1>();
+		//雪是特殊方块
+		if(blockID==24)z-=0.5f;
 		
 		BlockPosition = FVector(
 			chunkWorldPosition.X + x * 100,
 			chunkWorldPosition.Y + y * 100,
 			z * 100);
-		chunk.Blocks[x][y][z] = CreateBlock(blockID,BlockPosition);
+		
+		ABlock* block = CreateBlock(blockID,BlockPosition);
+
 	}
 }
 
