@@ -25,6 +25,9 @@ public:
 	//chunk地形湿度[0.0f,1.0f]
 	float BlocksHumidity[MaxBlocksWidth][MaxBlocksWidth];
 
+	//chunk生物群落属性[1,2,3,4...]
+	int32 BlocksBiome[MaxBlocksWidth][MaxBlocksWidth];
+
 	//chunk特殊方块列表
 	TArray<TPair<TTuple<int32,int32,int32>,int32>> BlocksID;
 

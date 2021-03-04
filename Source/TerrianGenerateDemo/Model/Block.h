@@ -8,7 +8,7 @@
 #include "CoreMinimal.h"
 #include "Block.generated.h"
 
-const int32 MAX_BLOCKS_NUM = 19;
+const int32 MAX_BLOCKS_NUM = 23;
 
 UCLASS()
 class TERRIANGENERATEDEMO_API ABlock : public AActor

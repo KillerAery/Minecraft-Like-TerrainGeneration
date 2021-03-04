@@ -13,6 +13,16 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 	for (int j = 0; j < MaxBlocksWidth; ++j)
 	{
+        /*
+	    None = 0
+	    雪地 Snow = 1
+	    草地 Green = 2
+	    泥地 Dry = 3
+        石地 Stone = 4
+	    沙漠 Desert = 5
+        */
+        if(chunk.BlocksBiome[i][j]==4||chunk.BlocksBiome[i][j]==5)continue;
+        
 		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
         int32 height = chunk.BlocksHeight[i][j];
         //-----------------
@@ -66,8 +76,8 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
                     chunk.BlocksID.Emplace(TTuple<int32,int32,int32>(i,j,chunk.BlocksHeight[i][j]+1+k),targetWoodID);
                 }
 
-                int32 t1 = NoiseTool::randInt(17*pf)%6+int32(treeHeight>=5);
-                int32 t2 = NoiseTool::randInt(11*pf)%6+int32(treeHeight>=5);
+                int32 t1 = NoiseTool::rand(17*pf)*4+1.5f+int32(treeHeight>=5);
+                int32 t2 = NoiseTool::rand(11*pf)*4+1.5f+int32(treeHeight>=5);
                 int32 leafHeight = treeHeight+1+t1%3;
                 int32 initLeafHeight = 2+t2%2;
                 for(int k = initLeafHeight;k < leafHeight;++k){

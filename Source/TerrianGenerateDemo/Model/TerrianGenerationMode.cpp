@@ -5,6 +5,7 @@
 #include "Core/HeightGenerator.h"
 #include "Core/TemperatureGenerator.h"
 #include "Core/HumidityGenerator.h"
+#include "Core/BiomeGenerator.h"
 #include "Core/TreeGenerator.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
@@ -82,6 +83,8 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	TemperatureGenerator::GenerateTemperature(chunk);
 	//生成湿度
 	HumidityGenerator::GenerateHumidity(chunk);
+	//生成生物群落属性
+	BiomeGenerator::GenerateBiome(chunk);
 	//生成植被
 	TreeGenerator::GenerateTree(chunk);
 
@@ -110,16 +113,34 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 			}
 
 			int32 targetBlockID;
-			float temperature = chunk.BlocksTemperature[i][j];
-			float humidity = chunk.BlocksHumidity[i][j];
-
-			//温度选择 沙地、泥地、草地、雪地
-			if(temperature > 0.20f && humidity < 0.3f){targetBlockID = 4;}
-			else if(temperature > 0.20f){targetBlockID = 3;}
-			else if(temperature > -0.2f && humidity < 0.05f){targetBlockID = 2;}
-			else if(temperature > -0.2f && humidity < 0.1f){targetBlockID = 3;}
-			else if(temperature > -0.2f){targetBlockID = 1;}
-			else{targetBlockID = 10;}
+			/*
+				None = 0
+				雪地 Snow = 1
+				草地 Green = 2
+				泥地 Dry = 3
+    			石地 Stone = 4
+				沙漠 Desert = 5
+			*/
+			switch (chunk.BlocksBiome[i][j])
+			{
+			case 1:
+			targetBlockID = 10;
+				break;
+			case 2:
+			targetBlockID = 1;
+				break;
+			case 3:
+			targetBlockID = 3;
+				break;
+			case 4:
+			targetBlockID = 5;
+				break;
+			case 5:
+			targetBlockID = 4;
+				break;
+			default:
+				break;
+			}
 
 			//随机泥土
 			if (k < chunk.BlocksHeight[i][j] || (rand() % 255 >= 250)){
