@@ -4,7 +4,7 @@
 #include "TreeGenerator.h"
 #include "Tool/NoiseTool.h"
 
-void TreeGenerator::GenerateTree(Chunk& chunk){
+void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
     const int32 cystalSize = 16;
     int32 seedOffset=NoiseTool::hash21(chunk.ChunkPosition);
 
@@ -25,14 +25,14 @@ void TreeGenerator::GenerateTree(Chunk& chunk){
         if(chunk.BlocksBiome[i][j]==4||chunk.BlocksBiome[i][j]==5)continue;
         //------------------
         //----生成树
-        if(GenerateTree(chunk,i,j,cystalSize))continue;
+        if(GenerateTree(chunk,info,i,j,cystalSize))continue;
         //-----------------
         //----生成草
-        if(GenerateFlower(chunk,i,j,cystalSize))continue;
+        if(GenerateFlower(chunk,info,i,j,cystalSize))continue;
 	}
 }
 
-bool TreeGenerator::GenerateFlower(Chunk& chunk,int32 i,int32 j,int32 cystalSize){
+bool TreeGenerator::GenerateFlower(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
         if(chunk.BlocksHeight[i][j] <=79)return false;
         
 		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
@@ -53,12 +53,13 @@ bool TreeGenerator::GenerateFlower(Chunk& chunk,int32 i,int32 j,int32 cystalSize
         }
 
         if(targetID==0)return false;
+        
+        AddBlockWithIndex(chunk,info,i,j,chunk.BlocksHeight[i][j]+1,targetID);
 
-        chunk.BlocksID.Emplace(TTuple<int32,int32,int32>(i,j,chunk.BlocksHeight[i][j]+1),targetID);
         return true;
 }
 
-bool TreeGenerator::GenerateTree(Chunk& chunk,int32 i,int32 j,int32 cystalSize){
+bool TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
         if(chunk.BlocksHeight[i][j]<=79-1)return false;
         
 		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
@@ -85,7 +86,7 @@ bool TreeGenerator::GenerateTree(Chunk& chunk,int32 i,int32 j,int32 cystalSize){
                 
         for(int k = 0;k<treeHeight;++k){
             //生成树干
-            chunk.BlocksID.Emplace(TTuple<int32,int32,int32>(i,j,chunk.BlocksHeight[i][j]+1+k),targetWoodID);
+            AddBlockWithIndex(chunk,info,i,j,chunk.BlocksHeight[i][j]+1+k,targetWoodID);
         }
 
         int32 t1 = NoiseTool::rand(17*pf)*4+1.5f+int32(treeHeight>=5);
@@ -94,7 +95,7 @@ bool TreeGenerator::GenerateTree(Chunk& chunk,int32 i,int32 j,int32 cystalSize){
         int32 initLeafHeight = 2+t2%2;
         for(int k = leafHeight-1;k >= initLeafHeight ;--k){
             //生成树叶
-            GenerateLeaves(chunk,i,j,chunk.BlocksHeight[i][j]+1+k,
+            GenerateLeaves(chunk,info,i,j,chunk.BlocksHeight[i][j]+1+k,
                 //贝塞尔曲线计算树叶
                 NoiseTool::bezier(
                     FVector2D(0,0)
@@ -108,7 +109,7 @@ bool TreeGenerator::GenerateTree(Chunk& chunk,int32 i,int32 j,int32 cystalSize){
     return true;
 }
 
-void TreeGenerator::GenerateLeaves(Chunk& chunk,int32 x,int32 y,int32 height,int32 radius,int32 targetLeafID){
+void TreeGenerator::GenerateLeaves(Chunk& chunk,GlobalInfo& info,int32 x,int32 y,int32 height,int32 radius,int32 targetLeafID){
     const bool leavesTemplate[4][5][5] = {
         {
             {0,0,0,0,0},
@@ -147,22 +148,32 @@ void TreeGenerator::GenerateLeaves(Chunk& chunk,int32 x,int32 y,int32 height,int
         if(!leavesTemplate[radius][i][j])continue;
         int32 dx = x+i-2;
         int32 dy = y+j-2;
+        int32 gx = x+i-2+chunk.ChunkPosition.X;
+        int32 gy = y+j-2+chunk.ChunkPosition.Y;
 
-        if(chunk.BlocksID.ContainsByPredicate(
-            [dx,dy,height](TPair<TTuple<int32,int32,int32>,int32>& p){
-                auto& t = p.Get<0>();
-                return t.Get<0>() == dx && t.Get<1>() == dy && t.Get<2>() == height;
+        if(info.SpecialBlocksID.ContainsByPredicate(
+            [dx,dy,height](TPair<uint64,int32>& p){
+                FVector t = NoiseTool::UnIndex(p.Get<0>());
+                return t.X== dx && t.Y == dy && t.Z == height;
             })
         )
         {
             continue;
         }
 
-        chunk.BlocksID.Emplace(TTuple<int32,int32,int32>(dx,dy,height),targetLeafID);
+        AddBlockWithIndex(chunk,info,dx,dy,height,targetLeafID);
 
         //树顶雪
-        if(chunk.BlocksBiome[x][y]==1 && NoiseTool::rand(FVector2D(dx+height*11,dy*17+radius*23))>0.2f){
-            chunk.BlocksID.Emplace(TTuple<int32,int32,int32>(dx,dy,height+1),24);
+        if(chunk.BlocksBiome[x][y]==1 && NoiseTool::rand(FVector2D(dx+height*11,dy*17+radius*23))>0.13f){
+            AddBlockWithIndex(chunk,info,dx,dy,height+1,24);
         }
     }
+}
+
+
+void TreeGenerator::AddBlockWithIndex(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 height,int32 targetID){
+    info.SpecialBlocksID.Emplace(NoiseTool::Index(
+    chunk.ChunkPosition.X*16+i,
+    chunk.ChunkPosition.Y*16+j,
+    height),targetID);
 }

@@ -308,3 +308,23 @@ FVector2D NoiseTool::bezier(FVector2D p0,FVector2D p1,FVector2D p2,float t){
 FVector2D NoiseTool::bezier(FVector2D p0,FVector2D p1,FVector2D p2,FVector2D p3,float t){
 	return bezier(p0,p1,p2,t)*(1-t)+bezier(p1,p2,p3,t)*t;
 }
+
+//三维坐标转一维坐标（压缩坐标）
+uint64 NoiseTool::Index(int32 x,int32 y,int32 z){
+		const int32 offset = 16384;
+		uint64 t =
+		uint64(x+offset)<<40 |
+		uint64(y+offset)<<20 | 
+		uint64(z+offset);
+		return t;
+	}
+
+//一维坐标转三维坐标（解压坐标）
+FVector NoiseTool::UnIndex(uint64 index){
+	const int32 offset = 16384;
+	return FVector(
+		int32(index>>40)-offset,
+		int32((index>>20)&0xFFFFF)-offset,
+		int32(index&0xFFFFF)-offset
+	);
+}

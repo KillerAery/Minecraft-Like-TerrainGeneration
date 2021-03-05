@@ -11,7 +11,6 @@ class TERRIANGENERATEDEMO_API Chunk
 {
 public:	
 	Chunk(FVector2D chunkPosition);
-
 public:
 	//chunk中心位置
 	FVector2D ChunkPosition;
@@ -27,10 +26,4 @@ public:
 
 	//chunk生物群落属性[1,2,3,4...]
 	int32 BlocksBiome[MaxBlocksWidth][MaxBlocksWidth];
-
-	//chunk特殊方块列表
-	TArray<TPair<TTuple<int32,int32,int32>,int32>> BlocksID;
-
-	//chunk所有显示用ABlock
-	//ABlock* Blocks[MaxBlocksWidth][MaxBlocksWidth][MaxBlocksHeigth];
 };

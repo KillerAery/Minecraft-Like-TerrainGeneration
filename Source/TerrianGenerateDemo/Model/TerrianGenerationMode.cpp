@@ -7,6 +7,7 @@
 #include "Core/HumidityGenerator.h"
 #include "Core/BiomeGenerator.h"
 #include "Core/TreeGenerator.h"
+#include "Tool/NoiseTool.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
 
@@ -48,12 +49,10 @@ void ATerrianGenerationMode::UpdateChunks()
 	for (int j = 0; j < ChunkSize; ++j) 
 	{
 		FVector2D f = FVector2D(ChunksCenterPosition.X + (i - Center),
-								ChunksCenterPosition.Y + (j - Center)
-								);
-
-		if (NeedChunk(f)) {
+					  			ChunksCenterPosition.Y + (j - Center));
+								  
+		if (NeedChunk(f))
 			GenerateChunk(f);
-		}
 	}
 }
 
@@ -86,9 +85,7 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	//生成生物群落属性
 	BiomeGenerator::GenerateBiome(chunk);
 	//生成植被
-	TreeGenerator::GenerateTree(chunk);
-
-	FVector2D chunkWorldPosition = FVector2D(chunkPosition.X * MaxBlocksWidth * 100, chunkPosition.Y * MaxBlocksWidth * 100);
+	TreeGenerator::GenerateTree(chunk,this->Info);
 
 	const int32 TRICK_EDGE_HEIGH = 5;
 
@@ -153,33 +150,26 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 			}
 
 			BlockPosition = FVector(
-				chunkWorldPosition.X + i * 100,
-				chunkWorldPosition.Y + j * 100,
-				k * 100);
+				chunkPosition.X*16 + i,
+				chunkPosition.Y*16 + j,
+			k);
 				
-			ABlock* block = CreateBlock(targetBlockID,BlockPosition);
+			CreateBlock(targetBlockID,BlockPosition);
 		}
 	}
 
-	int32 chunkX = chunk.ChunkPosition.X/1600;
-	int32 chunkY = chunk.ChunkPosition.Y/1600;
 	//生成特殊方块
-	for(auto& t:chunk.BlocksID){
-		int x = t.Get<0>().Get<0>();
-		int y = t.Get<0>().Get<1>();
-		float z = t.Get<0>().Get<2>();
+	for(auto& t:Info.SpecialBlocksID){
+		uint64 index = t.Get<0>();
 		int32 blockID = t.Get<1>();
-		//雪是特殊方块
-		if(blockID==24)z-=0.5f;
-		
+		FVector v = NoiseTool::UnIndex(index);
 		BlockPosition = FVector(
-			chunkWorldPosition.X + x * 100,
-			chunkWorldPosition.Y + y * 100,
-			z * 100);
-		
-		ABlock* block = CreateBlock(blockID,BlockPosition);
-
+			v.X,
+			v.Y,
+			v.Z);
+		CreateBlock(blockID,BlockPosition);
 	}
+	Info.SpecialBlocksID.Reset();
 }
 
 
@@ -187,14 +177,23 @@ int32 ATerrianGenerationMode::GetHeight(FVector2D position){
 	return 0;
 }
 
-ABlock* ATerrianGenerationMode::CreateBlock(int32 id, FVector location)
+bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
 {
-	if (id <= 0 || id > MAX_BLOCKS_NUM) {
-		return nullptr;
-	}
-	ABlock* block = GetWorld()->SpawnActor<ABlock>(location, FRotator::ZeroRotator);
+	if (id <= 0 || id > MAX_BLOCKS_NUM) {return false;}
+	uint64 index = NoiseTool::Index(blockIndexPosition.X,blockIndexPosition.Y,blockIndexPosition.Z);
+	auto result = Blocks.Find(index);
+	//已存在方块，失败
+	if(result)return false;
+	
+	//雪是特殊方块，处理特殊高度
+	if(id==24)blockIndexPosition.Z-=0.5f;
+
+	//创建方块
+	ABlock* block = GetWorld()->SpawnActor<ABlock>(blockIndexPosition*100, FRotator::ZeroRotator);
 	block->InitByBlockID(id);
-	return block;
+	Blocks.Add(index,block);
+
+	return true;
 }
 
 

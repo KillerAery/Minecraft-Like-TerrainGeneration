@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Model/GlobalInfo.h"
 #include "Model/Chunk.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -40,13 +41,17 @@ public:
 protected:
 	//全部Chunk
 	TArray<Chunk> Chunks;
+	//全部Block
+	TMap<uint64,ABlock*> Blocks;
+	//全局信息
+	GlobalInfo Info;
 
 	bool NeedChunk(FVector2D chunkPosition);
 
-	//
 	void GenerateChunk(FVector2D chunkPosition);
 
 	int32 GetHeight(FVector2D position);
 
-	ABlock* CreateBlock(int32 id, FVector location);
+	//创建Block
+	bool CreateBlock(int32 id, FVector blockIndexPosition);
 };
