@@ -3,6 +3,7 @@
 
 #include "Model/TerrianGenerationMode.h"
 #include "Core/HeightGenerator.h"
+#include "Core/CaveGenerator.h"
 #include "Core/TemperatureGenerator.h"
 #include "Core/HumidityGenerator.h"
 #include "Core/BiomeGenerator.h"
@@ -50,7 +51,7 @@ void ATerrianGenerationMode::UpdateChunks()
 	{
 		FVector2D f = FVector2D(ChunksCenterPosition.X + (i - Center),
 					  			ChunksCenterPosition.Y + (j - Center));
-								  
+
 		if (NeedChunk(f))
 			GenerateChunk(f);
 	}
@@ -78,6 +79,8 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	Chunk& chunk = Chunks[index];
 	//生成高度
 	HeightGenerator::GenerateHeight(chunk);
+	//生成洞穴
+	CaveGenerator::GenerateCave(chunk,this->Info);
 	//生成温度
 	TemperatureGenerator::GenerateTemperature(chunk);
 	//生成湿度
@@ -90,7 +93,19 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	const int32 TRICK_EDGE_HEIGH = 5;
 
 	FVector BlockPosition;
-	
+
+	//生成特殊方块
+	for(auto& itr : Info.SpecialBlocksID){
+		FVector v = NoiseTool::UnIndex(itr.Key);
+		BlockPosition = FVector(
+			v.X,
+			v.Y,
+			v.Z);
+		CreateBlock(itr.Value,BlockPosition);
+	}
+	Info.SpecialBlocksID.Reset();
+
+	//生成地形方块
 	for (int i = 0; i < 16; ++i)
 	for (int j = 0; j < 16; ++j) 
 	{	
@@ -157,19 +172,6 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 			CreateBlock(targetBlockID,BlockPosition);
 		}
 	}
-
-	//生成特殊方块
-	for(auto& t:Info.SpecialBlocksID){
-		uint64 index = t.Get<0>();
-		int32 blockID = t.Get<1>();
-		FVector v = NoiseTool::UnIndex(index);
-		BlockPosition = FVector(
-			v.X,
-			v.Y,
-			v.Z);
-		CreateBlock(blockID,BlockPosition);
-	}
-	Info.SpecialBlocksID.Reset();
 }
 
 
@@ -179,7 +181,7 @@ int32 ATerrianGenerationMode::GetHeight(FVector2D position){
 
 bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
 {
-	if (id <= 0 || id > MAX_BLOCKS_NUM) {return false;}
+	if (id < 0 || id > MAX_BLOCKS_NUM) {return false;}
 	uint64 index = NoiseTool::Index(blockIndexPosition.X,blockIndexPosition.Y,blockIndexPosition.Z);
 	auto result = Blocks.Find(index);
 	//已存在方块，失败
@@ -187,6 +189,12 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
 	
 	//雪是特殊方块，处理特殊高度
 	if(id==24)blockIndexPosition.Z-=0.5f;
+
+	//挖空方块，处理特殊空气方块
+	if(id==0){
+		Blocks.Add(index,nullptr);
+		return true;
+	}
 
 	//创建方块
 	ABlock* block = GetWorld()->SpawnActor<ABlock>(blockIndexPosition*100, FRotator::ZeroRotator);

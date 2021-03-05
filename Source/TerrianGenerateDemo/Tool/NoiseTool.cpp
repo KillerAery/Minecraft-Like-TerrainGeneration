@@ -290,12 +290,10 @@ void NoiseTool::prehandleValueNoise(FVector2D position2D, int32 crystalSize,int3
 }
 
 void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
-	FVector2D pi = FVector2D(floor(position2D.X / crystalSize), floor(position2D.Y / crystalSize));
 	GlobalOffset = position2D / crystalSize;
 }
 
 void NoiseTool::prehandleSimplexNoise(FVector position,int32 crystalSize,int32 frequence){
-	FVector pi = FVector(floor(position.X / crystalSize), floor(position.Y / crystalSize), floor(position.Z / crystalSize));
 	GlobalOffset3D = position / crystalSize;
 }
 
