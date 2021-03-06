@@ -10,9 +10,8 @@
 class TERRIANGENERATEDEMO_API GlobalInfo
 {
 public:
-	//特殊方块列表
-	//一个chunk的所有特殊方块生成完成后，应该清理
-	TMap<uint64,int32> SpecialBlocksID;
+	//全局方块列表
+	TMap<uint64,int32> GolbalBlocksID;
 
 	GlobalInfo();
 

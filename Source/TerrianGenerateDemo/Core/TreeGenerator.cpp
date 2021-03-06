@@ -24,7 +24,7 @@ void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
         */
         if(chunk.BlocksBiome[i][j]==0||chunk.BlocksBiome[i][j]==4||chunk.BlocksBiome[i][j]==5)continue;
         //被挖空就无法生成
-        if(info.SpecialBlocksID.Find(NoiseTool::Index(
+        if(info.GolbalBlocksID.Find(NoiseTool::Index(
             chunk.ChunkPosition.X*16+i,
             chunk.ChunkPosition.Y*16+j,
             chunk.BlocksHeight[i][j]))
@@ -159,7 +159,7 @@ void TreeGenerator::GenerateLeaves(Chunk& chunk,GlobalInfo& info,int32 x,int32 y
         int32 gx = x+i-2+chunk.ChunkPosition.X;
         int32 gy = y+j-2+chunk.ChunkPosition.Y;
 
-        if(info.SpecialBlocksID.Find(NoiseTool::Index(gx,gy,height)))
+        if(info.GolbalBlocksID.Find(NoiseTool::Index(gx,gy,height)))
             continue;
 
         AddBlockWithIndex(chunk,info,dx,dy,height,targetLeafID);
@@ -178,6 +178,8 @@ void TreeGenerator::AddBlockWithIndex(Chunk& chunk,GlobalInfo& info,int32 i,int3
         chunk.ChunkPosition.Y*16+j,
         height);
 
-    if(!info.SpecialBlocksID.Find(index))
-        info.SpecialBlocksID.Emplace(index,targetID);
+    if(!info.GolbalBlocksID.Find(index)){
+            info.GolbalBlocksID.Emplace(index,targetID);
+            chunk.BlocksID.Emplace(index,targetID);
+    }
 }

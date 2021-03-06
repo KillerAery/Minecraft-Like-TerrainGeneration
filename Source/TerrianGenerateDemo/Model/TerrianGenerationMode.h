@@ -9,9 +9,13 @@
 #include "GameFramework/GameModeBase.h"
 #include "TerrianGenerationMode.generated.h"
 
-const int32 LoadRadius = 3;
+const int32 LoadRadius = 5;
 const int32 ChunkSize = LoadRadius * 2 - 1;
 const int32 Center = LoadRadius - 1;
+
+const int32 DisplayRadius = LoadRadius-1;
+const int32 DisplaySize = DisplayRadius * 2- 1;
+const int32 DisplayCenter = DisplayRadius - 1;
 /**
  * 
  */
@@ -39,19 +43,27 @@ public:
 	FVector2D ChunksCenterPosition;
 	
 protected:
-	//全部Chunk
+	//全部加载Chunk
 	TArray<Chunk> Chunks;
+	//全部显示Chunk
+	TSet<Chunk*> Chunks2Display;
 	//全部Block
 	TMap<uint64,ABlock*> Blocks;
 	//全局信息
 	GlobalInfo Info;
 
-	bool NeedChunk(FVector2D chunkPosition);
+	//是否需要加载chunk
+	bool NeedLoadChunk(FVector2D chunkPosition);
 
-	void GenerateChunk(FVector2D chunkPosition);
+	//是否需要显示chunk
+	Chunk* GetDisplayChunk(FVector2D chunkPosition);
 
-	int32 GetHeight(FVector2D position);
+	//载入Chunk
+	void LoadChunk(Chunk& chunk);
 
+	//显示Chunk
+	void DisplayChunk(Chunk& chunk);
+	
 	//创建Block
 	bool CreateBlock(int32 id, FVector blockIndexPosition);
 };
