@@ -90,14 +90,10 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	//生成植被
 	TreeGenerator::GenerateTree(chunk,this->Info);
 
-	const int32 TRICK_EDGE_HEIGH = 5;
-
-	FVector BlockPosition;
-
 	//生成特殊方块
 	for(auto& itr : Info.SpecialBlocksID){
 		FVector v = NoiseTool::UnIndex(itr.Key);
-		BlockPosition = FVector(
+		FVector BlockPosition = FVector(
 			v.X,
 			v.Y,
 			v.Z);
@@ -105,53 +101,46 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 	}
 	Info.SpecialBlocksID.Reset();
 
+	const int32 TRICK_EDGE_HEIGH = 3;
 	//生成地形方块
 	for (int i = 0; i < 16; ++i)
 	for (int j = 0; j < 16; ++j) 
 	{	
-		for (int k = chunk.BlocksHeight[i][j],count = TRICK_EDGE_HEIGH; k >= 0; --k)
+		for (int k = chunk.BlocksHeight[i][j]; k >= 0; --k)
 		{
 			if(i == 0 || j == 0 || i == 15 || j == 15){
-				if(count==0)continue;
-				count--;
+				if(chunk.BlocksHeight[i][j]-k > TRICK_EDGE_HEIGH)break;
 			}
-			else if (k <= chunk.BlocksHeight[i - 1][j] &&
-				k <= chunk.BlocksHeight[i][j - 1] &&
-				k <= chunk.BlocksHeight[i + 1][j] &&
-				k <= chunk.BlocksHeight[i][j + 1] &&
-				k < chunk.BlocksHeight[i][j])
-			{
-					break;
+			else if(k < chunk.BlocksHeight[i][j]){
+				const int32 dx[4] = {-1,1,0,0};
+				const int32 dy[4] = {0,0,-1,1};
+
+				bool flag = false;
+				for(int32 d = 0;d<4;++d){
+					if(k>chunk.BlocksHeight[i+dx[d]][j+dy[d]]){
+						flag = true;
+						break;
+					}
+					auto f = Blocks.Find(NoiseTool::Index(chunk.ChunkPosition.X*16+i+dx[d],chunk.ChunkPosition.Y*16+j+dy[d],k));
+					if(f){
+						flag = true;
+						break;
+					}
+				}
+				if(!flag)break;
 			}
 
 			int32 targetBlockID;
-			/*
-				None = 0
-				雪地 Snow = 1
-				草地 Green = 2
-				泥地 Dry = 3
-    			石地 Stone = 4
-				沙漠 Desert = 5
+			/* None = 0 雪地 Snow = 10 草地 Green = 1
+			泥地 Dry = 3 石地 Stone = 4 沙漠 Desert = 5
 			*/
-			switch (chunk.BlocksBiome[i][j])
-			{
-			case 1:
-			targetBlockID = 10;
-				break;
-			case 2:
-			targetBlockID = 1;
-				break;
-			case 3:
-			targetBlockID = 3;
-				break;
-			case 4:
-			targetBlockID = 5;
-				break;
-			case 5:
-			targetBlockID = 4;
-				break;
-			default:
-				break;
+			switch (chunk.BlocksBiome[i][j]){
+				case 1:targetBlockID = 10;break;
+				case 2:targetBlockID = 1;break;
+				case 3:targetBlockID = 3;break;
+				case 4:targetBlockID = 5;break;
+				case 5:targetBlockID = 4;break;
+				default:break;
 			}
 
 			//随机泥土
@@ -164,7 +153,7 @@ void ATerrianGenerationMode::GenerateChunk(FVector2D chunkPosition)
 				targetBlockID = 2;
 			}
 
-			BlockPosition = FVector(
+			FVector BlockPosition = FVector(
 				chunkPosition.X*16 + i,
 				chunkPosition.Y*16 + j,
 			k);
