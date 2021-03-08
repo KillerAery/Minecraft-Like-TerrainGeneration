@@ -21,7 +21,7 @@ void CaveGenerator::GenerateCave(Chunk& chunk,GlobalInfo& info){
          );
 
         //若高于一定阈值，挖空
-        if(NoiseTool::simplexNoise(pf)>0.2f){
+        if(NoiseTool::simplexNoise(pf)+(chunk.BlocksHeight[i][j]-k)/10.0f*0.3f>0.5f){
             uint64 index =
             NoiseTool::Index(
                 chunk.ChunkPosition.X*16+i,

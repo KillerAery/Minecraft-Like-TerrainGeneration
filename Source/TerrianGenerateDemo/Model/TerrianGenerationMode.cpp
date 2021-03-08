@@ -113,7 +113,7 @@ void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
 	for (int i = 0; i < 16; ++i)
 	for (int j = 0; j < 16; ++j) 
 	{	
-		for (int k = chunk.BlocksHeight[i][j]; k > chunk.BlocksHeight[i][j]-25; --k)
+		for (int k = chunk.BlocksHeight[i][j]; k > chunk.BlocksHeight[i][j]-20; --k)
 		{
 			int32 targetBlockID = chunk.CaculateBlockID(i,j,k);
 			//随机泥土
@@ -129,7 +129,7 @@ void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
 		}
 
 		//垫底方块
-		for (int k = chunk.BlocksHeight[i][j]-25; k > chunk.BlocksHeight[i][j]-28; --k)
+		for (int k = chunk.BlocksHeight[i][j]-20; k > chunk.BlocksHeight[i][j]-23; --k)
 		{
 		uint64 index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
 		Info.GolbalBlocksID.Emplace(index,1);
@@ -150,25 +150,20 @@ void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
 		const int32 dx[6] = {1,-1,0,0,0,0};
     	const int32 dy[6] = {0,0,1,-1,0,0};
     	const int32 dz[6] = {0,0,0,0,-1,1};
-		bool needGenerate = false;
 
 		for(int d=0;d<6;++d)
 		{
 			uint64 index = NoiseTool::Index(v.X+dx[d],v.Y+dy[d],v.Z+dz[d]);
 			auto result = Info.GolbalBlocksID.Find(index);
-			if(
-			!result
+			if(!result
 			||(*result)==0 
 			|| (*result)== 11|| (*result)== 12|| (*result)== 13
 			|| (*result)== 20|| (*result)== 21|| (*result)== 22
 			|| (*result)== 23|| (*result)== 24 ){
-				needGenerate = true;
+				CreateBlock(itr.Value,BlockPosition);
 				break;
 			}
 		}
-		if(!needGenerate)continue;
-		
-		CreateBlock(itr.Value,BlockPosition);
 	}
 }
 
