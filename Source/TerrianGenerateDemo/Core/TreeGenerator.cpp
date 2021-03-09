@@ -24,11 +24,17 @@ void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
         */
         if(chunk.BlocksBiome[i][j]==0||chunk.BlocksBiome[i][j]==4||chunk.BlocksBiome[i][j]==5)continue;
         //被挖空就无法生成
-        if(info.GolbalBlocksID.Find(NoiseTool::Index(
+        int32* result = info.GolbalBlocksID.Find(NoiseTool::Index(
             chunk.ChunkPosition.X*16+i,
             chunk.ChunkPosition.Y*16+j,
-            chunk.BlocksHeight[i][j]))
-        )continue;
+            chunk.BlocksHeight[i][j]));
+        if(*result == 0 || *result == 9)continue;
+        
+        result = info.GolbalBlocksID.Find(NoiseTool::Index(
+            chunk.ChunkPosition.X*16+i,
+            chunk.ChunkPosition.Y*16+j,
+            chunk.BlocksHeight[i][j]+1));
+        if(result)continue;
         //------------------
         //----生成树
         if(GenerateTree(chunk,info,i,j,cystalSize))continue;
@@ -39,7 +45,7 @@ void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
 }
 
 bool TreeGenerator::GenerateFlower(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
-        if(chunk.BlocksHeight[i][j] <=79)return false;
+        if(chunk.BlocksHeight[i][j] <= SeaLevel)return false;
         
 		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
 
@@ -66,7 +72,7 @@ bool TreeGenerator::GenerateFlower(Chunk& chunk,GlobalInfo& info,int32 i,int32 j
 }
 
 bool TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
-        if(chunk.BlocksHeight[i][j]<=79-1)return false;
+        if(chunk.BlocksHeight[i][j]<=SeaLevel-1)return false;
         
 		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
         float temperature = chunk.BlocksTemperature[i][j];

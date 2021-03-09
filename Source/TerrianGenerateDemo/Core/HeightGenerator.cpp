@@ -4,11 +4,6 @@
 #include "Core/HeightGenerator.h"
 #include "Tool/NoiseTool.h"
 
-float HeightGenerator::GetHeight(FVector2D BlockPosition)
-{
-	return 0.0f;
-}
-
 // #BUG1:仍存在边缘问题（0,0）
 void HeightGenerator::GenerateHeight(Chunk& chunk,GlobalInfo& info)
 {

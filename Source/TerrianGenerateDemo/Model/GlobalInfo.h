@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+
+const int32 SeaLevel = 79;
 /**
  * 
  */
