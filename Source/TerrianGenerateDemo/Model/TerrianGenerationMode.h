@@ -51,19 +51,24 @@ protected:
 	TMap<uint64,ABlock*> Blocks;
 	//全局信息
 	GlobalInfo Info;
-
+protected:
+	//------------------------加载Chunk---------------------
 	//是否需要加载chunk
 	bool NeedLoadChunk(FVector2D chunkPosition);
-
-	//是否需要显示chunk
-	Chunk* GetDisplayChunk(FVector2D chunkPosition);
-
 	//载入Chunk
 	void LoadChunk(Chunk& chunk);
 
+	//------------------------显示Chunk---------------------
+	//是否需要显示chunk
+	Chunk* GetDisplayChunk(FVector2D chunkPosition);
 	//显示Chunk
 	void DisplayChunk(Chunk& chunk);
 	
+protected:
 	//创建Block
 	bool CreateBlock(int32 id, FVector blockIndexPosition);
+
+	//加载Chunk地形方块ID
+	void GenerateTerrianBlocksID(Chunk& chunk);
+
 };
