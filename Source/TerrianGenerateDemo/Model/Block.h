@@ -29,7 +29,7 @@ public:
 	int32 GetBlockID();
 protected:
 	UPROPERTY(EditAnywhere, Category = "Setup")
-	int32 BlockID = 0;
+	int32 BlockID;
 
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	UStaticMeshComponent* mMeshComponent;

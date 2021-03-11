@@ -2,18 +2,16 @@
 
 #include "Model/Block.h"
 
-UStaticMesh* ABlock::BlockStaticMeshs[MAX_BLOCKS_NUM]{ nullptr };
+UStaticMesh* ABlock::BlockStaticMeshs[MAX_BLOCKS_NUM] = { nullptr };
 
 // Sets default values
-ABlock::ABlock()
+ABlock::ABlock():BlockID(0)
 {
 	//禁止
 	PrimaryActorTick.bCanEverTick = false;
 
 	//带一个staticmesh组件
 	mMeshComponent = NewObject<UStaticMeshComponent>(this, TEXT("Block"));
-	mMeshComponent->RegisterComponent();
-	RootComponent = mMeshComponent;
 }
 
 
