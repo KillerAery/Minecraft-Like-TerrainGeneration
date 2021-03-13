@@ -9,11 +9,11 @@
 /**
  * 
  */
-class TERRIANGENERATEDEMO_API CaveGenerator
+class TERRIANGENERATEDEMO_API BuildingGenerator
 {
 public:
-	static void GenerateCave(Chunk& chunk,GlobalInfo& info);
-private:
-	CaveGenerator() = delete;
-	~CaveGenerator() = delete;
+	static void GenerateBuilding(Chunk& chunk,GlobalInfo& info);
+public:
+	BuildingGenerator() = delete;
+	~BuildingGenerator() = delete;
 };

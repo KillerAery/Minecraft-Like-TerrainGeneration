@@ -12,6 +12,7 @@ ABlock::ABlock():BlockID(0)
 
 	//带一个staticmesh组件
 	mMeshComponent = NewObject<UStaticMeshComponent>(this, TEXT("Block"));
+	this->SetRootComponent(mMeshComponent);
 }
 
 
