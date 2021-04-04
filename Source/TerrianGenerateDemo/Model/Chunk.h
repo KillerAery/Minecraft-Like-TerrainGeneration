@@ -14,9 +14,6 @@ public:
 
 	//计算方块ID
 	int32 CaculateBlockID(int32 i,int32 j,int32 k);
-
-	//暴露方块
-	//void Expose(GlobalInfo& info,int32 i,int32 j,int32 k);
 public:
 	//chunk中心位置
 	FVector2D ChunkPosition;

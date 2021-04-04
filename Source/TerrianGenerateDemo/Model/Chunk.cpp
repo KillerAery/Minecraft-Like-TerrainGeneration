@@ -6,8 +6,8 @@
 
 Chunk::Chunk(FVector2D chunkPosition):
 	BlocksHeight{0},BlocksTemperature{0},BlocksHumidity{0},BlocksBiome{0}
-{
-	ChunkPosition = chunkPosition;
+{    
+    ChunkPosition = chunkPosition;
 }
 
 int32 Chunk::CaculateBlockID(int32 i,int32 j,int32 k){
@@ -32,21 +32,3 @@ int32 Chunk::CaculateBlockID(int32 i,int32 j,int32 k){
 			default:return 0;break;
 	};
 }
-
-/*
-void Chunk::Expose(GlobalInfo& info,int32 i,int32 j,int32 k){
-    const int32 dx[6] = {1,-1,0,0,0,0};
-    const int32 dy[6] = {0,0,1,-1,0,0};
-    const int32 dz[6] = {0,0,0,0,-1,1};
-    for(int d = 0;d<6;++d){
-        uint64 index = NoiseTool::Index(
-            ChunkPosition.X*16+i+dx[d],
-            ChunkPosition.Y*16+j+dy[d],
-            k+dz[d]
-            );
-        if(!info.GolbalBlocksID.Find(index)){
-            info.GolbalBlocksID.Emplace(index,CaculateBlockID(i+dx[d],j+dy[d],k+dz[d]));
-        }
-    }
-}
-*/
