@@ -72,6 +72,12 @@ public:
 
 	//一维坐标转三维坐标（解压坐标）
 	static FVector UnIndex(uint64 index);
+
+	//二维坐标转一维坐标（压缩坐标）
+	static uint64 Index2D(int32 x,int32 y);
+
+	//一维坐标转二维坐标（解压坐标）
+	static FVector2D UnIndex2D(uint64 index);
 private:
 	static FVector2D GlobalVertex[4];
 	static FVector GlobalVertex3D[3];
