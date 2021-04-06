@@ -61,8 +61,6 @@ void ATerrianGenerationMode::UpdateChunks()
 			Chunk& chunk = Chunks[index];
 			//加载chunk信息
 			LoadChunk(chunk);
-			//生成建筑
-			BuildingGenerator::GenerateBuilding(chunk,this->Info);
 			//加载地形方块ID
 			LoadTerrianBlocksID(chunk);
 		}
@@ -180,6 +178,8 @@ void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
 	HumidityGenerator::GenerateHumidity(chunk);
 	//生成生物群落属性
 	BiomeGenerator::GenerateBiome(chunk);
+	//生成建筑
+	BuildingGenerator::GenerateBuilding(chunk,this->Info);
 }
 
 //展示Chunk
@@ -218,21 +218,21 @@ void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
 }
 
 
-bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
+bool ATerrianGenerationMode::CreateBlock(int32 id, FVector pos)
 {
 	if (id < 0 || id > MAX_BLOCKS_NUM) {return false;}
-	uint64 index = NoiseTool::Index(blockIndexPosition.X,blockIndexPosition.Y,blockIndexPosition.Z);
+	uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
 	auto result = Blocks.Find(index);
 	//已存在方块，失败
 	if(result)return false;
 	
 	//雪是特殊方块，处理特殊高度
-	if(id==24)blockIndexPosition.Z-=0.5f;
+	if(id==24)pos.Z-=0.5f;
 	//挖空方块，处理特殊空气方块
 	if(id==0){return true;}
 
 	//创建方块Actor
-	ABlock* block = GetWorld()->SpawnActor<ABlock>(blockIndexPosition*100, FRotator::ZeroRotator);
+	ABlock* block = GetWorld()->SpawnActor<ABlock>(pos*100, FRotator::ZeroRotator);
 	block->InitByBlockID(id);
 	Blocks.Add(index,block);
 
@@ -241,16 +241,18 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
 
 
 bool ATerrianGenerationMode::CreateBuilding(int32 id,int32 rotate, FVector pos){
-	//创建建筑Actor
-	//ABuilding* building =  GetWorld()->SpawnActor<ABuilding>();
-	//building->InitByBuildingID(id);
-
-	FStringAssetReference asset = "Blueprint'/Game/BluePrints/BP_Building" +
-				FString::FromInt(id) + ".BP_Building" +
-				FString::FromInt(id) + "'";
-	UBlueprint* gen = Cast<UBlueprint>(asset.ResolveObject()); 
-	if (gen != NULL){ 
-	AActor* spawnActor = GetWorld()->SpawnActor<AActor>(gen->GeneratedClass,pos*100+FVector(-50,-50,0), FRotator(0,rotate*90,0));  
+	
+	FString str = "BP_Building" + FString::FromInt(id);
+	FStringAssetReference asset = "Blueprint'/Game/Blueprints/" + str + "." + str + "'";
+	UE_LOG(LogTemp, Warning, TEXT("Your message !!!!!：%s"),*asset.ToString());
+	//Blueprint'/Game/Blueprints/BP_Building1.BP_Building1'
+	UObject* itemObj = asset.ResolveObject(); 
+	UBlueprint* gen = Cast<UBlueprint>(itemObj); 
+	if (gen){ 
+		AActor* spawnActor = GetWorld()->SpawnActor<AActor>(gen->GeneratedClass,pos*100+FVector(-50,-50,0), FRotator(0,rotate*90,0));
+	}
+	else{
+	UE_LOG(LogTemp, Warning, TEXT("Your message NNNNNNNNNNNNNNNNNNNNNNNN"));
 	}
 
 	return true;

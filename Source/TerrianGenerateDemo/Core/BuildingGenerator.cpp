@@ -104,25 +104,36 @@ void BuildingGenerator::PlaceBuilding(GlobalInfo& info,int32 x,int32 y,int32 ind
     for(int i=-updown;i<updown;++i)
     for(int j=-leftright;j<leftright;++j)
     {
-        aver += info.GetHeight(x+i,y+j);
+        int32 h = info.GetHeight(x+i,y+j);
+        //auto result = info.GolbalBlocksID.Find(NoiseTool::Index(x+i,y+j,h));
+        ////地面被挖空，不用生成房屋
+        //if(result&&*result==0)return;
+        aver += h;
     }
+    
     aver/=(buildingSize[index][0]*buildingSize[index][1]);
+    aver = floor(aver+0.5f);
 
     //低于海平面，没必要生成房屋
-    if(floor(aver)<=SeaLevel)return;
+    if(aver<=SeaLevel)return;
 
     for(int i=-updown;i<updown;++i)
     for(int j=-leftright;j<leftright;++j)
     {
-       info.SetHeight(x+i,y+j,floor(aver));
-       //地表插入空气，以免生成树木花草
-       info.GolbalBlocksID.Emplace(
-           NoiseTool::Index(x+i,y+j,floor(aver)+1),
+       info.SetHeight(x+i,y+j,aver);
+    }
+
+    //地表插入空气，以免生成树木花草
+    for(int i=-updown-1;i<updown+1;++i)
+    for(int j=-leftright-1;j<leftright+1;++j)
+    {   
+        info.GolbalBlocksID.Emplace(
+           NoiseTool::Index(x+i,y+j,info.GetHeight(x+i,y+j)+1),
            0
        );
     }
     
-    info.GolbalBudildings.Push(TTuple<uint64,int32,int32>(NoiseTool::Index(x,y,floor(aver)+1),index+1,rotate));
+    info.GolbalBudildings.Push(TTuple<uint64,int32,int32>(NoiseTool::Index(x,y,aver+1),index+1,rotate));
 }
 
 void BuildingGenerator::GeneratePaths(Chunk& chunk,GlobalInfo& info){
