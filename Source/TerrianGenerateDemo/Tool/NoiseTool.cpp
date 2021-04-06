@@ -326,21 +326,3 @@ FVector NoiseTool::UnIndex(uint64 index){
 		int32(index&0xFFFFF)-offset
 	);
 }
-
-//二维坐标转一维坐标（压缩坐标）
-uint64 NoiseTool::Index2D(int32 x,int32 y){		
-	const int32 offset = 16384;
-		uint64 t =
-		uint64(x+offset)<<20 |
-		uint64(y+offset);
-		return t;
-}
-
-//一维坐标转二维坐标（解压坐标）
-FVector2D NoiseTool::UnIndex2D(uint64 index){
-	const int32 offset = 16384;
-	return FVector2D(
-		int32((index>>20)&0xFFFFF)-offset,
-		int32(index&0xFFFFF)-offset
-	);
-}

@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "Model/Block.h"
-
 const size_t MaxBlocksWidth = 16;
 const size_t MaxBlocksHeigth = 256;
 

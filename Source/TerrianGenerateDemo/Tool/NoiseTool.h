@@ -68,16 +68,10 @@ public:
 	static FVector2D bezier(FVector2D p0,FVector2D p1,FVector2D p2,FVector2D p3,float t);
 
 	//三维坐标转一维坐标（压缩坐标）
-	static uint64 Index(int32 x,int32 y,int32 z);
+	static uint64 Index(int32 x,int32 y,int32 z=0);
 
 	//一维坐标转三维坐标（解压坐标）
 	static FVector UnIndex(uint64 index);
-
-	//二维坐标转一维坐标（压缩坐标）
-	static uint64 Index2D(int32 x,int32 y);
-
-	//一维坐标转二维坐标（解压坐标）
-	static FVector2D UnIndex2D(uint64 index);
 private:
 	static FVector2D GlobalVertex[4];
 	static FVector GlobalVertex3D[3];

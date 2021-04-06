@@ -2,6 +2,7 @@
 
 
 #include "Model/TerrianGenerationMode.h"
+
 #include "Core/HeightGenerator.h"
 #include "Core/CaveGenerator.h"
 #include "Core/TemperatureGenerator.h"
@@ -9,6 +10,8 @@
 #include "Core/BiomeGenerator.h"
 #include "Core/TreeGenerator.h"
 #include "Core/RainGenerator.h"
+#include "Core/BuildingGenerator.h"
+
 #include "Tool/NoiseTool.h"
 #include "TerrianGenerateDemoHUD.h"
 #include "TerrianGenerateDemoCharacter.h"
@@ -56,7 +59,12 @@ void ATerrianGenerationMode::UpdateChunks()
 		if (NeedLoadChunk(chunkPosition)){
 			int32 index = Chunks.Add(Chunk(chunkPosition));
 			Chunk& chunk = Chunks[index];
+			//加载chunk信息
 			LoadChunk(chunk);
+			//生成建筑
+			BuildingGenerator::GenerateBuilding(chunk,this->Info);
+			//加载地形方块ID
+			LoadTerrianBlocksID(chunk);
 		}
 	}	
 	
@@ -76,6 +84,9 @@ void ATerrianGenerationMode::UpdateChunks()
 	}
 	*/
 	
+	//生成建筑
+	GenerateBuildingBlocks();
+	
 	for (int i = 0; i < DisplaySize; ++i)
 	for (int j = 0; j < DisplaySize; ++j) 
 	{
@@ -92,7 +103,48 @@ void ATerrianGenerationMode::UpdateChunks()
 
 }
 
-//是否需要加载chunk
+void ATerrianGenerationMode::LoadTerrianBlocksID(Chunk& chunk){
+	//载入地形方块
+	for (int i = 0; i < 16; ++i)
+	for (int j = 0; j < 16; ++j) 
+	{	
+		for (int k = chunk.BlocksHeight[i][j]; k > chunk.BlocksHeight[i][j]-20; --k)
+		{
+			int32 targetBlockID = chunk.CaculateBlockID(i,j,k);
+			//随机泥土
+			if (rand() % 255 >= 250){
+				targetBlockID = 3;
+			}
+
+			uint64 index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
+			if(!Info.GolbalBlocksID.Find(index)){
+				Info.GolbalBlocksID.Emplace(index,targetBlockID);
+            	chunk.BlocksID.Emplace(index,targetBlockID);
+			}
+		}
+
+		//垫底方块
+		for (int k = chunk.BlocksHeight[i][j]-20; k > chunk.BlocksHeight[i][j]-23; --k)
+		{
+		uint64 index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
+		Info.GolbalBlocksID.Emplace(index,1);
+		}
+	}
+}
+
+
+void ATerrianGenerationMode::GenerateBuildingBlocks(){
+	for(auto &tuple: Info.GolbalBudildings){
+		uint64 posIndex = tuple.Get<0>();
+		int32 buildingIndex = tuple.Get<1>();
+		int32 rotate = tuple.Get<2>();
+
+		CreateBuilding(buildingIndex,rotate,NoiseTool::UnIndex(posIndex));
+	} 
+	Info.GolbalBudildings.Reset();
+}
+
+
 bool ATerrianGenerationMode::NeedLoadChunk(FVector2D chunkPosition){
 	//是否已存在Chunks列表内
 	if(Chunks.FindByPredicate(
@@ -104,7 +156,7 @@ bool ATerrianGenerationMode::NeedLoadChunk(FVector2D chunkPosition){
 	return true;
 }
 
-//是否需要显示chunk
+
 Chunk* ATerrianGenerationMode::GetDisplayChunk(FVector2D chunkPosition){
 	Chunk* chunk = Chunks.FindByPredicate(
 		[chunkPosition](Chunk& chunk){
@@ -128,8 +180,6 @@ void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
 	HumidityGenerator::GenerateHumidity(chunk);
 	//生成生物群落属性
 	BiomeGenerator::GenerateBiome(chunk);
-	//生成地形方块ID
-	GenerateTerrianBlocksID(chunk);
 }
 
 //展示Chunk
@@ -167,6 +217,7 @@ void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
 	chunk.BlocksID=std::move(TArray<TPair<uint64,int32>>());
 }
 
+
 bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
 {
 	if (id < 0 || id > MAX_BLOCKS_NUM) {return false;}
@@ -180,7 +231,7 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
 	//挖空方块，处理特殊空气方块
 	if(id==0){return true;}
 
-	//创建方块
+	//创建方块Actor
 	ABlock* block = GetWorld()->SpawnActor<ABlock>(blockIndexPosition*100, FRotator::ZeroRotator);
 	block->InitByBlockID(id);
 	Blocks.Add(index,block);
@@ -189,31 +240,36 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector blockIndexPosition)
 }
 
 
-void ATerrianGenerationMode::GenerateTerrianBlocksID(Chunk& chunk){
-	//载入地形方块
-	for (int i = 0; i < 16; ++i)
-	for (int j = 0; j < 16; ++j) 
-	{	
-		for (int k = chunk.BlocksHeight[i][j]; k > chunk.BlocksHeight[i][j]-20; --k)
-		{
-			int32 targetBlockID = chunk.CaculateBlockID(i,j,k);
-			//随机泥土
-			if (rand() % 255 >= 250){
-				targetBlockID = 3;
-			}
+bool ATerrianGenerationMode::CreateBuilding(int32 id,int32 rotate, FVector pos){
+	//创建建筑Actor
+	//ABuilding* building =  GetWorld()->SpawnActor<ABuilding>();
+	//building->InitByBuildingID(id);
 
-			uint64 index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
-			if(!Info.GolbalBlocksID.Find(index)){
-				Info.GolbalBlocksID.Emplace(index,targetBlockID);
-            	chunk.BlocksID.Emplace(index,targetBlockID);
-			}
-		}
-
-		//垫底方块
-		for (int k = chunk.BlocksHeight[i][j]-20; k > chunk.BlocksHeight[i][j]-23; --k)
-		{
-		uint64 index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
-		Info.GolbalBlocksID.Emplace(index,1);
-		}
+	FStringAssetReference asset = "Blueprint'/Game/BluePrints/BP_Building" +
+				FString::FromInt(id) + ".BP_Building" +
+				FString::FromInt(id) + "'";
+	UBlueprint* gen = Cast<UBlueprint>(asset.ResolveObject()); 
+	if (gen != NULL){ 
+	AActor* spawnActor = GetWorld()->SpawnActor<AActor>(gen->GeneratedClass,pos*100+FVector(-50,-50,0), FRotator(0,rotate*90,0));  
 	}
+
+	return true;
 }
+
+/*
+void ATerrianGenerationMode::Expose(GlobalInfo& info,int32 i,int32 j,int32 k){
+    const int32 dx[6] = {1,-1,0,0,0,0};
+    const int32 dy[6] = {0,0,1,-1,0,0};
+    const int32 dz[6] = {0,0,0,0,-1,1};
+    for(int d = 0;d<6;++d){
+        uint64 index = NoiseTool::Index(
+            ChunkPosition.X*16+i+dx[d],
+            ChunkPosition.Y*16+j+dy[d],
+            k+dz[d]
+            );
+        if(!info.GolbalBlocksID.Find(index)){
+            info.GolbalBlocksID.Emplace(index,CaculateBlockID(i+dx[d],j+dy[d],k+dz[d]));
+        }
+    }
+}
+*/

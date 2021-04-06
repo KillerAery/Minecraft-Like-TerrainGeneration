@@ -30,5 +30,7 @@ void HeightGenerator::GenerateHeight(Chunk& chunk,GlobalInfo& info)
 		}
 
 	}
+	
+	info.SetChunkHeight(chunk.ChunkPosition,chunk.BlocksHeight);
 }
 	

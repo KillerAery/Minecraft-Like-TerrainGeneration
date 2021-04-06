@@ -4,7 +4,11 @@
 
 #include "Model/GlobalInfo.h"
 #include "Model/Chunk.h"
+
+#include "Model/Block.h"
+
 #include "CoreMinimal.h"
+
 #include "GameFramework/Actor.h"
 #include "GameFramework/GameModeBase.h"
 #include "TerrianGenerationMode.generated.h"
@@ -55,6 +59,10 @@ protected:
 	//------------------------加载Chunk---------------------
 	//是否需要加载chunk
 	bool NeedLoadChunk(FVector2D chunkPosition);
+	//加载地形方块ID
+	void LoadTerrianBlocksID(Chunk& chunk);
+	//生成建筑方块
+	void GenerateBuildingBlocks();
 	//载入Chunk
 	void LoadChunk(Chunk& chunk);
 
@@ -63,12 +71,14 @@ protected:
 	Chunk* GetDisplayChunk(FVector2D chunkPosition);
 	//显示Chunk
 	void DisplayChunk(Chunk& chunk);
-	
+
 protected:
-	//创建Block
-	bool CreateBlock(int32 id, FVector blockIndexPosition);
+	//创建Block Actor
+	bool CreateBlock(int32 id, FVector pos);
+	
+	//创建Building Actor
+	bool CreateBuilding(int32 id,int32 rotate, FVector pos);
 
-	//加载Chunk地形方块ID
-	void GenerateTerrianBlocksID(Chunk& chunk);
-
+	//暴露方块
+	//void Expose(GlobalInfo& info,int32 i,int32 j,int32 k);
 };

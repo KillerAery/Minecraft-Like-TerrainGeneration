@@ -2,6 +2,7 @@
 
 
 #include "GlobalInfo.h"
+#include "Tool/NoiseTool.h"
 
 GlobalInfo::GlobalInfo()
 {
@@ -9,4 +10,62 @@ GlobalInfo::GlobalInfo()
 
 GlobalInfo::~GlobalInfo()
 {
+}
+
+int32 GlobalInfo::GetHeight(FVector2D pos){
+   int32 xi = floor(pos.X/16.0f);
+   int32 yi = floor(pos.Y/16.0f);
+
+   auto height = GolbalHeight.Find(NoiseTool::Index(xi,yi));
+   return height?(*height)[(int32)pos.X-xi*16][(int32)pos.Y-yi*16]:-1;
+}
+
+int32 GlobalInfo::GetHeight(int32 x,int32 y){
+   int32 xi = floor(x/16.0f);
+   int32 yi = floor(y/16.0f);
+
+   auto height = GolbalHeight.Find(NoiseTool::Index(xi,yi));
+   return height?(*height)[x-xi*16][y-yi*16]:-1;
+}
+
+void GlobalInfo::SetChunkHeight(FVector2D pos,HeightMap heightmap){
+    GolbalHeight.Emplace(
+        NoiseTool::Index(pos.X,pos.Y),
+        heightmap);
+}
+
+void GlobalInfo::SetHeight(FVector2D pos,int32 height){
+   int32 xi = floor(pos.X/16.0f);
+   int32 yi = floor(pos.Y/16.0f);
+
+   auto map = GolbalHeight.Find(NoiseTool::Index(xi,yi));
+   if(map)
+      (*map)[(int32)pos.X-xi*16][(int32)pos.Y-yi*16] = height;
+}
+	
+void GlobalInfo::SetHeight(int32 x,int32 y,int32 height){
+   int32 xi = floor(x/16.0f);
+   int32 yi = floor(y/16.0f);
+
+   auto map = GolbalHeight.Find(NoiseTool::Index(xi,yi));
+   if(map)
+      (*map)[x-xi*16][y-yi*16] = height;
+}
+
+void GlobalInfo::AddBlock(FVector pos,int32 BlockID){
+   uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
+   GolbalBlocksID.Emplace(index,BlockID);
+}
+
+void GlobalInfo::RemoveBlock(FVector pos){
+   uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
+   GolbalBlocksID.Emplace(index,0);
+}
+	
+void GlobalInfo::AddBuilding(FVector pos,int32 BlockID){
+
+}
+
+void GlobalInfo::RemoveBuilding(FVector pos){
+
 }
