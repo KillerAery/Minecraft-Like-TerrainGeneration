@@ -61,8 +61,6 @@ void ATerrianGenerationMode::UpdateChunks()
 			Chunk& chunk = Chunks[index];
 			//加载chunk信息
 			LoadChunk(chunk);
-			//加载地形方块ID
-			LoadTerrianBlocksID(chunk);
 		}
 	}	
 	
@@ -81,7 +79,24 @@ void ATerrianGenerationMode::UpdateChunks()
 		}
 	}
 	*/
-	
+	for (int i = 0; i < DisplaySize-2; ++i)
+	for (int j = 0; j < DisplaySize-2; ++j) 
+	{
+		FVector2D position = FVector2D(ChunksCenterPosition.X + i +2,
+					  						ChunksCenterPosition.Y + j +2);
+
+		Chunk* chunk = Chunks.FindByPredicate(
+		[position](Chunk& chunk){
+			return FVector2D::DistSquared(position,chunk.ChunkPosition)<0.0001f;
+		});
+
+		if(!Chunk2Build.Find(chunk)){
+			//生成建筑
+			BuildingGenerator::GenerateBuilding(*chunk,this->Info);
+			Chunk2Build.Add(chunk);
+		}
+	}
+
 	//生成建筑
 	GenerateBuildingBlocks();
 	
@@ -91,14 +106,15 @@ void ATerrianGenerationMode::UpdateChunks()
 		FVector2D chunkPosition = FVector2D(ChunksCenterPosition.X + i +1,
 					  						ChunksCenterPosition.Y + j +1);
 		Chunk* chunk = GetDisplayChunk(chunkPosition);
-		if(chunk){
+		if(chunk){			
+			//加载地形方块ID
+			LoadTerrianBlocksID(*chunk);
 			//生成植被
 			TreeGenerator::GenerateTree(*chunk,this->Info);
 			//显示chunk
 			DisplayChunk(*chunk);
 		}
 	}
-
 }
 
 void ATerrianGenerationMode::LoadTerrianBlocksID(Chunk& chunk){
@@ -241,21 +257,11 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector pos)
 
 
 bool ATerrianGenerationMode::CreateBuilding(int32 id,int32 rotate, FVector pos){
-	
-	FString str = "BP_Building" + FString::FromInt(id);
-	FStringAssetReference asset = "Blueprint'/Game/Blueprints/" + str + "." + str + "'";
-	UE_LOG(LogTemp, Warning, TEXT("Your message !!!!!：%s"),*asset.ToString());
-	//Blueprint'/Game/Blueprints/BP_Building1.BP_Building1'
-	UObject* itemObj = asset.ResolveObject(); 
-	UBlueprint* gen = Cast<UBlueprint>(itemObj); 
-	if (gen){ 
-		AActor* spawnActor = GetWorld()->SpawnActor<AActor>(gen->GeneratedClass,pos*100+FVector(-50,-50,0), FRotator(0,rotate*90,0));
-	}
-	else{
-	UE_LOG(LogTemp, Warning, TEXT("Your message NNNNNNNNNNNNNNNNNNNNNNNN"));
-	}
+	FString str = TEXT("Blueprint'/Game/Blueprints/BP_Building") + FString::FromInt(id)+TEXT(".BP_Building")+ FString::FromInt(id)+ TEXT("_C'");
+	UClass* BPClass = LoadClass<AActor>(nullptr, *str);
+	AActor* spawnActor = GetWorld()->SpawnActor<AActor>(BPClass,pos*100+FVector(-50,-50,0), FRotator(0,rotate*90,0));
 
-	return true;
+	return spawnActor!=nullptr;
 }
 
 /*

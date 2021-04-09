@@ -122,7 +122,9 @@
 			"__threading_support": "cpp",
 			"__tree": "cpp",
 			"__tuple": "cpp",
-			"string_view": "cpp"
+			"string_view": "cpp",
+			"bit": "cpp",
+			"stop_token": "cpp"
 		}
 	}
 }

@@ -20,7 +20,7 @@ public:
 	static void GenerateDomains(Chunk& chunk,GlobalInfo& info);
 	static void GenerateBuildings(Chunk& chunk,GlobalInfo& info);
 
-	static void PlaceBuilding(GlobalInfo& info,int32 x,int32 y,int32 buildingIndex,int32 rotate);
+	static bool PlaceBuilding(GlobalInfo& info,int32 x,int32 y,int32 buildingIndex,int32 rotate);
 
 	static void GeneratePaths(Chunk& chunk,GlobalInfo& info);
 protected:

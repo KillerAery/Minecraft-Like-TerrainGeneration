@@ -51,6 +51,8 @@ protected:
 	TArray<Chunk> Chunks;
 	//全部显示Chunk
 	TSet<Chunk*> Chunks2Display;
+	//全部建筑Chunk
+	TSet<Chunk*> Chunk2Build;
 	//全部Block
 	TMap<uint64,ABlock*> Blocks;
 	//全局信息
