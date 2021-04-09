@@ -25,18 +25,12 @@ public:
 	GlobalInfo();
 
 	~GlobalInfo();
-	
-	//高度若不存在则返还-1
-	int32 GetHeight(FVector2D pos);
 
 	//高度若不存在则返还-1
 	int32 GetHeight(int32 x,int32 y);
 
 	//设置高度
-	void SetChunkHeight(FVector2D chunkPosition,HeightMap heightmap);
-
-	//设置高度
-	void SetHeight(FVector2D pos,int32 height);
+	void SetChunkHeight(int32 x,int32 y,HeightMap heightmap);
 
 	//设置高度	
 	void SetHeight(int32 x,int32 y,int32 height);

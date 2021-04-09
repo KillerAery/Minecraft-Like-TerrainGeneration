@@ -17,12 +17,11 @@ void BuildingGenerator::GenerateBuilding(Chunk& chunk,GlobalInfo& info){
 
     GenerateDomains(chunk,info);
     GenerateBuildings(chunk,info);
-    //PlaceBuilding(info,chunk.ChunkPosition.X*16+8,chunk.ChunkPosition.Y*16+8,0,0);
-    //GeneratePaths(chunk,info);
+    GeneratePaths(chunk,info);
 }
 
 void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
-    float maxGradient = 10000;   
+    float maxGradient = 10000;
     for(int i =1;i<15;++i)
     for(int j =1;j<15;++j)
     {
@@ -31,10 +30,11 @@ void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
             chunk.BlocksHeight[i+1][j]+
             chunk.BlocksHeight[i][j-1]+
             chunk.BlocksHeight[i][j+1])/4.0f;
-        float dt = FMath::Abs((chunk.BlocksHeight[i-1][j]-aver))+
-         FMath::Abs((chunk.BlocksHeight[i+1][j]-aver))+
-          FMath::Abs((chunk.BlocksHeight[i][j-1]-aver))+
-           FMath::Abs((chunk.BlocksHeight[i][j+1]-aver));
+        float dt = 
+        FMath::Abs((chunk.BlocksHeight[i-1][j]-aver))+
+        FMath::Abs((chunk.BlocksHeight[i+1][j]-aver))+
+        FMath::Abs((chunk.BlocksHeight[i][j-1]-aver))+
+        FMath::Abs((chunk.BlocksHeight[i][j+1]-aver));
         if(dt<maxGradient){
             maxGradient = dt;
             startPoint = FVector2D(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j);
@@ -64,13 +64,9 @@ void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
         domains.Emplace(NoiseTool::Index(p.X+dx[d],p.Y+dy[d]));
 
         //设置最高发展度费用
-        if(cost > 8)break;
+        if(cost > 7)break;
 
         int32 centerHeight = info.GetHeight(p.X,p.Y);
-        if(centerHeight<5||centerHeight>1000) 
-        {
-            continue;
-        }
 
         const int32 dx[4] = {1,-1,0,0};
         const int32 dy[4] = {0,0,1,-1};
@@ -82,7 +78,7 @@ void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
             if(domains.Find(NoiseTool::Index(x,y)))continue;
 
             int32 height = info.GetHeight(x,y);
-            if(height<=SeaLevel||height>1000)continue;
+            if(height<=SeaLevel||height>1000){continue;}
 
             int32 deltaheight = FMath::Abs(centerHeight-height);
 
@@ -114,12 +110,11 @@ void BuildingGenerator::GenerateBuildings(Chunk& chunk,GlobalInfo& info){
         int32 index = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,-count)*107)%3;
         int32 rotate = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,-count)*17)%4;
         
-        bool test = PlaceBuilding(info,pos.X,pos.Y,index,rotate);
-        if(!test) test = PlaceBuilding(info,pos.X,pos.Y,index,(rotate+1)%4);
+        bool test = PlaceBuilding(info,pos.X,pos.Y,index,rotate) || PlaceBuilding(info,pos.X,pos.Y,index,(rotate+1)%4);
 
         int32 offset = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,-count)*67)%3+5;
-        int32 offsetX = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,count)*61)%3-1;
-        int32 offsetY = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,count)*117)%3-1;
+        int32 offsetX = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,count)*61)%5-2;
+        int32 offsetY = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(-count,count)*117)%5-2;
 
         if(test){
             for(int i = 0;i<4;++i){
@@ -127,7 +122,7 @@ void BuildingGenerator::GenerateBuildings(Chunk& chunk,GlobalInfo& info){
                 (pos.X+dx[i]*(offset+buildingSize[index][0])+offsetX,
                 pos.Y+dy[i]*(offset+buildingSize[index][1])+offsetY));
             }
-	        UE_LOG(LogTemp, Warning, TEXT("Your message 2134214"));
+	        UE_LOG(LogTemp, Warning, TEXT("Your message 233333333333333333333333"));
         }
         else{
 	        UE_LOG(LogTemp, Warning, TEXT("Your message NNNNNNNNNNNNNNNNNNNNNNNN"));

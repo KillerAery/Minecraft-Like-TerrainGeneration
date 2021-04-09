@@ -12,14 +12,6 @@ GlobalInfo::~GlobalInfo()
 {
 }
 
-int32 GlobalInfo::GetHeight(FVector2D pos){
-   int32 xi = floor(pos.X/16.0f);
-   int32 yi = floor(pos.Y/16.0f);
-
-   auto height = GolbalHeight.Find(NoiseTool::Index(xi,yi));
-   return height?(*height)[(int32)pos.X-xi*16][(int32)pos.Y-yi*16]:-1;
-}
-
 int32 GlobalInfo::GetHeight(int32 x,int32 y){
    int32 xi = floor(x/16.0f);
    int32 yi = floor(y/16.0f);
@@ -28,19 +20,10 @@ int32 GlobalInfo::GetHeight(int32 x,int32 y){
    return height?(*height)[x-xi*16][y-yi*16]:-1;
 }
 
-void GlobalInfo::SetChunkHeight(FVector2D pos,HeightMap heightmap){
+void GlobalInfo::SetChunkHeight(int32 x,int32 y,HeightMap heightmap){
     GolbalHeight.Emplace(
-        NoiseTool::Index(pos.X,pos.Y),
+        NoiseTool::Index(x,y),
         heightmap);
-}
-
-void GlobalInfo::SetHeight(FVector2D pos,int32 height){
-   int32 xi = floor(pos.X/16.0f);
-   int32 yi = floor(pos.Y/16.0f);
-
-   auto map = GolbalHeight.Find(NoiseTool::Index(xi,yi));
-   if(map)
-      (*map)[(int32)pos.X-xi*16][(int32)pos.Y-yi*16] = height;
 }
 	
 void GlobalInfo::SetHeight(int32 x,int32 y,int32 height){

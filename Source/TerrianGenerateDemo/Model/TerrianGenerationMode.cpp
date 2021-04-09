@@ -79,12 +79,12 @@ void ATerrianGenerationMode::UpdateChunks()
 		}
 	}
 	*/
-	/*
-	for (int i = 0; i < DisplaySize-2; ++i)
-	for (int j = 0; j < DisplaySize-2; ++j) 
+	
+	for (int i = 1; i < ChunkSize-1; ++i)
+	for (int j = 1; j < ChunkSize-1; ++j) 
 	{
-		FVector2D position = FVector2D(ChunksCenterPosition.X + i +2,
-					  						ChunksCenterPosition.Y + j +2);
+		FVector2D position = FVector2D(ChunksCenterPosition.X + i,
+					  				   ChunksCenterPosition.Y + j);
 
 		Chunk* chunk = Chunks.FindByPredicate(
 		[position](Chunk& chunk){
@@ -94,22 +94,19 @@ void ATerrianGenerationMode::UpdateChunks()
 		if(!Chunk2Build.Find(chunk)){
 			//生成建筑
 			BuildingGenerator::GenerateBuilding(*chunk,this->Info);
+			//加载地形方块ID
+			LoadTerrianBlocksID(*chunk);
 			Chunk2Build.Add(chunk);
 		}
 	}
-	*/
 	
-	for (int i = 0; i < DisplaySize; ++i)
-	for (int j = 0; j < DisplaySize; ++j) 
+	for (int i = 2; i < ChunkSize-2; ++i)
+	for (int j = 2; j < ChunkSize-2; ++j) 
 	{
-		FVector2D chunkPosition = FVector2D(ChunksCenterPosition.X + i +1,
-					  						ChunksCenterPosition.Y + j +1);
+		FVector2D chunkPosition = FVector2D(ChunksCenterPosition.X + i,
+					  						ChunksCenterPosition.Y + j);
 		Chunk* chunk = GetDisplayChunk(chunkPosition);
 		if(chunk){			
-			//生成建筑
-			BuildingGenerator::GenerateBuilding(*chunk,this->Info);
-			//加载地形方块ID
-			LoadTerrianBlocksID(*chunk);
 			//生成植被
 			TreeGenerator::GenerateTree(*chunk,this->Info);
 			//显示chunk
@@ -128,7 +125,7 @@ void ATerrianGenerationMode::LoadTerrianBlocksID(Chunk& chunk){
 	{	
 		for (int k = chunk.BlocksHeight[i][j]; k > chunk.BlocksHeight[i][j]-20; --k)
 		{
-			int32 targetBlockID = chunk.CaculateBlockID(i,j,k);
+			int32 targetBlockID = CaculateBlockID(chunk,i,j,k);
 			//随机泥土
 			if (rand() % 255 >= 250){
 				targetBlockID = 3;
@@ -198,8 +195,29 @@ void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
 	HumidityGenerator::GenerateHumidity(chunk);
 	//生成生物群落属性
 	BiomeGenerator::GenerateBiome(chunk);
-	//生成建筑
-	BuildingGenerator::GenerateBuilding(chunk,this->Info);
+}
+
+int32 ATerrianGenerationMode::CaculateBlockID(Chunk& chunk,int32 i,int32 j,int32 k){
+    if(i<0||i>=16||j<0||j>=16){return 0;}
+
+    int32 dk = chunk.BlocksHeight[i][j]-k;
+    /* None = 0 雪地 Snow = 1 草地 Green = 2
+    泥地 Dry = 3 石地 Stone = 4 沙漠 Desert = 5
+    */
+    //地下石头
+    if(dk>=3){return 2;}
+    //地下泥土
+    if(dk>=1){return 3;}
+    //地表方块	
+    switch(chunk.BlocksBiome[i][j])
+	{
+			case 1:return 10;break;
+			case 2:return 1;break;
+			case 3:return 3;break;
+			case 4:return 5;break;
+			case 5:return 4;break;
+			default:return 0;break;
+	};
 }
 
 //展示Chunk

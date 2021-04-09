@@ -9,9 +9,6 @@ class TERRIANGENERATEDEMO_API Chunk
 {
 public:	
 	Chunk(FVector2D chunkPosition);
-
-	//计算方块ID
-	int32 CaculateBlockID(int32 i,int32 j,int32 k);
 public:
 	//chunk中心位置
 	FVector2D ChunkPosition;

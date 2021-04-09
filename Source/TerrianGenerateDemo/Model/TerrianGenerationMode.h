@@ -67,6 +67,8 @@ protected:
 	void GenerateBuildingBlocks();
 	//载入Chunk
 	void LoadChunk(Chunk& chunk);
+	//计算方块ID
+	int32 CaculateBlockID(Chunk& chunk,int32 i,int32 j,int32 k);
 
 	//------------------------显示Chunk---------------------
 	//是否需要显示chunk
