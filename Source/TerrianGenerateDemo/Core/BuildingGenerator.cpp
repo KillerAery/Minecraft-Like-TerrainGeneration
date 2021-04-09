@@ -118,10 +118,14 @@ void BuildingGenerator::GenerateBuildings(Chunk& chunk,GlobalInfo& info){
         if(!test) test = PlaceBuilding(info,pos.X,pos.Y,index,(rotate+1)%4);
 
         int32 offset = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,-count)*67)%3+5;
+        int32 offsetX = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,count)*61)%3-1;
+        int32 offsetY = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,count)*117)%3-1;
 
         if(test){
             for(int i = 0;i<4;++i){
-                q.push(FVector2D(pos.X+dx[i]*(offset+buildingSize[index][0]),pos.Y+dy[i]*(offset+buildingSize[index][1])));
+                q.push(FVector2D
+                (pos.X+dx[i]*(offset+buildingSize[index][0])+offsetX,
+                pos.Y+dy[i]*(offset+buildingSize[index][1])+offsetY));
             }
 	        UE_LOG(LogTemp, Warning, TEXT("Your message 2134214"));
         }

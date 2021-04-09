@@ -79,6 +79,7 @@ void ATerrianGenerationMode::UpdateChunks()
 		}
 	}
 	*/
+	/*
 	for (int i = 0; i < DisplaySize-2; ++i)
 	for (int j = 0; j < DisplaySize-2; ++j) 
 	{
@@ -96,9 +97,7 @@ void ATerrianGenerationMode::UpdateChunks()
 			Chunk2Build.Add(chunk);
 		}
 	}
-
-	//生成建筑
-	GenerateBuildingBlocks();
+	*/
 	
 	for (int i = 0; i < DisplaySize; ++i)
 	for (int j = 0; j < DisplaySize; ++j) 
@@ -107,6 +106,8 @@ void ATerrianGenerationMode::UpdateChunks()
 					  						ChunksCenterPosition.Y + j +1);
 		Chunk* chunk = GetDisplayChunk(chunkPosition);
 		if(chunk){			
+			//生成建筑
+			BuildingGenerator::GenerateBuilding(*chunk,this->Info);
 			//加载地形方块ID
 			LoadTerrianBlocksID(*chunk);
 			//生成植被
@@ -115,6 +116,9 @@ void ATerrianGenerationMode::UpdateChunks()
 			DisplayChunk(*chunk);
 		}
 	}
+
+	//生成建筑
+	GenerateBuildingBlocks();
 }
 
 void ATerrianGenerationMode::LoadTerrianBlocksID(Chunk& chunk){
