@@ -28,7 +28,7 @@ void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
             chunk.ChunkPosition.X*16+i,
             chunk.ChunkPosition.Y*16+j,
             chunk.BlocksHeight[i][j]));
-        if(*result == 0 || *result == 9)continue;
+        if(result &&(*result == 0||*result == 9))continue;
         
         result = info.GolbalBlocksID.Find(NoiseTool::Index(
             chunk.ChunkPosition.X*16+i,

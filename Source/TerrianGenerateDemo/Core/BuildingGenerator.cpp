@@ -22,6 +22,7 @@ void BuildingGenerator::GenerateBuilding(Chunk& chunk,GlobalInfo& info){
 
 void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
     float maxGradient = 10000;
+    /*
     for(int i =1;i<15;++i)
     for(int j =1;j<15;++j)
     {
@@ -40,6 +41,8 @@ void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
             startPoint = FVector2D(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j);
         }
     }
+    */
+   startPoint = FVector2D(chunk.ChunkPosition.X*16+7,chunk.ChunkPosition.Y*16+7);
 
     std::priority_queue<
         std::pair<float,FVector2D>,
@@ -180,5 +183,4 @@ bool BuildingGenerator::PlaceBuilding(GlobalInfo& info,int32 x,int32 y,int32 ind
 }
 
 void BuildingGenerator::GeneratePaths(Chunk& chunk,GlobalInfo& info){
-
 }

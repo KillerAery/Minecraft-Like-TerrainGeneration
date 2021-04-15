@@ -94,6 +94,8 @@ void ATerrianGenerationMode::UpdateChunks()
 		if(!Chunk2Build.Find(chunk)){
 			//生成建筑
 			BuildingGenerator::GenerateBuilding(*chunk,this->Info);
+			//生成建筑
+			GenerateBuildingBlocks();
 			//加载地形方块ID
 			LoadTerrianBlocksID(*chunk);
 			Chunk2Build.Add(chunk);
@@ -114,8 +116,6 @@ void ATerrianGenerationMode::UpdateChunks()
 		}
 	}
 
-	//生成建筑
-	GenerateBuildingBlocks();
 }
 
 void ATerrianGenerationMode::LoadTerrianBlocksID(Chunk& chunk){
