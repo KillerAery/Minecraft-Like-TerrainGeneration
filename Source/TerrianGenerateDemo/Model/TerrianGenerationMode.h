@@ -59,24 +59,32 @@ protected:
 	GlobalInfo Info;
 protected:
 	//------------------------加载Chunk---------------------
+
 	//是否需要加载chunk
 	bool NeedLoadChunk(FVector2D chunkPosition);
+
 	//加载地形方块ID
 	void LoadTerrianBlocksID(Chunk& chunk);
+
 	//生成建筑方块
 	void GenerateBuildingBlocks();
+
 	//载入Chunk
 	void LoadChunk(Chunk& chunk);
+
 	//计算方块ID
 	int32 CaculateBlockID(Chunk& chunk,int32 i,int32 j,int32 k);
 
 	//------------------------显示Chunk---------------------
+
 	//是否需要显示chunk
 	Chunk* GetDisplayChunk(FVector2D chunkPosition);
+
 	//显示Chunk
 	void DisplayChunk(Chunk& chunk);
 
 protected:
+
 	//创建Block Actor
 	bool CreateBlock(int32 id, FVector pos);
 	

@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "TreeGenerator.h"
 #include "Tool/NoiseTool.h"
+#include "Model/Biome.h"
 
-void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
+void PlantGenerator::GeneratePlant(Chunk& chunk,GlobalInfo& info){
     const int32 cystalSize = 16;
-    int32 seedOffset=NoiseTool::hash21(chunk.ChunkPosition);
+    int32 seedOffset = NoiseTool::hash21(chunk.ChunkPosition);
 
 	NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize);
     NoiseTool::setSeed(1317+seedOffset);
@@ -14,70 +14,90 @@ void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 	for (int j = 0; j < MaxBlocksWidth; ++j)
 	{
-        /*
-	    None = 0
-	    雪地 Snow = 1
-	    草地 Green = 2
-	    泥地 Dry = 3
-        石地 Stone = 4
-	    沙漠 Desert = 5
-        */
-        if(chunk.BlocksBiome[i][j]==0||chunk.BlocksBiome[i][j]==4||chunk.BlocksBiome[i][j]==5)continue;
-        //被挖空就无法生成
-        int32* result = info.GolbalBlocksID.Find(NoiseTool::Index(
-            chunk.ChunkPosition.X*16+i,
-            chunk.ChunkPosition.Y*16+j,
-            chunk.BlocksHeight[i][j]));
-        if(result &&(*result == 0||*result == 9))continue;
+        //不允许在空地、石头、沙漠上产生植被
+        if( chunk.BlocksBiome[i][j]==static_cast<int32>(BiomeType::None)||
+            chunk.BlocksBiome[i][j]==static_cast<int32>(BiomeType::Stone)||
+            chunk.BlocksBiome[i][j]==static_cast<int32>(BiomeType::Desert))
+        {
+            continue;
+        }
         
-        result = info.GolbalBlocksID.Find(NoiseTool::Index(
+        int32* result;
+        //查询地板方块ID
+        result = info.FindBlock(FVector(
+                chunk.ChunkPosition.X*16+i,
+                chunk.ChunkPosition.Y*16+j,
+                chunk.BlocksHeight[i][j])
+        );
+        //被挖空（方块ID为0）或者方块ID为9（方块为水）就无法生成
+        if(result && (*result == 0 || *result == 9)){
+            continue;
+        }
+        
+        //查询地板上一格的方块ID
+        result = info.FindBlock(FVector(
             chunk.ChunkPosition.X*16+i,
             chunk.ChunkPosition.Y*16+j,
             chunk.BlocksHeight[i][j]+1));
-        if(result)continue;
-        //------------------
-        //----生成树
+        //如果存在方块，则无法生成
+        if(result){
+            continue;
+        }
+
+        //生成树
         if(GenerateTree(chunk,info,i,j,cystalSize))continue;
-        //-----------------
-        //----生成草
+        
+        //生成草
         if(GenerateFlower(chunk,info,i,j,cystalSize))continue;
 	}
 }
 
-bool TreeGenerator::GenerateFlower(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
-        if(chunk.BlocksHeight[i][j] <= SeaLevel)return false;
+bool PlantGenerator::GenerateFlower(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
+        //如果地板方块在水平面以下，则不允许生成花朵
+        if(chunk.BlocksHeight[i][j] <= SeaLevel)
+            return false;
         
-		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
-
+        //获得柱块的温度值、湿度值
         float temperature = chunk.BlocksTemperature[i][j];
         float humidity = chunk.BlocksHumidity[i][j];
+
+		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
+        //计算概率值
 		float possible = NoiseTool::rand(pf) - FMath::Abs(temperature+0.1f)*0.4f + humidity*0.4f;
+
         int32 targetID = 0;
-        //若满足概率（花类）：20黄花、21蓝花、22蘑菇、23蘑菇
+        //若满足生成花的概率
         if(possible > 1.0f){
-            targetID = 20+NoiseTool::randInt(FVector2D(i+j*21,j-i^2))%4;
+            //方块ID：20=黄花、21=蓝花、22=蘑菇、23=蘑菇
+            targetID = 20 + NoiseTool::randInt(FVector2D(i+j*21,j-i^2))%4;
         }
-        //若满足概率（草类）：11绿草 12黄草，13白草
+        //若满足生成草的概率
         else if(possible > 0.85f){
+            //方块ID：11=绿草 12=黄草，13=白草
             if(temperature>0.3f){targetID = 12;}
             else if(temperature>-0.3f){targetID = 11;}
             else{targetID = 13;}
         }
-
-        if(targetID==0)return false;
+        if(targetID==0)
+            return false;
         
-        AddBlockWithIndex(chunk,info,i,j,chunk.BlocksHeight[i][j]+1,targetID);
+        //添加目标方块（花或草）    
+        info.AddBlock(FVector(
+            chunk.ChunkPosition.X*16+i,
+            chunk.ChunkPosition.Y*16+j,
+            chunk.BlocksHeight[i][j]+1),targetID);
 
         return true;
 }
 
-bool TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
-        if(chunk.BlocksHeight[i][j]<=SeaLevel-1)return false;
+bool PlantGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 cystalSize){
+        //如果地板方块在水平面下一格的以下，则不允许生成花朵
+        if(chunk.BlocksHeight[i][j] <= SeaLevel-1)return false;
         
 		FVector2D pf = FVector2D(float(i) / MaxBlocksWidth / cystalSize, float(j) / MaxBlocksWidth / cystalSize);
         float temperature = chunk.BlocksTemperature[i][j];
         float humidity = chunk.BlocksHumidity[i][j];
-		float possible = ((NoiseTool::simplexNoise(pf)+1.0f)/2.0f)*0.15f - FMath::Abs(temperature+0.1f)*0.10f + humidity*0.15f + NoiseTool::rand(-pf)*0.9f;
+		float possible = (NoiseTool::simplexNoise(pf)+1.0f)/2.0f*0.15f - FMath::Abs(temperature+0.1f)*0.10f + humidity*0.15f + NoiseTool::rand(-pf)*0.9f;
             
         //若满足概率
         if(possible < 0.985f)return false;
@@ -86,42 +106,44 @@ bool TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,i
 
         //根据温度选择树类型
         temperature += (NoiseTool::rand(FVector2D::UnitVector+pf)-0.5f)*0.2f;
-        //方块ID：
-        //14温带木 15热带木，16寒带木
-        //17温带树叶 18寒带树叶 19热带树叶
+
         int32 targetWoodID;
         int32 targetLeafID;
+        //方块ID：14=温带木 15=热带木，16=寒带木，17=温带树叶 18=寒带树叶，19=热带树叶
         if(temperature>0.3f){targetWoodID = 15;targetLeafID = 19;}
         else if(temperature>-0.3f){targetWoodID = 14;targetLeafID = 17;}
         else{targetWoodID = 16;targetLeafID = 18;}
-
-                
+         
         for(int k = 0;k<treeHeight;++k){
-            //生成树干
-            AddBlockWithIndex(chunk,info,i,j,chunk.BlocksHeight[i][j]+1+k,targetWoodID);
+            //生成目标方块（树干）    
+            info.AddBlock(FVector(
+                chunk.ChunkPosition.X*16+i,
+                chunk.ChunkPosition.Y*16+j,
+                chunk.BlocksHeight[i][j]+1+k),targetWoodID);
         }
 
         int32 t1 = NoiseTool::rand(17*pf)*4+1.5f+int32(treeHeight>=5);
         int32 t2 = NoiseTool::rand(11*pf)*4+1.5f+int32(treeHeight>=5);
         int32 leafHeight = treeHeight+1+t1%3;
         int32 initLeafHeight = 2+t2%2;
-        for(int k = leafHeight-1;k >= initLeafHeight ;--k){
-            //生成树叶
-            GenerateLeaves(chunk,info,i,j,chunk.BlocksHeight[i][j]+1+k,
-                //贝塞尔曲线计算树叶
+        for(int k = leafHeight-1;k >= initLeafHeight;--k){
+            //贝塞尔曲线计算树叶半径
+            float leafRadius = 
                 NoiseTool::bezier(
                     FVector2D(0,0)
                     ,FVector2D(0.33f,t1)
                     ,FVector2D(0.66f,t2)
                     ,FVector2D(1,0)
-                    ,float(k-initLeafHeight)/(leafHeight-1-initLeafHeight)).Y
-            ,targetLeafID);
+                    ,float(k-initLeafHeight)/(leafHeight-1-initLeafHeight)).Y;
+
+            //生成树叶
+            GenerateLeaves(chunk,info,i,j,chunk.BlocksHeight[i][j]+1+k,leafRadius,targetLeafID);
         }
 
     return true;
 }
 
-void TreeGenerator::GenerateLeaves(Chunk& chunk,GlobalInfo& info,int32 x,int32 y,int32 height,int32 radius,int32 targetLeafID){
+void PlantGenerator::GenerateLeaves(Chunk& chunk,GlobalInfo& info,int32 x,int32 y,int32 height,int32 radius,int32 targetLeafID){
     radius = FMath::Clamp(radius,0,3);
 
     for(int i =0;i<5;++i)
@@ -131,36 +153,22 @@ void TreeGenerator::GenerateLeaves(Chunk& chunk,GlobalInfo& info,int32 x,int32 y
         
         int32 dx = x+i-2;
         int32 dy = y+j-2;
-        int32 gx = x+i-2+chunk.ChunkPosition.X;
-        int32 gy = y+j-2+chunk.ChunkPosition.Y;
+        int32 gx = dx+chunk.ChunkPosition.X*16;
+        int32 gy = dy+chunk.ChunkPosition.Y*16;
 
-        if(info.GolbalBlocksID.Find(NoiseTool::Index(gx,gy,height)))
+        if(info.FindBlock(FVector(gx,gy,height)))
             continue;
 
-        AddBlockWithIndex(chunk,info,dx,dy,height,targetLeafID);
+        info.AddBlock(FVector(gx,gy,height),targetLeafID);
 
         //树顶雪
-        if(chunk.BlocksBiome[x][y]==1 && NoiseTool::rand(FVector2D(dx+height*11,dy*17+radius*23))>0.13f){
-            AddBlockWithIndex(chunk,info,dx,dy,height+1,24);
+        if(chunk.BlocksBiome[x][y]==1 && NoiseTool::rand(FVector2D(gx+height*11,gy*17+radius*23))>0.13f){
+            info.AddBlock(FVector(gx,gy,height+1),24);
         }
     }
 }
 
-
-void TreeGenerator::AddBlockWithIndex(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,int32 height,int32 targetID){
-    uint64 index = NoiseTool::Index(
-        chunk.ChunkPosition.X*16+i,
-        chunk.ChunkPosition.Y*16+j,
-        height);
-
-    if(!info.GolbalBlocksID.Find(index)){
-            info.GolbalBlocksID.Emplace(index,targetID);
-            chunk.BlocksID.Emplace(index,targetID);
-    }
-}
-
-
-const bool leavesTemplate[4][5][5] = {
+bool PlantGenerator::leavesTemplate[4][5][5] = {
 {   {0,0,0,0,0},
     {0,0,1,0,0},
     {0,1,1,1,0},

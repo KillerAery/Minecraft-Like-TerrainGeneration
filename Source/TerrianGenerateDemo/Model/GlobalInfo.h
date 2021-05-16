@@ -14,13 +14,15 @@ using HeightMap = int32(*)[MaxBlocksWidth];
  */
 class TERRIANGENERATEDEMO_API GlobalInfo
 {
-public:
+private:
 	//全局方块列表
-	TMap<uint64,int32> GolbalBlocksID;
+	TMap<uint64,int32> GlobalBlocksID;
+	//待显示方块列表
+	TArray<TPair<uint64,int32>> Blocks2Display;
+	//待显示建筑列表
+	TArray<TTuple<uint64,int32,int32>> Budildings2Display;
 	//全局高度
-	TMap<uint64,HeightMap> GolbalHeight;
-	//全局建筑列表
-	TArray<TTuple<uint64,int32,int32>> GolbalBudildings;
+	TMap<uint64,HeightMap> GlobalHeight;
 public:
 	GlobalInfo();
 
@@ -38,12 +40,27 @@ public:
 	//添加方块
 	void AddBlock(FVector pos,int32 BlockID);
 
+	//添加非显示方块
+	void AddBlockWithoutDisplay(FVector pos,int32 BlockID);
+
+	//添加仅显示方块
+	void AddBlockOnlyDisplay(FVector pos,int32 BlockID);
+
 	//移除方块
 	void RemoveBlock(FVector pos);
+
+	//查找方块
+	int32* FindBlock(FVector pos);
+
+	//待显示方块列表
+	TArray<TPair<uint64,int32>>& GetBlocks2Display();
 	
 	//添加建筑
-	void AddBuilding(FVector pos,int32 BlockID);
+	void AddBuilding(FVector pos,int32 BuildingID,int32 rotate);
 
 	//移除建筑
 	void RemoveBuilding(FVector pos);
+
+	//待显示建筑列表
+	TArray<TTuple<uint64,int32,int32>>& GetBuildings2Display();
 };

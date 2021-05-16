@@ -24,6 +24,4 @@ public:
 
 	//chunk生物群落属性[1,2,3,4...]
 	int32 BlocksBiome[MaxBlocksWidth][MaxBlocksWidth];
-
-	TArray<TPair<uint64,int32>> BlocksID;
 };

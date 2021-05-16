@@ -103,7 +103,6 @@ void BuildingGenerator::GenerateBuildings(Chunk& chunk,GlobalInfo& info){
     std::queue<FVector2D> q;
     q.push(startPoint);
 
-    UE_LOG(LogTemp, Warning, TEXT("buildings begin"));
     while(!q.empty()){
         ++count;
 
@@ -125,14 +124,8 @@ void BuildingGenerator::GenerateBuildings(Chunk& chunk,GlobalInfo& info){
                 (pos.X+dx[i]*(offset+buildingSize[index][0])+offsetX,
                 pos.Y+dy[i]*(offset+buildingSize[index][1])+offsetY));
             }
-	        UE_LOG(LogTemp, Warning, TEXT("Your message 233333333333333333333333"));
-        }
-        else{
-	        UE_LOG(LogTemp, Warning, TEXT("Your message NNNNNNNNNNNNNNNNNNNNNNNN"));
         }
     }
-    
-    UE_LOG(LogTemp, Warning, TEXT("buildings %d"),count);
 }
 
 
@@ -175,10 +168,11 @@ bool BuildingGenerator::PlaceBuilding(GlobalInfo& info,int32 x,int32 y,int32 ind
     for(int i=-updown-1;i<updown+1;++i)
     for(int j=-leftright-1;j<leftright+1;++j)
     {   
-        info.GolbalBlocksID.Emplace(NoiseTool::Index(x+i,y+j,info.GetHeight(x+i,y+j)+1),0);
+        FVector pos = FVector(x+i,y+j,info.GetHeight(x+i,y+j)+1);
+        info.AddBlock(pos,0);
     }
-    
-    info.GolbalBudildings.Push(TTuple<uint64,int32,int32>(NoiseTool::Index(x,y,aver+1),index+1,rotate));
+
+    info.AddBuilding(FVector(x,y,aver+1),index+1,rotate);
     return true;
 }
 

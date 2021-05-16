@@ -64,7 +64,7 @@ void ATerrianGenerationMode::UpdateChunks()
 		}
 	}	
 	
-	/* 关闭雨水侵蚀
+	/* 雨水侵蚀
 	for (int i = 0; i < DisplaySize; ++i)
 	for (int j = 0; j < DisplaySize; ++j) 
 	{
@@ -110,7 +110,7 @@ void ATerrianGenerationMode::UpdateChunks()
 		Chunk* chunk = GetDisplayChunk(chunkPosition);
 		if(chunk){			
 			//生成植被
-			TreeGenerator::GenerateTree(*chunk,this->Info);
+			PlantGenerator::GeneratePlant(*chunk,this->Info);
 			//显示chunk
 			DisplayChunk(*chunk);
 		}
@@ -131,32 +131,34 @@ void ATerrianGenerationMode::LoadTerrianBlocksID(Chunk& chunk){
 				targetBlockID = 3;
 			}
 
-			uint64 index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
-			if(!Info.GolbalBlocksID.Find(index)){
-				Info.GolbalBlocksID.Emplace(index,targetBlockID);
-            	chunk.BlocksID.Emplace(index,targetBlockID);
+			FVector pos = FVector(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
+			if(!Info.FindBlock(pos)){
+				Info.AddBlockWithoutDisplay(pos,targetBlockID);
 			}
 		}
 
-		//垫底方块
+		//垫底方块（非显示）
 		for (int k = chunk.BlocksHeight[i][j]-20; k > chunk.BlocksHeight[i][j]-23; --k)
 		{
-		uint64 index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
-		Info.GolbalBlocksID.Emplace(index,1);
+			FVector pos = FVector(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
+			Info.AddBlockWithoutDisplay(pos,1);
 		}
 	}
 }
 
 
 void ATerrianGenerationMode::GenerateBuildingBlocks(){
-	for(auto &tuple: Info.GolbalBudildings){
+	//根据待显示建筑列表，进行多个ABuilding的创建
+	auto& buildings2Display = Info.GetBuildings2Display();
+	for(auto &tuple: buildings2Display){
 		uint64 posIndex = tuple.Get<0>();
 		int32 buildingIndex = tuple.Get<1>();
 		int32 rotate = tuple.Get<2>();
-
 		CreateBuilding(buildingIndex,rotate,NoiseTool::UnIndex(posIndex));
 	} 
-	Info.GolbalBudildings.Reset();
+
+	//显示完建筑就可以清理列表了
+	buildings2Display.Reset();
 }
 
 
@@ -199,61 +201,70 @@ void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
 
 int32 ATerrianGenerationMode::CaculateBlockID(Chunk& chunk,int32 i,int32 j,int32 k){
     if(i<0||i>=16||j<0||j>=16){return 0;}
-
     int32 dk = chunk.BlocksHeight[i][j]-k;
-    /* None = 0 雪地 Snow = 1 草地 Green = 2
-    泥地 Dry = 3 石地 Stone = 4 沙漠 Desert = 5
-    */
     //地下石头
     if(dk>=3){return 2;}
     //地下泥土
     if(dk>=1){return 3;}
     //地表方块	
-    switch(chunk.BlocksBiome[i][j])
+    switch((BiomeType)chunk.BlocksBiome[i][j])
 	{
-			case 1:return 10;break;
-			case 2:return 1;break;
-			case 3:return 3;break;
-			case 4:return 5;break;
-			case 5:return 4;break;
-			default:return 0;break;
+			case BiomeType::Snow:	return 10;break;
+			case BiomeType::Green:	return 1;break;
+			case BiomeType::Dry:	return 3;break;
+			case BiomeType::Stone:	return 5;break;
+			case BiomeType::Desert:	return 4;break;
+			default:				return 0;break;
 	};
 }
 
-//展示Chunk
-void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
-	//显示所有方块
-	for(auto& itr : chunk.BlocksID){
-		FVector v = NoiseTool::UnIndex(itr.Key);
-		FVector BlockPosition = FVector(
-			v.X,
-			v.Y,
-			v.Z);
 
+void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
+	//添加地形方块进显示方块列表
+	for (int i = 0; i < 16; ++i)
+	for (int j = 0; j < 16; ++j) 
+	{	
+		for (int k = chunk.BlocksHeight[i][j]; k > chunk.BlocksHeight[i][j]-20; --k)
+		{
+			FVector pos = FVector(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k);
+			int32* blockID = Info.FindBlock(pos);
+			if(blockID){
+				Info.AddBlock(pos,*blockID);
+			}
+		}
+	}
+
+	//根据待显示方块列表，进行多个ABlock的创建
+	auto& blocks2Display = Info.GetBlocks2Display();
+	for(auto& itr : blocks2Display){
+		FVector BlockPosition = NoiseTool::UnIndex(itr.Key);
 		const int32 dx[6] = {1,-1,0,0,0,0};
     	const int32 dy[6] = {0,0,1,-1,0,0};
     	const int32 dz[6] = {0,0,0,0,-1,1};
-
 		for(int d=0;d<6;++d)
 		{
-			uint64 index = NoiseTool::Index(v.X+dx[d],v.Y+dy[d],v.Z+dz[d]);
-			auto result = Info.GolbalBlocksID.Find(index);
+			FVector pos = FVector(BlockPosition.X+dx[d],BlockPosition.Y+dy[d],BlockPosition.Z+dz[d]);
+			auto result = Info.FindBlock(pos);
+			
 			bool needCreate = false;
-			if(!result){needCreate = true;}
-			else 
-			switch(*result){
+			if(!result){
+				needCreate = true;
+			}
+			else switch(*result){
 				case 0:case 9:case 11:case 12:case 13:case 20:case 21:case 22:case 23:case 24:
 				needCreate = true;
 				break;
-			}
+				}
+			
 			if(needCreate){
 				CreateBlock(itr.Value,BlockPosition);
 				break;
 			}
 		}
 	}
-	//释放方块ID内存，因为已无用处
-	chunk.BlocksID=std::move(TArray<TPair<uint64,int32>>());
+	
+	//显示完方块就可以清理列表了
+	blocks2Display.Reset();
 }
 
 

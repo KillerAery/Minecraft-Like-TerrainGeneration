@@ -27,8 +27,13 @@ void CaveGenerator::GenerateCave(Chunk& chunk,GlobalInfo& info){
                 chunk.ChunkPosition.X*16+i,
                 chunk.ChunkPosition.Y*16+j,
                 k);
-            info.GolbalBlocksID.Emplace(index,0);
-            chunk.BlocksID.Emplace(index,0);
+            
+            info.AddBlock(
+                FVector(
+                    chunk.ChunkPosition.X*16+i,
+                    chunk.ChunkPosition.Y*16+j,
+                    k)
+                ,0);
         };
 	}
 }

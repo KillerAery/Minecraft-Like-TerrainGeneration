@@ -4,19 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Model/Chunk.h"
+#include "Model/Biome.h"
 
-
-enum class BiomeType{
-	None = 0,
-	Snow = 1,
-	Green = 2,
-	Dry = 3,
-	Stone = 4,
-	Desert = 5
-};
 
 /**
- * 
+ * 生物群落分类器
  */
 class TERRIANGENERATEDEMO_API BiomeGenerator
 {

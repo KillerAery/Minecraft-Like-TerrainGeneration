@@ -19,22 +19,6 @@ ABlock::ABlock():BlockID(0)
 int32 ABlock::GetBlockID(){
 	return BlockID;
 }
-// Called when the game starts or when spawned
-/*
-void ABlock::BeginPlay()
-{
-	Super::BeginPlay();
-}
-*/
-
-// Called every frame
-/*
-void ABlock::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-*/
 
 void ABlock::InitByBlockID(int32 id)
 {	
@@ -50,3 +34,4 @@ void ABlock::InitByBlockID(int32 id)
 	//设置staticmesh
 	mMeshComponent->SetStaticMesh(BlockStaticMeshs[id - 1]);
 }
+

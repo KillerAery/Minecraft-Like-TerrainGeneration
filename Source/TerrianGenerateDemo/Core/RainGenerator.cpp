@@ -29,9 +29,10 @@ void RainGenerator::flow(Chunk& chunk,GlobalInfo& info,float rain,int i,int j,in
     waters.Emplace(index);
 
     //垂流：检测下方踏空
-    index = NoiseTool::Index(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k-1);
+    FVector pos = FVector(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j,k-1);
+    index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
     if(waters.Find(index)){return;}
-    auto result = info.GolbalBlocksID.Find(index);
+    auto result = info.FindBlock(pos);
     if(!result||(*result)==0){
         flow(chunk,info,rain-0.3f,i,j,k-1);
         return;
@@ -43,16 +44,20 @@ void RainGenerator::flow(Chunk& chunk,GlobalInfo& info,float rain,int i,int j,in
     for(int d = 0;d<4;++d){
         int32 x = i+dx[d];
         int32 y = j+dy[d];
-        index = NoiseTool::Index(chunk.ChunkPosition.X*16+x,chunk.ChunkPosition.Y*16+y,k);
+
+        pos = FVector(chunk.ChunkPosition.X*16+x,chunk.ChunkPosition.Y*16+y,k);
+        index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
+
         if(waters.Find(index))continue;
 
-        result = info.GolbalBlocksID.Find(index);
+        result = info.FindBlock(pos );
         //水平流向无障碍
         if(!result||(*result)==0){
-            index = NoiseTool::Index(chunk.ChunkPosition.X*16+x,chunk.ChunkPosition.Y*16+y,k-1);
+            pos = FVector(chunk.ChunkPosition.X*16+x,chunk.ChunkPosition.Y*16+y,k-1);
+            index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
             if(waters.Find(index)){continue;}
 
-            result = info.GolbalBlocksID.Find(index);
+            result = info.FindBlock(pos );
             if(!result||(*result)==0){
                 flow(chunk,info,rain-1.0f,x,y,k-1);
             }
@@ -64,8 +69,6 @@ void RainGenerator::flow(Chunk& chunk,GlobalInfo& info,float rain,int i,int j,in
 
     for(uint64 index:waters){
         auto vec = NoiseTool::UnIndex(index);
-        index = NoiseTool::Index(vec.X,vec.Y,vec.Z-1);
-        info.GolbalBlocksID.Emplace(index,9);
-        chunk.BlocksID.Emplace(index,9);
+        info.AddBlock(FVector(vec.X,vec.Y,vec.Z-1),9);
     }
 }

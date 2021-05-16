@@ -9,10 +9,12 @@ void HumidityGenerator::GenerateHumidity(Chunk& chunk){
 	const int32 times = 3;
 	int32 cystalSize  = 16;
 
-	NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize);
-    NoiseTool::setSeed(201+NoiseTool::hash21(chunk.ChunkPosition));
+    NoiseTool::setSeed(201);
 
 	for (int d = 0; d < times; ++d) {
+
+		NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize);
+
 		for (int i = 0; i < MaxBlocksWidth; ++i)
 		for (int j = 0; j < MaxBlocksWidth; ++j)
 		{
@@ -26,6 +28,7 @@ void HumidityGenerator::GenerateHumidity(Chunk& chunk){
 
 			chunk.BlocksHumidity[i][j] += value / times;
 		}
+		
 		cystalSize*=2;
 	}
 }
