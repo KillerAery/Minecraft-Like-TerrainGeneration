@@ -274,7 +274,7 @@ float NoiseTool::simplexNoise(FVector p){
 }
 
 
-void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
+void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize){
 	FVector2D pi = FVector2D(floor(position2D.X / crystalSize), floor(position2D.Y / crystalSize));
 	FVector2D vertex[4] = { {pi.X,pi.Y},{pi.X + 1,pi.Y},{pi.X,pi.Y + 1},{pi.X + 1,pi.Y + 1} };
 
@@ -285,15 +285,15 @@ void NoiseTool::prehandlePerlinNoise(FVector2D position2D, int32 crystalSize,int
 }
 
 //TODO
-void NoiseTool::prehandleValueNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
+void NoiseTool::prehandleValueNoise(FVector2D position2D, int32 crystalSize){
 
 }
 
-void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize,int32 frequence){
+void NoiseTool::prehandleSimplexNoise(FVector2D position2D, int32 crystalSize){
 	GlobalOffset = position2D / crystalSize;
 }
 
-void NoiseTool::prehandleSimplexNoise(FVector position,int32 crystalSize,int32 frequence){
+void NoiseTool::prehandleSimplexNoise(FVector position,int32 crystalSize){
 	GlobalOffset3D = position / crystalSize;
 }
 

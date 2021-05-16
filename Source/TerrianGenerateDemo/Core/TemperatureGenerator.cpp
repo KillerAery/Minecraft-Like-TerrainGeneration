@@ -12,7 +12,7 @@ void TemperatureGenerator::GenerateTemperature(Chunk& chunk)
 
 	for (int d = 0; d < times; ++d,cystalSize*=2) {
 
-	NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize,1);
+	NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize);
 
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 	for (int j = 0; j < MaxBlocksWidth; ++j)

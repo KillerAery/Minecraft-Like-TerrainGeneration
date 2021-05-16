@@ -8,7 +8,7 @@ void TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info){
     const int32 cystalSize = 16;
     int32 seedOffset=NoiseTool::hash21(chunk.ChunkPosition);
 
-	NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize,1);
+	NoiseTool::prehandleSimplexNoise(chunk.ChunkPosition,cystalSize);
     NoiseTool::setSeed(1317+seedOffset);
 
 	for (int i = 0; i < MaxBlocksWidth; ++i)
@@ -122,37 +122,6 @@ bool TreeGenerator::GenerateTree(Chunk& chunk,GlobalInfo& info,int32 i,int32 j,i
 }
 
 void TreeGenerator::GenerateLeaves(Chunk& chunk,GlobalInfo& info,int32 x,int32 y,int32 height,int32 radius,int32 targetLeafID){
-    const bool leavesTemplate[4][5][5] = {
-        {
-            {0,0,0,0,0},
-            {0,0,1,0,0},
-            {0,1,1,1,0},
-            {0,0,1,0,0},
-            {0,0,0,0,0}
-        },
-        {
-            {0,0,0,0,0},
-            {0,1,1,1,0},
-            {0,1,1,1,0},
-            {0,1,1,1,0},
-            {0,0,0,0,0}
-        },
-        {
-            {0,1,1,1,0},
-            {1,1,1,1,1},
-            {1,1,1,1,1},
-            {1,1,1,1,1},
-            {0,1,1,1,0}
-        },
-        {
-            {1,1,1,1,1},
-            {1,1,1,1,1},
-            {1,1,1,1,1},
-            {1,1,1,1,1},
-            {1,1,1,1,1}
-        }
-    };
-
     radius = FMath::Clamp(radius,0,3);
 
     for(int i =0;i<5;++i)
@@ -189,3 +158,30 @@ void TreeGenerator::AddBlockWithIndex(Chunk& chunk,GlobalInfo& info,int32 i,int3
             chunk.BlocksID.Emplace(index,targetID);
     }
 }
+
+
+const bool leavesTemplate[4][5][5] = {
+{   {0,0,0,0,0},
+    {0,0,1,0,0},
+    {0,1,1,1,0},
+    {0,0,1,0,0},
+    {0,0,0,0,0}},
+
+{   {0,0,0,0,0},
+    {0,1,1,1,0},
+    {0,1,1,1,0},
+    {0,1,1,1,0},
+    {0,0,0,0,0}},
+
+{   {0,1,1,1,0},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {0,1,1,1,0}},
+
+{   {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1},
+    {1,1,1,1,1}}
+};

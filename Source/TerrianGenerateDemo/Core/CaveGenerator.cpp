@@ -8,7 +8,7 @@ void CaveGenerator::GenerateCave(Chunk& chunk,GlobalInfo& info){
     //晶格大小
 	int32 m = 2;
 
-	NoiseTool::prehandleSimplexNoise(FVector(chunk.ChunkPosition.X,chunk.ChunkPosition.Y,0),m,1);
+	NoiseTool::prehandleSimplexNoise(FVector(chunk.ChunkPosition.X,chunk.ChunkPosition.Y,0),m);
 
 	for (int i = 0; i < MaxBlocksWidth; ++i)
 	for (int j = 0; j < MaxBlocksWidth; ++j)

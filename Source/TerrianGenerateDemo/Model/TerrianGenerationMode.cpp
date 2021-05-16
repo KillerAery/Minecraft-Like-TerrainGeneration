@@ -240,7 +240,8 @@ void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
 			auto result = Info.GolbalBlocksID.Find(index);
 			bool needCreate = false;
 			if(!result){needCreate = true;}
-			else switch(*result){
+			else 
+			switch(*result){
 				case 0:case 9:case 11:case 12:case 13:case 20:case 21:case 22:case 23:case 24:
 				needCreate = true;
 				break;
