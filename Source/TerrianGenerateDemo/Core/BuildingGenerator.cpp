@@ -130,15 +130,11 @@ bool BuildingGenerator::PlaceOneBuilding(GlobalInfo& info,int32 x,int32 y,int32 
     {   
         //若不在发展域，则无需生成建筑         
         if(!domains.Find(NoiseTool::Index(x+i,y+j))){return false;}
-
         int32 h = info.GetHeight(x+i,y+j);
-        //auto result = info.GolbalBlocksID.Find(NoiseTool::Index(x+i,y+j,h));
-        ////地面被挖空，不用生成房屋
-        //if(result&&*result==0)return false;
         aver += h;
     }
     
-    aver/=(buildingSize[index][0]*buildingSize[index][1]);
+    aver /= (buildingSize[index][0]*buildingSize[index][1]);
     aver = floor(aver+0.5f);
 
     //低于海平面，没必要生成房屋
@@ -160,6 +156,8 @@ bool BuildingGenerator::PlaceOneBuilding(GlobalInfo& info,int32 x,int32 y,int32 
     }
 
     info.AddBuilding(FVector(x,y,aver+1),index+1,rotate);
+    domains.Emplace(NoiseTool::Index(x-updown,y-leftright));
+    buildingPos.Push(FVector2D(x-updown,y-leftright));
     return true;
 }
 
@@ -172,15 +170,19 @@ void BuildingGenerator::PlacePaths(Chunk& chunk,GlobalInfo& info){
     for(int j = i+1;j<n;++j)
     {
         auto path = PathFinder::findPath(buildingPos[i],buildingPos[j]);
+
+	    UE_LOG(LogTemp, Warning, TEXT("path roads num = %d"),path.Num());
+
         for(FVector2D pos : path){
             roads.Emplace(NoiseTool::Index(pos.X,pos.Y));
             info.AlterBlock(FVector(pos.X,pos.Y,info.GetHeight(pos.X,pos.Y)),5);
         }
     }
+    buildingPos.Reset();
 }
 
 bool BuildingGenerator::inBarrier(FVector2D pos){
-    return domains.Contains(NoiseTool::Index(pos.X,pos.Y));
+    return !domains.Contains(NoiseTool::Index(pos.X,pos.Y));
 }
 	
 

@@ -45,7 +45,6 @@ private:
 
 	//存储OpenNode的内存空间
 	static std::vector<OpenNode> pointList;
-
 private:
 	PathFinder() = delete;
 	~PathFinder() = delete;
