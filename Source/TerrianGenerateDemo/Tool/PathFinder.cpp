@@ -6,7 +6,7 @@
 int PathFinder::depth = 0;        
 
 //深度限制
-int PathFinder::depthLimit = 1000;     
+int PathFinder::depthLimit = 400;     
 
 //存储OpenNode的内存空间
 std::vector<OpenNode> PathFinder::pointList = std::vector<OpenNode>(depthLimit);

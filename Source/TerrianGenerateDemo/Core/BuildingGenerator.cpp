@@ -130,6 +130,12 @@ bool BuildingGenerator::PlaceOneBuilding(GlobalInfo& info,int32 x,int32 y,int32 
     {   
         //若不在发展域，则无需生成建筑         
         if(!domains.Find(NoiseTool::Index(x+i,y+j))){return false;}
+        
+        //若地面被挖空，则无需生成建筑
+        FVector pos3D = FVector(x+i,y+j,info.GetHeight(x+i,y+j));
+        int* result = info.FindBlock(pos3D);
+        if(result&&(*result)==0){return false;}
+
         int32 h = info.GetHeight(x+i,y+j);
         aver += h;
     }
@@ -175,6 +181,13 @@ void BuildingGenerator::PlacePaths(Chunk& chunk,GlobalInfo& info){
 
         for(FVector2D pos : path){
             roads.Emplace(NoiseTool::Index(pos.X,pos.Y));
+            FVector pos3D = FVector(pos.X,pos.Y,info.GetHeight(pos.X,pos.Y));
+            int* result = info.FindBlock(pos3D);
+
+            //被挖空则不生成
+            if(result&&(*result)==0)
+                continue;
+            
             info.AlterBlock(FVector(pos.X,pos.Y,info.GetHeight(pos.X,pos.Y)),5);
         }
     }
