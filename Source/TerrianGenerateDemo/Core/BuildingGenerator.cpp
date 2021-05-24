@@ -2,47 +2,33 @@
 
 
 #include "BuildingGenerator.h"
-#include "GameFramework/Actor.h"
 #include <queue>
+#include "GameFramework/Actor.h"
 #include "Tool/NoiseTool.h"
+#include "Tool/PathFinder.h"
 
 
-TSet<uint64> BuildingGenerator::domains={};
+TSet<uint64> BuildingGenerator::domains={};	
+
+TSet<uint64> BuildingGenerator::roads={};
+
 FVector2D BuildingGenerator::startPoint=FVector2D::ZeroVector;
+
+TArray<FVector2D> BuildingGenerator::buildingPos={};
 
 void BuildingGenerator::GenerateBuilding(Chunk& chunk,GlobalInfo& info){
     if(NoiseTool::rand(chunk.ChunkPosition)<0.98f)return;
 
     //domains.Reset();
 
-    GenerateDomains(chunk,info);
-    GenerateBuildings(chunk,info);
-    GeneratePaths(chunk,info);
+    DevelopeDomains(chunk,info);
+    PlaceBuildings(chunk,info);
+    PlacePaths(chunk,info);
 }
 
-void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
-    float maxGradient = 10000;
-    /*
-    for(int i =1;i<15;++i)
-    for(int j =1;j<15;++j)
-    {
-        float aver = (
-            chunk.BlocksHeight[i-1][j]+
-            chunk.BlocksHeight[i+1][j]+
-            chunk.BlocksHeight[i][j-1]+
-            chunk.BlocksHeight[i][j+1])/4.0f;
-        float dt = 
-        FMath::Abs((chunk.BlocksHeight[i-1][j]-aver))+
-        FMath::Abs((chunk.BlocksHeight[i+1][j]-aver))+
-        FMath::Abs((chunk.BlocksHeight[i][j-1]-aver))+
-        FMath::Abs((chunk.BlocksHeight[i][j+1]-aver));
-        if(dt<maxGradient){
-            maxGradient = dt;
-            startPoint = FVector2D(chunk.ChunkPosition.X*16+i,chunk.ChunkPosition.Y*16+j);
-        }
-    }
-    */
-   startPoint = FVector2D(chunk.ChunkPosition.X*16+7,chunk.ChunkPosition.Y*16+7);
+void BuildingGenerator::DevelopeDomains(Chunk& chunk,GlobalInfo& info){
+
+    startPoint = FVector2D(chunk.ChunkPosition.X*16+7,chunk.ChunkPosition.Y*16+7);
 
     std::priority_queue<
         std::pair<float,FVector2D>,
@@ -92,7 +78,7 @@ void BuildingGenerator::GenerateDomains(Chunk& chunk,GlobalInfo& info){
 	UE_LOG(LogTemp, Warning, TEXT("devlop %d"),count);
 }
 
-void BuildingGenerator::GenerateBuildings(Chunk& chunk,GlobalInfo& info){
+void BuildingGenerator::PlaceBuildings(Chunk& chunk,GlobalInfo& info){
     //[第几个建筑][长、宽]
     const int32 buildingSize[3][2]={{10,6},{8,6},{6,6}};
     const int32 dx[4] = {1,-1,0,0};
@@ -112,24 +98,25 @@ void BuildingGenerator::GenerateBuildings(Chunk& chunk,GlobalInfo& info){
         int32 index = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,-count)*107)%3;
         int32 rotate = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,-count)*17)%4;
         
-        bool test = PlaceBuilding(info,pos.X,pos.Y,index,rotate) || PlaceBuilding(info,pos.X,pos.Y,index,(rotate+1)%4);
+        bool test = PlaceOneBuilding(info,pos.X,pos.Y,index,rotate) || PlaceOneBuilding(info,pos.X,pos.Y,index,(rotate+1)%4);
+        if(!test){
+            continue;
+        }   
 
         int32 offset = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,-count)*67)%3+5;
         int32 offsetX = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(count,count)*61)%5-2;
         int32 offsetY = NoiseTool::randInt(chunk.ChunkPosition+FVector2D(-count,count)*117)%5-2;
-
-        if(test){
-            for(int i = 0;i<4;++i){
-                q.push(FVector2D
-                (pos.X+dx[i]*(offset+buildingSize[index][0])+offsetX,
-                pos.Y+dy[i]*(offset+buildingSize[index][1])+offsetY));
-            }
+        
+        for(int i = 0;i<4;++i){
+            q.push(FVector2D
+            (pos.X+dx[i]*(offset+buildingSize[index][0])+offsetX,
+            pos.Y+dy[i]*(offset+buildingSize[index][1])+offsetY));
         }
     }
 }
 
 
-bool BuildingGenerator::PlaceBuilding(GlobalInfo& info,int32 x,int32 y,int32 index,int32 rotate){
+bool BuildingGenerator::PlaceOneBuilding(GlobalInfo& info,int32 x,int32 y,int32 index,int32 rotate){
     //[第几个建筑][长、宽]
     const int32 buildingSize[3][2]={{10,6},{8,6},{6,6}};
 
@@ -176,5 +163,34 @@ bool BuildingGenerator::PlaceBuilding(GlobalInfo& info,int32 x,int32 y,int32 ind
     return true;
 }
 
-void BuildingGenerator::GeneratePaths(Chunk& chunk,GlobalInfo& info){
+void BuildingGenerator::PlacePaths(Chunk& chunk,GlobalInfo& info){
+    PathFinder::setConditionInBarrier(inBarrier);
+    PathFinder::setWeightFormula(weightFormula);
+    int n = buildingPos.Num();
+    //两两寻路，进行道路连接
+    for(int i = 0;i<n;++i)
+    for(int j = i+1;j<n;++j)
+    {
+        auto path = PathFinder::findPath(buildingPos[i],buildingPos[j]);
+        for(FVector2D pos : path){
+            roads.Emplace(NoiseTool::Index(pos.X,pos.Y));
+            info.AlterBlock(FVector(pos.X,pos.Y,info.GetHeight(pos.X,pos.Y)),5);
+        }
+    }
+}
+
+bool BuildingGenerator::inBarrier(FVector2D pos){
+    return domains.Contains(NoiseTool::Index(pos.X,pos.Y));
+}
+	
+
+TPair<float,float> BuildingGenerator::weightFormula(FVector2D pos,FVector2D endPos,float cost){
+    if(roads.Contains(NoiseTool::Index(pos.X,pos.Y))){
+        cost -= 0.5f;
+    }
+
+    FVector2D dist = (endPos-pos).GetAbs();
+    float predict = (dist.X+dist.Y)*1.41f - FMath::Max(dist.X,dist.Y)*0.41f + cost;
+    
+    return TPair<float,float>(cost,predict);
 }

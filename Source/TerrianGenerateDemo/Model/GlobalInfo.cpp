@@ -45,7 +45,6 @@ void GlobalInfo::AddBlockWithoutDisplay(FVector pos,int32 BlockID){
    GlobalBlocksID.Emplace(index,BlockID);
 }
 
-//添加仅显示方块
 void GlobalInfo::AddBlockOnlyDisplay(FVector pos,int32 BlockID){
    uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
    Blocks2Display.Emplace(index,BlockID);
@@ -54,6 +53,17 @@ void GlobalInfo::AddBlockOnlyDisplay(FVector pos,int32 BlockID){
 void GlobalInfo::RemoveBlock(FVector pos){
    uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
    GlobalBlocksID.Emplace(index,0);
+   Blocks2Alter.Emplace(index,0);
+}
+
+void GlobalInfo::AlterBlock(FVector pos,int32 BlockID){
+   uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
+   GlobalBlocksID.Emplace(index,BlockID);
+   Blocks2Alter.Emplace(index,BlockID);
+}
+
+TArray<TPair<uint64,int32>>& GlobalInfo::GetBlocks2Alter(){
+   return Blocks2Alter;
 }
 
 int32* GlobalInfo::FindBlock(FVector pos){

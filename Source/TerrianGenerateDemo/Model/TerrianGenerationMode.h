@@ -83,14 +83,20 @@ protected:
 	//显示Chunk
 	void DisplayChunk(Chunk& chunk);
 
+	//------------------------更新-------------------------
+	void UpdateBlocks();
+
 protected:
 
 	//创建Block Actor
 	bool CreateBlock(int32 id, FVector pos);
+
+	//移除Block Actor
+	void RemoveBlock(FVector pos);
 	
 	//创建Building Actor
 	bool CreateBuilding(int32 id,int32 rotate, FVector pos);
 
-	//暴露方块
+	//暴露周围方块（用于方块更新时）
 	//void Expose(GlobalInfo& info,int32 i,int32 j,int32 k);
 };

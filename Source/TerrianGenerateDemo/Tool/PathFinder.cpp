@@ -15,9 +15,16 @@ std::vector<OpenNode> PathFinder::pointList = std::vector<OpenNode>(depthLimit);
 std::function<bool(FVector2D pos)> PathFinder::inBarrier = nullptr;
 	
 //函数接口：计算权值预测公式
-std::function<float(FVector2D pos,FVector2D endPos)> PathFinder::predict = nullptr;
+std::function<TPair<float,float>(FVector2D pos,FVector2D endPos,float cost)> PathFinder::weightFormula = nullptr;
+
+std::priority_queue<OpenNode*, std::vector<OpenNode*>, OpenPointPtrCompare> PathFinder::openlist = {};
 
 TArray<FVector2D> PathFinder::findPath(FVector2D startPos,FVector2D endPos) {
+    //清理数据结构
+    pointList.clear();
+    while(!openlist.empty())
+        openlist.pop();
+
     TArray<FVector2D> road;
     // 创建并开启一个父节点
     openlist.push(createOpenNode(startPos, endPos, 0, nullptr));
@@ -47,23 +54,24 @@ TArray<FVector2D> PathFinder::findPath(FVector2D startPos,FVector2D endPos) {
 }
 
 
-void PathFinder::setConditionInBarrier(std::function<bool(FVector2D pos)>& func){
+void PathFinder::setConditionInBarrier(std::function<bool(FVector2D pos)> func){
     inBarrier = func;
 }
 
-void PathFinder::setPredict(std::function<float(FVector2D pos,FVector2D endPos)>& func){
-    predict = func;
+void PathFinder::setWeightFormula(std::function<TPair<float,float>(FVector2D pos,FVector2D endPo,float cost)> func){
+    weightFormula = func;
 }
 
-OpenNode* PathFinder::createOpenNode(FVector2D pos,FVector2D endPos, int cost, OpenNode* fatherNode){
-    pointList.push_back(OpenNode(pos,cost,predict(pos,endPos)+cost,fatherNode));
+OpenNode* PathFinder::createOpenNode(FVector2D pos,FVector2D endPos, float cost, OpenNode* fatherNode){
+    TPair<float,float> pair = weightFormula(pos,endPos,cost);
+    pointList.push_back(OpenNode(pos,pair.Get<0>(),pair.Get<1>(),fatherNode));
     return &pointList.back();
 }
 
 void PathFinder::open(OpenNode& OpenNode,FVector2D endPos) {
 	//八方的位置
 	const int direction[8][2] = { {1,0},{0,1},{-1,0},{0,-1},{1,1},{-1,1},{-1,-1},{1,-1}};
-    const int cost[8] = {10,10,10,10,14,14,14,14};
+    const float cost[8] = {1,1,1,1,1.41f,1.41f,1.41f,1.41f};
 
     //深度+1
     depth++;

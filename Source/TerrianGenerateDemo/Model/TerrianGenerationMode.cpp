@@ -233,7 +233,6 @@ void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
 			}
 		}
 	}
-
 	//根据待显示方块列表，进行多个ABlock的创建
 	auto& blocks2Display = Info.GetBlocks2Display();
 	for(auto& itr : blocks2Display){
@@ -267,6 +266,16 @@ void ATerrianGenerationMode::DisplayChunk(Chunk& chunk){
 	blocks2Display.Reset();
 }
 
+void ATerrianGenerationMode::UpdateBlocks(){
+	TArray<TPair<uint64,int32>>& alterBlocks = Info.GetBlocks2Alter();
+	for(auto& pair: alterBlocks){
+		FVector pos = NoiseTool::UnIndex(pair.Get<0>());
+		RemoveBlock(pos);
+		CreateBlock(pair.Get<1>(),pos);
+	}
+	
+	alterBlocks.Reset();
+}
 
 bool ATerrianGenerationMode::CreateBlock(int32 id, FVector pos)
 {
@@ -289,6 +298,14 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector pos)
 	return true;
 }
 
+
+void ATerrianGenerationMode::RemoveBlock(FVector pos){
+	uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
+	auto result = Blocks.Find(index);
+	if(!result)return;
+	(*result)->Destroy();
+	*result = nullptr;
+}
 
 bool ATerrianGenerationMode::CreateBuilding(int32 id,int32 rotate, FVector pos){
 	FString str = TEXT("Blueprint'/Game/Blueprints/BP_Building") + FString::FromInt(id)+TEXT(".BP_Building")+ FString::FromInt(id)+ TEXT("_C'");

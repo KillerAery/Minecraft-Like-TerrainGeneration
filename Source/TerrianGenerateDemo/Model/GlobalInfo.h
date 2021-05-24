@@ -17,6 +17,8 @@ class TERRIANGENERATEDEMO_API GlobalInfo
 private:
 	//全局方块列表
 	TMap<uint64,int32> GlobalBlocksID;
+	//待更改方块列表
+	TArray<TPair<uint64,int32>> Blocks2Alter;
 	//待显示方块列表
 	TArray<TPair<uint64,int32>> Blocks2Display;
 	//待显示建筑列表
@@ -48,6 +50,12 @@ public:
 
 	//移除方块
 	void RemoveBlock(FVector pos);
+
+	//更改方块
+	void AlterBlock(FVector pos,int32 BlockID);	
+	
+	//待修改方块列表
+	TArray<TPair<uint64,int32>>& GetBlocks2Alter();
 
 	//查找方块
 	int32* FindBlock(FVector pos);
