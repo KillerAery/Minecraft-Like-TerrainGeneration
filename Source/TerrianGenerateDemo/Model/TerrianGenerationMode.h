@@ -4,11 +4,8 @@
 
 #include "Model/GlobalInfo.h"
 #include "Model/Chunk.h"
-
 #include "Model/Block.h"
-
 #include "CoreMinimal.h"
-
 #include "GameFramework/Actor.h"
 #include "GameFramework/GameModeBase.h"
 #include "TerrianGenerationMode.generated.h"
@@ -47,19 +44,19 @@ public:
 	FVector2D ChunksCenterPosition;
 	
 protected:
-	//全部加载Chunk
-	TArray<Chunk> Chunks;
-	//全部显示Chunk
+	//全部Chunk
+	TMap<uint64,Chunk> Chunks;
+	//用于显示的Chunk
 	TSet<Chunk*> Chunks2Display;
-	//全部建筑Chunk
-	TSet<Chunk*> Chunk2Build;
 	//全部Block
-	TMap<uint64,ABlock*> Blocks;
+	TMap<uint64,ABlock*> ABlocks;
 	//全局信息
 	GlobalInfo Info;
 protected:
 	//------------------------加载Chunk---------------------
-
+	//载入Chunk
+	void LoadChunk(Chunk& chunk);
+	
 	//是否需要加载chunk
 	bool NeedLoadChunk(FVector2D chunkPosition);
 
@@ -69,17 +66,10 @@ protected:
 	//生成建筑方块
 	void GenerateBuildingBlocks();
 
-	//载入Chunk
-	void LoadChunk(Chunk& chunk);
-
 	//计算方块ID
 	int32 CaculateBlockID(Chunk& chunk,int32 i,int32 j,int32 k);
 
 	//------------------------显示Chunk---------------------
-
-	//是否需要显示chunk
-	Chunk* GetDisplayChunk(FVector2D chunkPosition);
-
 	//显示Chunk
 	void DisplayChunk(Chunk& chunk);
 

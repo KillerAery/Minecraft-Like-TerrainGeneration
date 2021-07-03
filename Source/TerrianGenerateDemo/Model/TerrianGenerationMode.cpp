@@ -1,6 +1,4 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Model/TerrianGenerationMode.h"
 
 #include "Core/HeightGenerator.h"
@@ -49,73 +47,68 @@ void ATerrianGenerationMode::SetCameraLoaction(FVector location)
 
 void ATerrianGenerationMode::UpdateChunks()
 {
-	//加载Chunk
+	//在ChunkSize*ChunkSize的范围内加载Chunk
 	for (int i = 0; i < ChunkSize; ++i)
 	for (int j = 0; j < ChunkSize; ++j) 
 	{
 		FVector2D chunkPosition = FVector2D(ChunksCenterPosition.X + i,
 					  						ChunksCenterPosition.Y + j);
-
-		if (NeedLoadChunk(chunkPosition)){
-			int32 index = Chunks.Add(Chunk(chunkPosition));
+		uint64 index = NoiseTool::Index(chunkPosition.X,chunkPosition.Y);
+		
+		//若未加载该Chunk
+		if (!Chunks.Contains(index)){
+			//创建Chunk
+			Chunks.Emplace(index,Chunk(chunkPosition));
 			Chunk& chunk = Chunks[index];
 			//加载chunk信息
 			LoadChunk(chunk);
+			//加载地形方块ID
+			LoadTerrianBlocksID(chunk);
 		}
 	}	
 	
-	/* 雨水侵蚀
-	for (int i = 0; i < DisplaySize; ++i)
-	for (int j = 0; j < DisplaySize; ++j) 
-	{
-		FVector2D chunkPosition = FVector2D(ChunksCenterPosition.X + i +1,
-					  						ChunksCenterPosition.Y + j +1);
-		Chunk* chunk = Chunks.FindByPredicate(
-		[chunkPosition](Chunk& chunk){return FVector2D::DistSquared(chunkPosition,chunk.ChunkPosition)<0.0001f;});
-
-		if(chunk){
-			//生成雨水侵蚀现象
-			RainGenerator::GenerateRain(*chunk,this->Info);
-		}
-	}
-	*/
-	
-	for (int i = 1; i < ChunkSize-1; ++i)
-	for (int j = 1; j < ChunkSize-1; ++j) 
-	{
-		FVector2D position = FVector2D(ChunksCenterPosition.X + i,
-					  				   ChunksCenterPosition.Y + j);
-
-		Chunk* chunk = Chunks.FindByPredicate(
-		[position](Chunk& chunk){
-			return FVector2D::DistSquared(position,chunk.ChunkPosition)<0.0001f;
-		});
-
-		if(!Chunk2Build.Find(chunk)){
-			//生成建筑
-			BuildingGenerator::GenerateBuilding(*chunk,this->Info);
-			//生成建筑
-			GenerateBuildingBlocks();
-			//加载地形方块ID
-			LoadTerrianBlocksID(*chunk);
-			Chunk2Build.Add(chunk);
-		}
-	}
-	
+	//在(ChunkSize-2)*(ChunkSize-2)的范围内显示Chunk
 	for (int i = 2; i < ChunkSize-2; ++i)
 	for (int j = 2; j < ChunkSize-2; ++j) 
 	{
 		FVector2D chunkPosition = FVector2D(ChunksCenterPosition.X + i,
 					  						ChunksCenterPosition.Y + j);
-		Chunk* chunk = GetDisplayChunk(chunkPosition);
-		if(chunk){			
+		uint64 index = NoiseTool::Index(chunkPosition.X,chunkPosition.Y);
+		Chunk* chunkptr = &Chunks[index];
+		
+		//若未显示该Chunk
+		if(!Chunks2Display.Contains(chunkptr)){
+			//记录Chunk为已显示
+			Chunks2Display.Add(chunkptr);
+
+			Chunk& chunk = *chunkptr;
+			//（禁用）生成雨水侵蚀现象
+			//RainGenerator::GenerateRain(chunk,this->Info);	
+			//生成建筑
+			BuildingGenerator::GenerateBuilding(chunk,this->Info);
 			//生成植被
-			PlantGenerator::GeneratePlant(*chunk,this->Info);
+			PlantGenerator::GeneratePlant(chunk,this->Info);
 			//显示chunk
-			DisplayChunk(*chunk);
+			DisplayChunk(chunk);
 		}
 	}
+	
+	//生成建筑
+	GenerateBuildingBlocks();
+}
 
+void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
+{
+	//生成高度
+	HeightGenerator::GenerateHeight(chunk,this->Info);
+	//生成洞穴
+	CaveGenerator::GenerateCave(chunk,this->Info);
+	//生成温度
+	TemperatureGenerator::GenerateTemperature(chunk);
+	//生成湿度
+	HumidityGenerator::GenerateHumidity(chunk);
+	//生成生物群落属性
+	BiomeGenerator::GenerateBiome(chunk);
 }
 
 void ATerrianGenerationMode::LoadTerrianBlocksID(Chunk& chunk){
@@ -159,44 +152,6 @@ void ATerrianGenerationMode::GenerateBuildingBlocks(){
 
 	//显示完建筑就可以清理列表了
 	buildings2Display.Reset();
-}
-
-
-bool ATerrianGenerationMode::NeedLoadChunk(FVector2D chunkPosition){
-	//是否已存在Chunks列表内
-	if(Chunks.FindByPredicate(
-		[chunkPosition](Chunk& chunk){
-			return FVector2D::DistSquared(chunkPosition,chunk.ChunkPosition)<0.0001f;
-		})){
-		return false;
-	}
-	return true;
-}
-
-
-Chunk* ATerrianGenerationMode::GetDisplayChunk(FVector2D chunkPosition){
-	Chunk* chunk = Chunks.FindByPredicate(
-		[chunkPosition](Chunk& chunk){
-			return FVector2D::DistSquared(chunkPosition,chunk.ChunkPosition)<0.0001f;
-		});
-
-	if(Chunks2Display.Find(chunk)) return nullptr;
-	Chunks2Display.Add(chunk);
-	return chunk;
-}
-
-void ATerrianGenerationMode::LoadChunk(Chunk& chunk)
-{
-	//生成高度
-	HeightGenerator::GenerateHeight(chunk,this->Info);
-	//生成洞穴
-	CaveGenerator::GenerateCave(chunk,this->Info);
-	//生成温度
-	TemperatureGenerator::GenerateTemperature(chunk);
-	//生成湿度
-	HumidityGenerator::GenerateHumidity(chunk);
-	//生成生物群落属性
-	BiomeGenerator::GenerateBiome(chunk);
 }
 
 int32 ATerrianGenerationMode::CaculateBlockID(Chunk& chunk,int32 i,int32 j,int32 k){
@@ -281,7 +236,7 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector pos)
 {
 	if (id < 0 || id > MAX_BLOCKS_NUM) {return false;}
 	uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
-	auto result = Blocks.Find(index);
+	auto result = ABlocks.Find(index);
 	//已存在方块，失败
 	if(result)return false;
 	
@@ -293,7 +248,7 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector pos)
 	//创建方块Actor
 	ABlock* block = GetWorld()->SpawnActor<ABlock>(pos*100, FRotator::ZeroRotator);
 	block->InitByBlockID(id);
-	Blocks.Add(index,block);
+	ABlocks.Add(index,block);
 
 	return true;
 }
@@ -301,7 +256,7 @@ bool ATerrianGenerationMode::CreateBlock(int32 id, FVector pos)
 
 void ATerrianGenerationMode::RemoveBlock(FVector pos){
 	uint64 index = NoiseTool::Index(pos.X,pos.Y,pos.Z);
-	auto result = Blocks.Find(index);
+	auto result = ABlocks.Find(index);
 	if(!result)return;
 	(*result)->Destroy();
 	*result = nullptr;
@@ -314,21 +269,3 @@ bool ATerrianGenerationMode::CreateBuilding(int32 id,int32 rotate, FVector pos){
 
 	return spawnActor!=nullptr;
 }
-
-/*
-void ATerrianGenerationMode::Expose(GlobalInfo& info,int32 i,int32 j,int32 k){
-    const int32 dx[6] = {1,-1,0,0,0,0};
-    const int32 dy[6] = {0,0,1,-1,0,0};
-    const int32 dz[6] = {0,0,0,0,-1,1};
-    for(int d = 0;d<6;++d){
-        uint64 index = NoiseTool::Index(
-            ChunkPosition.X*16+i+dx[d],
-            ChunkPosition.Y*16+j+dy[d],
-            k+dz[d]
-            );
-        if(!info.GolbalBlocksID.Find(index)){
-            info.GolbalBlocksID.Emplace(index,CaculateBlockID(i+dx[d],j+dy[d],k+dz[d]));
-        }
-    }
-}
-*/
